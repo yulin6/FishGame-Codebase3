@@ -1,4 +1,6 @@
 #!/bin/bash
 
-javac ./Other/src/xyes/Util.java ./Other/src/xyes/Xyes.java
-java -cp ./Other/src/ xyes.Xyes "$@"
+# Script to compile the Java source files into class files and then run them from a fixed directory
+
+javac -d ./Other/out/production/hw01/xyes ./Other/src/xyes/Util.java ./Other/src/xyes/Xyes.java
+java -cp ./Other/out/production/hw01/xyes xyes.Xyes "$@"
