@@ -1,0 +1,4 @@
+#!/bin/bash
+
+javac ./Other/src/xyes/Util.java ./Other/src/xyes/Xyes.java
+java -cp ./Other/src/ xyes.Xyes "$@"
