@@ -26,8 +26,13 @@ public class Xyes {
       out = "hello world";
       limit = false;
     } else if (args[0].equals("-limit")) {
-      out = util.concat(Arrays.copyOfRange(args, 1, args.length));
-      limit = true;
+        if (args.length == 1) {
+            out = "hello world";
+            limit = true;
+        } else {
+            out = util.concat(Arrays.copyOfRange(args, 1, args.length));
+            limit = true;
+        }
     } else {
       out = util.concat(args);
       limit = false;
