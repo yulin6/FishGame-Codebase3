@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Script to compile the Java source files into class files and then run them from a fixed directory
+
+javac -d ./Other/out/production/hw02 -cp ./Other/gson-2.8.6.jar ./Other/src/xjson/xjson.java
+java -cp ./Other/gson-2.8.6.jar:./Other/out/production/hw02 xjson.xjson
