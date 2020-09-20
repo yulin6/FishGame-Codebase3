@@ -13,6 +13,7 @@ import java.awt.event.MouseListener;
 public class xgui extends JFrame implements MouseListener {
     private int width;
     private int height;
+    private Polygon hex;
 
     public xgui(int size) {
         // Enough space to fit the hexagon
@@ -66,19 +67,22 @@ public class xgui extends JFrame implements MouseListener {
         int w = this.width;
         int h = this.height;
         int bottom = this.getSize().height - 1;
-        Polygon p = new Polygon();
-        p.addPoint(0, bottom - h/2);
-        p.addPoint(w/3, bottom);
-        p.addPoint(2 * (w/3), bottom);
-        p.addPoint(w, bottom - h/2);
-        p.addPoint(2 * (w/3), bottom - h);
-        p.addPoint(w/3, bottom - h);
-        g.drawPolygon(p);
+        hex = new Polygon();
+        hex.addPoint(0, bottom - h/2);
+        hex.addPoint(w/3, bottom);
+        hex.addPoint(2 * (w/3), bottom);
+        hex.addPoint(w, bottom - h/2);
+        hex.addPoint(2 * (w/3), bottom - h);
+        hex.addPoint(w/3, bottom - h);
+        g.drawPolygon(hex);
     }
 
     @Override public void mouseClicked(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
+        if (hex.contains(new Point(x, y))) {
+            System.exit(0);   
+        }
         System.out.println("Mouse Clicked at X: " + x + " - Y: " + y);
     }
 
