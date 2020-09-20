@@ -7,15 +7,20 @@ import java.awt.*;
  * Class to provide the functionality of xgui. 
  */
 public class xgui extends JFrame {
+    private int width;
+    private int height;
 
     public xgui(int size) {
-        //Enough space to fit the hexagon
-        setSize(size * 3, size * 2);
+        // Enough space to fit the hexagon
+        width = 3 * size;
+        height = 2 * size;
+
+        setSize(size * 5, size * 5);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
-    
     }
+
     /**
      * Main method of xgui - draws a hexagon based on argument into the window
      * and closes window & shuts down upon clicking inside it.
@@ -24,10 +29,7 @@ public class xgui extends JFrame {
     public static void main(String[] args) {
         inputCheck(args);
         
-        new xgui(Integer.parseInt(args[0])); 
-        // If this point is reached, our input (singular) is valid
-        System.out.println("Debug: input value is: " + args[0]);        
-        
+        new xgui(Integer.parseInt(args[0]));        
     }
     
     /**
@@ -56,15 +58,16 @@ public class xgui extends JFrame {
     }
 
     public void paint(Graphics g) {
-        int w = this.getSize().width - 1;
-        int h = this.getSize().height - 1;
+        int w = this.width;
+        int h = this.height;
+        int bottom = this.getSize().height - 1;
         Polygon p = new Polygon();
-        p.addPoint(0, h/2);
-        p.addPoint(w/3, h);
-        p.addPoint(2 * (w/3), h);
-        p.addPoint(w, h/2);
-        p.addPoint(2 * (w/3), 0);
-        p.addPoint(w/3, 0);
+        p.addPoint(0, bottom - h/2);
+        p.addPoint(w/3, bottom);
+        p.addPoint(2 * (w/3), bottom);
+        p.addPoint(w, bottom - h/2);
+        p.addPoint(2 * (w/3), bottom - h);
+        p.addPoint(w/3, bottom - h);
         g.drawPolygon(p);
     }
 }
