@@ -21,7 +21,7 @@ public class xgui extends JFrame implements MouseListener {
         height = 2 * size;
 
         addMouseListener(this);
-        setSize(size * 5, size * 5);
+        setSize(size * 6, size * 4);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
@@ -57,7 +57,7 @@ public class xgui extends JFrame implements MouseListener {
             System.exit(-2);
         }
 
-        if (x < 0) {
+        if (x <= 0) {
             System.out.println("usage: ./xgui positive-integer");
             System.exit(-3);
         }
@@ -83,10 +83,10 @@ public class xgui extends JFrame implements MouseListener {
         if (hex.contains(new Point(x, y))) {
             System.exit(0);   
         }
-        System.out.println("Mouse Clicked at X: " + x + " - Y: " + y);
     }
-
-    @Override public void mouseEntered(MouseEvent e) {}
+    
+    // Leave these overrides empty; we need implementations to build, but only clicked is needed
+    @Override public void mouseEntered(MouseEvent e) { }
 
     @Override public void mouseExited(MouseEvent e) { }
 
