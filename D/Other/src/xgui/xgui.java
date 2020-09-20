@@ -3,10 +3,14 @@ package xgui;
 import javax.swing.*;
 import java.awt.*;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+
 /**
  * Class to provide the functionality of xgui. 
  */
-public class xgui extends JFrame {
+public class xgui extends JFrame implements MouseListener {
     private int width;
     private int height;
 
@@ -15,6 +19,7 @@ public class xgui extends JFrame {
         width = 3 * size;
         height = 2 * size;
 
+        addMouseListener(this);
         setSize(size * 5, size * 5);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -70,5 +75,20 @@ public class xgui extends JFrame {
         p.addPoint(w/3, bottom - h);
         g.drawPolygon(p);
     }
+
+    @Override public void mouseClicked(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+        System.out.println("Mouse Clicked at X: " + x + " - Y: " + y);
+    }
+
+    @Override public void mouseEntered(MouseEvent e) {}
+
+    @Override public void mouseExited(MouseEvent e) { }
+
+    @Override public void mousePressed(MouseEvent e) { }
+
+    @Override public void mouseReleased(MouseEvent arg0) { }
+
 }
 
