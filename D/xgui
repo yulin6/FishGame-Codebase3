@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Script to compile the Java source files into class files and then run them from a fixed directory
+
+javac -d ./Other/out/ ./Other/src/xgui/xgui.java
+java -cp ./Other/out/ xgui.xgui "$@"
