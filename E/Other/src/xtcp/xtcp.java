@@ -1,5 +1,7 @@
 package xtcp;
 
+import io.netty.*;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -24,6 +26,27 @@ public class xtcp {
      * @args arguments to the main function of xtcp.
      */
     public static void main(String[] args) {
+        int portNo = 4567;
+
+        // Validate arguments
+        if (args.length != 1) {
+            System.out.println("Usage: ./xtcp <port number>");
+            System.exit(1);
+        }
+        
+        try {
+            Integer.parseInt(args[0]);
+        } catch (NumberFormatException e) {
+            System.out.println("Usage: ./xtcp <port number>");
+            System.exit(2);
+        }
+
+        portNo = Integer.parseInt(args[0]);
+        if (portNo <= 0) {
+            System.out.println("Usage: ./xtcp <port number>");
+            System.exit(3);
+        }
+
         // Set up TCP connection 
         
         // Do some JSON parsing
