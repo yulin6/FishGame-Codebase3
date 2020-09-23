@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Script to compile the Java source files into class files and then run them from a fixed directory
+
+javac -d ./Other/out/ -cp ./Other/dep/gson-2.8.6.jar:./Other/dep/netty-all-4.1.52-Final.jar ./Other/src/xtcp/xtcp.java
+java -cp ./Other/dep/gson-2.8.6.jar:./Other/dep/netty-all-4.1.52-Final.jar:./Other/out/ xtcp.xtcp
