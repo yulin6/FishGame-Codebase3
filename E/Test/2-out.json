@@ -1,0 +1,3 @@
+{ "count" : 4,
+    "seq" : ["the first one", 117, {"hey" : "jude"}, [23, 321, 432]]}
+[4, [23, 321, 432], {"hey" : "jude"}, 117, "the first one"]
