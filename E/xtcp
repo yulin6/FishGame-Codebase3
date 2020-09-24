@@ -1,6 +1,8 @@
 #!/bin/bash
 APACHE="/usr/share/java/apache-commons-net.jar"
 GSON="./Other/dep/gson-2.8.6.jar"
+NETTY="./Other/dep/netty/jar/all-in-one/netty-4.1.52.Final.jar"
+
 
 # Script to compile the Java source files into class files and then run them from a fixed directory
 

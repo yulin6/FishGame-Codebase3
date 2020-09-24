@@ -1,6 +1,10 @@
 package xtcp;
 
-import org.apache.commons.net;
+import org.apache.commons.net.DefaultSocketFactory;
+
+import java.io.*;
+
+import java.net.*;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -27,51 +31,93 @@ public class xtcp {
      */
     public static void main(String[] args) {
         int portNo = 4567;
+        DefaultSocketFactory factory = new DefaultSocketFactory();
+        ServerSocket server = null;
+        Socket client = null;
 
         // Validate arguments
-        if (args.length != 1) {
+        if (args.length > 1) {
             System.out.println("Usage: ./xtcp <port number>");
             System.exit(1);
-        }
-        
-        try {
-            Integer.parseInt(args[0]);
-        } catch (NumberFormatException e) {
-            System.out.println("Usage: ./xtcp <port number>");
-            System.exit(2);
-        }
+        } else if (args.length == 1) {
+            try {
+                Integer.parseInt(args[0]);
+            } catch (NumberFormatException e) {
+                System.out.println("Usage: ./xtcp <port number>");
+                System.exit(1);
+            }
 
-        portNo = Integer.parseInt(args[0]);
-        if (portNo <= 0) {
-            System.out.println("Usage: ./xtcp <port number>");
-            System.exit(3);
+            portNo = Integer.parseInt(args[0]);
+            if (portNo <= 0) {
+                System.out.println("Usage: ./xtcp <port number>");
+                System.exit(1);
+            }
+        } else {
+            System.out.println("Defaulting to port " + portNo + ".");
         }
 
         // Set up TCP connection 
-        
-        // Do some JSON parsing
-        parseInput();
+        try {
+            server = factory.createServerSocket(portNo);
+            server.setSoTimeout(3000);
+        } catch (IOException e) {
+            System.out.println("Could not create sockets.");
+            System.exit(2);
+        }
 
-        // Debug: print JSON
-        System.out.println(out1.toString());
-        System.out.println(out2.toString());
+        try { 
+            client = server.accept();
+        } catch (SocketTimeoutException e) {
+            System.out.println("Did not receive data before timeout.");
+            System.exit(2);
+        } catch (IOException e) {
+            System.out.println("IO exception has occurred.");
+            System.exit(2);
+        } 
+
+        // Do some JSON parsing
+        InputStream istream = null;
+        OutputStream ostream = null;
+        try {
+            istream = client.getInputStream();
+            ostream = client.getOutputStream();
+        } catch (IOException e) {
+            System.out.println("Error obtaining I/O streams from client.");
+            System.exit(2);
+        }
+
+        parseInput(istream);
+
+        PrintWriter p = new PrintWriter(ostream, true);
+
+        p.println(out1.toString());
+        p.println(out2.toString());
+        p.close();
+
+        try {
+            client.close();
+            server.close();
+        } catch (IOException e) {
+            System.out.println("Error closing sockets.");
+            System.exit(2);
+        }      
     }
 
     /**
      * Helper method to parse all JSON input from the a TCP input stream
      * and create the appropriate JSON objects to return.
+     * @args istream Input stream to read from.
      */
-    private static void parseInput() {
+    private static void parseInput(InputStream istream) {
         // Open a scanner to accept all the JSON values from TCP conn
         // into one string to give to a parser
-        Scanner input = new Scanner(System.in);
+        Scanner input = new Scanner(istream);
         StringBuilder rawJson = new StringBuilder();
         while (input.hasNextLine()) {
             rawJson.append(input.nextLine());
             rawJson.append("\n");
         }
         
-        input.close();
         String jsonInput = rawJson.toString();
 
         // Create a Gson object to convert JSON into Java objects
