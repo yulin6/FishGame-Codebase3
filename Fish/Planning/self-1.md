@@ -84,7 +84,6 @@ This one is a practice run to make sure you get
 
 
 
-
   - do sentences make a point? do they run on?
 
     Yes. Each sentence contributes to the thesis statement of the
@@ -93,13 +92,12 @@ This one is a practice run to make sure you get
 
 
 
-
   - do sentences connect via old words/new words so that readers keep
     reading?
 
-    [Not sure what this means]
-
-
+    Yes; we tried to reuse terminology as appropriate in order to keep
+	continuity between sentences. This should ensure that readers are 
+	able to keep reading without any difficulty.
 
 
   - are all sentences complete? Are they missing verbs? Objects? Other
