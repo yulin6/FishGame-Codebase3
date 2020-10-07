@@ -5,11 +5,12 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
+import gamestate.controller.FishController;
+
 /**
  *
  */
 public class BoardPanel extends JPanel {
-
   // TODO: delete before submission - note - tiles have fixed sizes
   /**
    * Creates a new BoardPanel, which determines size based on the board size.
@@ -22,6 +23,7 @@ public class BoardPanel extends JPanel {
   @Override
   protected void paintComponent(Graphics g) {
     // TODO
+    // Pass this and g
   }
 
 }

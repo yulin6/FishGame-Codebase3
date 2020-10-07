@@ -4,10 +4,13 @@ import java.awt.Dimension;
 
 import javax.swing.JFrame;
 
+import gamestate.controller.FishController;
+
 /**
  * Class to wrap JFrame to represent the board's frame.
  */
 public class BoardFrame extends JFrame {
+  private FishController controller;
   private BoardPanel panel;
 
   /**
@@ -16,6 +19,7 @@ public class BoardFrame extends JFrame {
   public BoardFrame() {
     super();
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    //TODO: Set resizable?
     this.setSize(new Dimension(300, 300)); // TODO fix sizing
   }
 
@@ -40,6 +44,10 @@ public class BoardFrame extends JFrame {
    */
   public void display() {
     this.setVisible(true);
+  }
+
+  public void setController(FishController controller) {
+    this.controller = controller;
   }
 
 }

@@ -1,18 +1,13 @@
 package gamestate.model;
 
+import java.awt.*;
+
 import gamestate.view.BoardPanel;
 
 /**
  * Interface for Tile type objects.
  */
 public interface ITile {
-
-  /**
-   * Create a new Tile with the given number of fish on it.
-   * @param numFish Number of fish on the tile
-   * @return The built Tile
-   */
-  Tile buildTile(int numFish);
 
   /**
    * Sets this Tile as occupied.
@@ -25,6 +20,17 @@ public interface ITile {
   void setUnoccupied();
 
   /**
+   * Sets this Tile as a hole
+   */
+  void setHole();
+
+  /**
+   * Checks if this tile is a hole in the board
+   * @return true if hole, else false
+   */
+  boolean isHole();
+
+  /**
    * Returns the number of fish on the Tile.
    * @return number of fish
    */
@@ -35,5 +41,11 @@ public interface ITile {
    * @return true if occupied, else false
    */
   boolean isOccupied();
+
+  /**
+   * Renders this tile
+   * @param bp the BoardPanel to render the tile on
+   */
+  void render(BoardPanel bp, Graphics g);
 
 }
