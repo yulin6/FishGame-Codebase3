@@ -42,10 +42,10 @@ public class Tile implements ITile {
     if (FISH_ICON == null) {
       try {
         File pathToFishIcon = new File("resources/fish33x20.png");
-        File pathRed = new File("/resources/redpenguin.png");
-        File pathWhite = new File("/resources/whitepenguin.png");
-        File pathBrown = new File("/resources/brownpenguin.png");
-        File pathBlack = new File("/resources/blackpenguin.png");
+        File pathRed = new File("resources/redpenguin.png");
+        File pathWhite = new File("resources/whitepenguin.png");
+        File pathBrown = new File("resources/brownpenguin.png");
+        File pathBlack = new File("resources/blackpenguin.png");
         image = ImageIO.read(pathToFishIcon);
         FISH_ICON = image;
         image = ImageIO.read(pathRed);
