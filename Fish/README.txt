@@ -42,6 +42,7 @@ Assuming the current working directory is Common/:
 - "sh all-tests.sh" to run all tests for milestone 2 - "The Game Pieces"
   which may later be renamed for clarity
 - Individual tests for milestone 2 may be run with
-"java -cp /usr/share/java/junit4.jar:out/:out-test/ org.junit.runner.JUnitCore gamestate.model.<CLASSNAME>", where <CLASSNAME> is one of BoardPositionTest, PixelPositionTest, TileTest, or BoardTest
+"java -cp /usr/share/java/junit4.jar:out/:out-test/ org.junit.runner.JUnitCore gamestate.model.<CLASSNAME>",
+where <CLASSNAME> is one of BoardPositionTest, PixelPositionTest, TileTest, or BoardTest
 - Test source code can be found within Common/test/, with further subdirectories
 depending on the software component the tests were written for.
