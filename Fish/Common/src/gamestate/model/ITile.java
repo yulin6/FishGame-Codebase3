@@ -10,6 +10,12 @@ import gamestate.view.BoardPanel;
 public interface ITile {
 
   /**
+   * Gets the BoardPosition of this tile.
+   * @return the position representing the tile's location.
+   */
+  BoardPosition getPosition();
+
+  /**
    * Sets this Tile as occupied.
    */
   void setOccupied();

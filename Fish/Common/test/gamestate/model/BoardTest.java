@@ -69,6 +69,12 @@ public class BoardTest {
 
   @Test
   public void getValidMoves() {
-
+    ArrayList<Tile> tiles = uniform.getValidMoves(new BoardPosition(1, 0));
+    ArrayList<BoardPosition> positions = new ArrayList<>();
+    for (Tile t : tiles) {
+      positions.add(t.getPosition());
+    }
+    assertTrue(positions.contains(new BoardPosition(0, 0)));
+    assertTrue(positions.contains(new BoardPosition(0, 1)));
   }
 }

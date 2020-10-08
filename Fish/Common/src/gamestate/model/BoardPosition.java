@@ -33,4 +33,18 @@ public class BoardPosition {
     return col;
   }
 
+  /**
+   * Checks equality of another position and this position.
+   * @param obj Other object to check equality with
+   * @return True if the row and column of both are the same, else false
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof BoardPosition) {
+      BoardPosition bp = (BoardPosition) obj;
+      return (this.row == bp.getRow() && this.col == bp.getCol());
+    } else {
+      return false;
+    }
+  }
 }

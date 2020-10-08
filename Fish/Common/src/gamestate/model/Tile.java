@@ -95,6 +95,11 @@ public class Tile implements ITile {
   }
 
   @Override
+  public BoardPosition getPosition() {
+    return p;
+  }
+
+  @Override
   public void setOccupied() {
     occupied = true;
   }
