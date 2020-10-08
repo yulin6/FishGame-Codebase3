@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import gamestate.model.Board;
 import gamestate.model.BoardPosition;
+import gamestate.model.Penguin;
 import gamestate.view.BoardFrame;
 import gamestate.view.BoardPanel;
 
@@ -83,14 +84,38 @@ public class FishController {
   public static void main(String [] args) {
     //Uniform board
     //FishController fc = new FishController(4, 3, 4);
+    //int rAmt = randomInt(1, 5);
+    //int cAmt = randomInt(1, 5);
 
     ArrayList<BoardPosition> holes = new ArrayList<>();
+    /* testing - generate random holes
+    for (int i = 0; i < 3; i++) {
+      holes.add(new BoardPosition(randomInt(0, rAmt - 1), randomInt(0, cAmt - 1)));
+    }
+    */
     holes.add(new BoardPosition(0, 0));
     holes.add(new BoardPosition(3, 1));
     holes.add(new BoardPosition(2, 1));
     holes.add(new BoardPosition(1, 2));
 
     FishController fc = new FishController(4, 3, holes, 3);
+    Penguin p1 = new Penguin(Penguin.PenguinColor.BLACK, new BoardPosition(0, 1));
+    Penguin p2 = new Penguin(Penguin.PenguinColor.BROWN, new BoardPosition(2, 2));
+    fc.getBoard().placePenguin(p1);
+    fc.getBoard().placePenguin(p2);
+
+    //FishController fc = new FishController(rAmt, cAmt, holes, randomInt(0, rAmt * cAmt - 4));
     fc.frame.display();
+  }
+
+  /**
+   * Returns an integer from the range, start and end inclusive.
+   * @param min minimum value
+   * @param max maximum value
+   * @return integer in the range
+   */
+  private static int randomInt(int min, int max) {
+    int range = max - min + 1;
+    return (int) (Math.random() * range) + min;
   }
 }

@@ -16,9 +16,9 @@ public interface ITile {
   BoardPosition getPosition();
 
   /**
-   * Sets this Tile as occupied.
+   * Sets this Tile's occupancy status.
    */
-  void setOccupied();
+  void setStatus(Tile.TileStatus s);
 
   /**
    * Sets this Tile as unoccupied.

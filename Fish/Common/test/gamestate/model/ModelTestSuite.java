@@ -9,10 +9,8 @@ import org.junit.runners.Suite;
         BoardTest.class,
         TileTest.class,
         PixelPositionTest.class,
+        PenguinTest.class
 })
 
-/**
- * Blank class. To be run with JUnit, letting all tests run together.
- */
 public class ModelTestSuite {
 }

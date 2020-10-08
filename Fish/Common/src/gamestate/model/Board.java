@@ -1,6 +1,7 @@
 package gamestate.model;
 
 import java.awt.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import gamestate.controller.FishController;
@@ -18,6 +19,7 @@ public class Board implements IBoard {
   int rows;
   int cols;
   Tile [][] tiles;
+  ArrayList<Penguin> penguins;
 
   /**
    * Creates a board in which there are holes in given spaces, tiles have a random number of fish,
@@ -36,6 +38,8 @@ public class Board implements IBoard {
     numOneFish -= removeHoles(holes);
 
     setOneFishTiles(numOneFish, minTiles);
+
+    this.penguins = new ArrayList<>();
   }
 
   /**
@@ -50,6 +54,8 @@ public class Board implements IBoard {
     this.tiles = new Tile[this.rows][this.cols];
 
     initTiles(fishNum);
+
+    this.penguins = new ArrayList<>();
   }
 
   /**
@@ -169,6 +175,29 @@ public class Board implements IBoard {
   @Override
   public int getCols() {
     return cols;
+  }
+
+  @Override
+  public void placePenguin(Penguin p) {
+    this.penguins.add(p);
+    int row = p.getPosition().getRow();
+    int col = p.getPosition().getCol();
+    Penguin.PenguinColor color = p.getColor();
+    switch (color) {
+      case RED:
+        tiles[row][col].setStatus(Tile.TileStatus.RED);
+        break;
+      case BLACK:
+        tiles[row][col].setStatus(Tile.TileStatus.BLACK);
+        break;
+      case BROWN:
+        tiles[row][col].setStatus(Tile.TileStatus.BROWN);
+        break;
+      case WHITE:
+        tiles[row][col].setStatus(Tile.TileStatus.WHITE);
+        break;
+      default:
+    }
   }
 
   @Override

@@ -49,4 +49,10 @@ public interface IBoard {
    */
   int getCols();
 
+  /**
+   * Places a penguin onto the board.
+   * @param p The penguin to add to the board
+   */
+  void placePenguin(Penguin p);
+
 }

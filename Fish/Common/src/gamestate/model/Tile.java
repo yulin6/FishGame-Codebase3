@@ -24,10 +24,13 @@ public class Tile implements ITile {
 
   static Image FISH_ICON = null;
   final int FISH_ICON_HEIGHT = 20;
+  static Image PENGUIN_RED = null;
+  static Image PENGUIN_WHITE = null;
+  static Image PENGUIN_BROWN = null;
+  static Image PENGUIN_BLACK = null;
 
   int fish;
   TileStatus occupant;
-  boolean occupied;
   BoardPosition p;
 
   /**
@@ -39,16 +42,26 @@ public class Tile implements ITile {
     if (FISH_ICON == null) {
       try {
         File pathToFishIcon = new File("resources/fish33x20.png");
-        System.out.println(pathToFishIcon.getAbsolutePath());
+        File pathRed = new File("/resources/redpenguin.png");
+        File pathWhite = new File("/resources/whitepenguin.png");
+        File pathBrown = new File("/resources/brownpenguin.png");
+        File pathBlack = new File("/resources/blackpenguin.png");
         image = ImageIO.read(pathToFishIcon);
         FISH_ICON = image;
+        image = ImageIO.read(pathRed);
+        PENGUIN_RED = image;
+        image = ImageIO.read(pathWhite);
+        PENGUIN_WHITE = image;
+        image = ImageIO.read(pathBrown);
+        PENGUIN_BROWN = image;
+        image = ImageIO.read(pathBlack);
+        PENGUIN_BLACK = image;
       } catch (IOException e) {
         e.printStackTrace();
       }
     }
     this.fish = numFish;
     occupant = TileStatus.NONE;
-    occupied = false;
     this.p = p;
   }
 
@@ -100,22 +113,13 @@ public class Tile implements ITile {
   }
 
   @Override
-  public void setOccupied() {
-    occupied = true;
+  public void setStatus(TileStatus s) {
+    this.occupant = s;
   }
-
-  /*
-  For the future when Penguin has an implementation
-  @Override
-  public void setOccupied(Penguin p) {
-
-  }
-   */
 
   @Override
   public void setUnoccupied() {
     occupant = TileStatus.NONE;
-    occupied = false;
   }
 
   @Override
@@ -131,8 +135,7 @@ public class Tile implements ITile {
 
   @Override
   public boolean isOccupied() {
-    return occupied;
-    // return (occupant != TileStatus.NONE);
+    return (occupant != TileStatus.NONE);
   }
 
   @Override
@@ -141,14 +144,9 @@ public class Tile implements ITile {
       return;
     }
     drawHexagon(g);
-    int shift = p.getRow() % 2;
-    int shiftRight = (int) (shift * 2.0/3.0 * WIDTH);
-
-    for (int i = 0; i < fish; i++) {
-      g.drawImage(FISH_ICON,
-              (int) (COLUMN_WIDTH * p.getCol() + 1.0/3.0 * WIDTH + shiftRight) + R_OFFSET,
-              (int) (p.getRow() / 2.0 * HEIGHT + D_OFFSET) + FISH_ICON_HEIGHT * i,
-              null);
+    drawFish(g);
+    if (this.isOccupied()) {
+      drawPenguin(g);
     }
   }
 
@@ -177,6 +175,41 @@ public class Tile implements ITile {
     g.fillPolygon(hex);
     g.setColor(Color.BLACK);
     g.drawPolygon(hex);
+  }
+
+  private void drawFish(Graphics g) {
+    int shift = p.getRow() % 2;
+    int shiftRight = (int) (shift * 2.0/3.0 * WIDTH);
+    for (int i = 0; i < fish; i++) {
+      g.drawImage(FISH_ICON,
+              (int) (COLUMN_WIDTH * p.getCol() + 1.0/3.0 * WIDTH + shiftRight) + R_OFFSET,
+              (int) (p.getRow() / 2.0 * HEIGHT + D_OFFSET) + FISH_ICON_HEIGHT * i,
+              null);
+    }
+  }
+
+  private void drawPenguin(Graphics g) {
+    int shift = p.getRow() % 2;
+    int shiftRight = (int) (shift * 2.0/3.0 * WIDTH);
+
+    int xcoord = (int) (COLUMN_WIDTH * p.getCol() + 1.0/3.0 * WIDTH + shiftRight) + R_OFFSET;
+    int ycoord = (int) (p.getRow() / 2.0 * HEIGHT + D_OFFSET) + HEIGHT / 2;
+
+    switch (this.occupant) {
+      case WHITE:
+        g.drawImage(PENGUIN_WHITE, xcoord, ycoord, null);
+        break;
+      case BLACK:
+        g.drawImage(PENGUIN_BLACK, xcoord, ycoord, null);
+        break;
+      case RED:
+        g.drawImage(PENGUIN_RED, xcoord, ycoord, null);
+        break;
+      case BROWN:
+        g.drawImage(PENGUIN_BROWN, xcoord, ycoord, null);
+        break;
+      default:
+    }
   }
 
   /**

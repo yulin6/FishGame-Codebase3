@@ -19,6 +19,9 @@ code that are associated with the project; currently it contains an image of a F
 we used
 (obtained from https://www.cleanpng.com/png-computer-icons-fish-clip-art-pour-vector-1633443/
 as well as the resized version of it that was used in our rendering.
+It also contains some images relating to penguins. The base penguin image was retrieved from
+https://www.hiclipart.com/free-transparent-background-png-clipart-qmoau/download
+and resized/recolored for use in this project.
 
 There are currently two .sh files, run.sh and all-tests.sh. run.sh will bring up
 a rendering of a game board, while all-tests.sh is part of the test harness for

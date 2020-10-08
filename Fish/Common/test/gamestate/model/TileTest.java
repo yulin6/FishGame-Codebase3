@@ -38,16 +38,16 @@ public class TileTest {
   }
 
   @Test
-  public void setOccupied() {
+  public void setStatus() {
     assertFalse(t1.isOccupied());
-    t1.setOccupied();
+    t1.setStatus(Tile.TileStatus.RED);
     assertTrue(t1.isOccupied());
   }
 
   @Test
   public void setUnoccupied() {
     assertFalse(t2.isOccupied());
-    t2.setOccupied();
+    t2.setStatus(Tile.TileStatus.BLACK);
     assertTrue(t2.isOccupied());
     t2.setUnoccupied();
     assertFalse(t2.isOccupied());
