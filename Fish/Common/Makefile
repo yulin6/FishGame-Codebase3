@@ -14,11 +14,13 @@ TESTFILES = \
 default: sources testsources
 
 sources:
+	mkdir out
 	$(JAVAC) $(OUTDIR) $(JAVAFILES) 
 
 testsources:
+	mkdir out-test
 	$(JAVAC) $(TESTDIR) $(TESTDEP) $(TESTFILES)
 
 clean:
-	$(RM) -r out/gamestate
-	$(RM) -r out-test/gamestate
+	$(RM) -r out
+	$(RM) -r out-test
