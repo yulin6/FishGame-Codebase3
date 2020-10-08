@@ -20,7 +20,7 @@ public class Board implements IBoard {
   Tile [][] tiles;
 
   /**
-   * Creates a board in which there are hoels in given spaces, tiles have a random number of fish,
+   * Creates a board in which there are holes in given spaces, tiles have a random number of fish,
    * and there is a minimum number of 1-fish tiles guaranteed
    * @param rows number of rows of tiles on the board
    * @param columns the number of columns of tiles on the board
@@ -40,11 +40,11 @@ public class Board implements IBoard {
 
   /**
    * Creates a full uniform board with each tile having fishNum fish
-   * @param fishNum the number of fish on each tile
    * @param rows the number of rows of tiles on the board
    * @param columns the number of columns of tiles on the board
+   * @param fishNum the number of fish on each tile
    */
-  public Board (int fishNum, int rows, int columns) {
+  public Board (int rows, int columns, int fishNum) {
     this.rows = rows;
     this.cols = columns;
     this.tiles = new Tile[this.rows][this.cols];
@@ -134,6 +134,10 @@ public class Board implements IBoard {
     int row = p.getRow();
     int col = p.getCol();
 
+    if (row >= rows || col >= cols || row < 0 || col < 0) {
+      throw new IllegalArgumentException("Cannot remove tile out of bounds.");
+    }
+
     tiles[row][col].setHole();
   }
 
@@ -150,6 +154,11 @@ public class Board implements IBoard {
   @Override
   public void setController(FishController controller) {
     this.controller = controller;
+  }
+
+  @Override
+  public FishController getController() {
+    return controller;
   }
 
   @Override

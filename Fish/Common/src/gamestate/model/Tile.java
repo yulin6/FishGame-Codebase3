@@ -126,7 +126,8 @@ public class Tile implements ITile {
 
   @Override
   public boolean isOccupied() {
-    return (occupant != TileStatus.NONE);
+    return occupied;
+    // return (occupant != TileStatus.NONE);
   }
 
   @Override
