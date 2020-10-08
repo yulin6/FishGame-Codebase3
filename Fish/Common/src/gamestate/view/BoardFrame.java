@@ -24,7 +24,7 @@ public class BoardFrame extends JFrame {
   }
 
   /**
-   * Adds a BoardPanel to the BoardFrame for display
+   * Adds a BoardPanel to the BoardFrame for display.
    * @param bp BoardPanel to add that belongs to this BoardFrame
    */
   public void addPanel(BoardPanel bp) {

@@ -1,6 +1,9 @@
 package gamestate.model;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Polygon;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -10,11 +13,11 @@ import javax.imageio.ImageIO;
 import gamestate.view.BoardPanel;
 
 /**
- *
+ * Class to represent a tile in a game of Fish.
  */
 public class Tile implements ITile {
-  public static final int HEIGHT = 150;
-  public static final int WIDTH = 150;
+  public static final int HEIGHT = 100;
+  public static final int WIDTH = 100;
   public static final double COLUMN_WIDTH = 4.0/3.0 * WIDTH;
   public static final int R_OFFSET = 20;
   public static final int D_OFFSET = 20;
@@ -40,7 +43,6 @@ public class Tile implements ITile {
         image = ImageIO.read(pathToFishIcon);
         FISH_ICON = image;
       } catch (IOException e) {
-        System.out.println("Error loading fish icon image");
         e.printStackTrace();
       }
     }
@@ -50,23 +52,43 @@ public class Tile implements ITile {
     this.p = p;
   }
 
+  /**
+   * Builder class for Tile objects.
+   */
   public static class TileBuilder {
     private int fish;
     private BoardPosition p;
 
+    /**
+     * Creates a TileBuilder.
+     */
     TileBuilder() {
     }
 
+    /**
+     * Sets the number of fish for the tile to be built.
+     * @param numFish Number of fish for the tile.
+     * @return The TileBuilder, for continued use.
+     */
     public TileBuilder setFish(int numFish) {
       this.fish = numFish;
       return this;
     }
 
+    /**
+     * Sets the position for the tile to be built.
+     * @param p Position of the tile on the board.
+     * @return The TileBuilder, for continued use.
+     */
     public TileBuilder setPosition(BoardPosition p) {
       this.p = p;
       return this;
     }
 
+    /**
+     * Returns the tile with the settings specified by the Builder.
+     * @return The built Tile.
+     */
     public Tile build() {
       return new Tile(fish, p);
     }
