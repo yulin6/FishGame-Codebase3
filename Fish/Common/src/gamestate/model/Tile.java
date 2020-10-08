@@ -38,7 +38,7 @@ public class Tile implements ITile {
     BufferedImage image;
     if (FISH_ICON == null) {
       try {
-        File pathToFishIcon = new File("Fish/Common/src/assets/fish33x20.png");
+        File pathToFishIcon = new File("src/assets/fish33x20.png");
         System.out.println(pathToFishIcon.getAbsolutePath());
         image = ImageIO.read(pathToFishIcon);
         FISH_ICON = image;
