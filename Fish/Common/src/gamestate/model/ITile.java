@@ -43,7 +43,7 @@ public interface ITile {
   boolean isOccupied();
 
   /**
-   * Renders this tile
+   * Renders this tile.
    * @param bp the BoardPanel to render the tile on
    */
   void render(BoardPanel bp, Graphics g);

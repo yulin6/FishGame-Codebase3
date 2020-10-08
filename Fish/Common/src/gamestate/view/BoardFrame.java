@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 
 import gamestate.controller.FishController;
+import gamestate.model.Tile;
 
 /**
  * Class to wrap JFrame to represent the board's frame.
@@ -19,8 +20,7 @@ public class BoardFrame extends JFrame {
   public BoardFrame() {
     super();
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    //TODO: Set resizable?
-    this.setSize(new Dimension(300, 300)); // TODO fix sizing
+
   }
 
   /**
@@ -29,6 +29,7 @@ public class BoardFrame extends JFrame {
    */
   public void addPanel(BoardPanel bp) {
     this.panel = bp;
+    this.add(bp);
   }
 
   /**
@@ -43,11 +44,28 @@ public class BoardFrame extends JFrame {
    * Sets this BoardFrame as visible.
    */
   public void display() {
+    int rows = controller.getBoard().getRows();
+    int cols = controller.getBoard().getCols();
+    int windowWidth = (int) (rows * Tile.COLUMN_WIDTH + Tile.R_OFFSET);
+    int windowHeight = cols * Tile.HEIGHT + Tile.D_OFFSET;
+    this.setSize(new Dimension(windowWidth, windowHeight));
     this.setVisible(true);
   }
 
+  /**
+   * Sets the controller of this BoardFrame.
+   * @param controller The controller to assign.
+   */
   public void setController(FishController controller) {
     this.controller = controller;
+  }
+
+  /**
+   * Gets the controller of this BoardFrame.
+   * @return The controller associated with this object.
+   */
+  public FishController getController() {
+    return controller;
   }
 
 }

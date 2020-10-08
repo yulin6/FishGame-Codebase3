@@ -3,7 +3,7 @@ package gamestate.model;
 /**
  * Class to represent positions (of objects such as Tile(s)).
  */
-public class Position {
+public class BoardPosition {
   private int row;
   private int col;
 
@@ -12,7 +12,7 @@ public class Position {
    * @param row The row at of the Position
    * @param col The column of the Position
    */
-  public Position(int row, int col) {
+  public BoardPosition(int row, int col) {
     this.row = row;
     this.col = col;
   }

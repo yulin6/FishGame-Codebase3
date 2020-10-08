@@ -8,27 +8,39 @@ import gamestate.view.BoardPanel;
 
 public interface IBoard {
   /**
-   *
-   * @param p
-   * @return
+   * Gets the list of valid Tiles that can be moved to from a given board position.
+   * @param p The position on the board to begin a move from.
+   * @return An ArrayList of valid Tile objects that can be moved to.
    */
-  ArrayList<Tile> getValidMoves(Position p);
+  ArrayList<Tile> getValidMoves(BoardPosition p);
 
   /**
-   *
-   * @param p
+   * Removes a tile from the board. If already a hole, does nothing.
+   * @param p The tile to be removed from the board.
    */
-  void removeTile(Position p);
+  void removeTile(BoardPosition p);
 
   /**
-   *
+   * Renders the current state of the board.
    */
   void renderBoard(BoardPanel bp, Graphics g);
 
   /**
-   *
-   * @param controller
+   * Assigns a controller for the board.
+   * @param controller The controller to assign to the board.
    */
   void setController(FishController controller);
+
+  /**
+   * Returns the amount of rows in the board.
+   * @return integer number of rows
+   */
+  int getRows();
+
+  /**
+   * Returns the amount of columns in the board.
+   * @return integer number of columns
+   */
+  int getCols();
 
 }
