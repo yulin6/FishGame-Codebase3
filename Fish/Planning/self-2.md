@@ -21,6 +21,9 @@ TAs can find:
   Here, we detail that the board class represents a board for the Fish game (line 11). Like with Tile, we should go into more detail about the data representation.
 
 - the functionality for removing a tile:
+
+<https://github.ccs.neu.edu/CS4500-F20/oakwood/blob/b9878e2eb56ea3997b47755e1c1c7a9f0ce2d617/Fish/Common/src/gamestate/model/Board.java#L139-L148>
+
   - purpose:
   
   <https://github.ccs.neu.edu/CS4500-F20/oakwood/blob/b9878e2eb56ea3997b47755e1c1c7a9f0ce2d617/Fish/Common/src/gamestate/model/IBoard.java#L18>
@@ -36,6 +39,9 @@ TAs can find:
   <https://github.ccs.neu.edu/CS4500-F20/oakwood/blob/b9878e2eb56ea3997b47755e1c1c7a9f0ce2d617/Fish/Common/test/gamestate/model/BoardTest.java#L30-L42>
 
 - the functiinality for reaching other tiles on the board:
+
+<https://github.ccs.neu.edu/CS4500-F20/oakwood/blob/b9878e2eb56ea3997b47755e1c1c7a9f0ce2d617/Fish/Common/src/gamestate/model/Board.java#L204-L214>
+
   - purpose:
   
   <https://github.ccs.neu.edu/CS4500-F20/oakwood/blob/b9878e2eb56ea3997b47755e1c1c7a9f0ce2d617/Fish/Common/src/gamestate/model/IBoard.java#L11>
