@@ -46,8 +46,8 @@ public class BoardFrame extends JFrame {
   public void display() {
     int rows = controller.getBoard().getRows();
     int cols = controller.getBoard().getCols();
-    int windowWidth = (int) (rows * Tile.COLUMN_WIDTH + Tile.R_OFFSET);
-    int windowHeight = cols * Tile.HEIGHT + Tile.D_OFFSET;
+    int windowWidth = (int) (cols * Tile.COLUMN_WIDTH + Tile.R_OFFSET + Tile.WIDTH);
+    int windowHeight = rows * Tile.HEIGHT + Tile.D_OFFSET;
     this.setSize(new Dimension(windowWidth, windowHeight));
     this.setVisible(true);
   }

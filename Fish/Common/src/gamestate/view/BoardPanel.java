@@ -19,6 +19,6 @@ public class BoardPanel extends JPanel {
   @Override
   protected void paintComponent(Graphics g) {
     BoardFrame frame = (BoardFrame) SwingUtilities.windowForComponent(this);
-    frame.getController().getBoard().renderBoard(this, g);
+    frame.getController().getBoard().renderBoard(g);
   }
 }

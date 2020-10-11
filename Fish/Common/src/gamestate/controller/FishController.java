@@ -99,10 +99,6 @@ public class FishController {
     holes.add(new BoardPosition(1, 2));
 
     FishController fc = new FishController(4, 3, holes, 3);
-    Penguin p1 = new Penguin(Penguin.PenguinColor.BLACK, new BoardPosition(0, 1));
-    Penguin p2 = new Penguin(Penguin.PenguinColor.BROWN, new BoardPosition(2, 2));
-    fc.getBoard().placePenguin(p1);
-    fc.getBoard().placePenguin(p2);
 
     //FishController fc = new FishController(rAmt, cAmt, holes, randomInt(0, rAmt * cAmt - 4));
     fc.frame.display();

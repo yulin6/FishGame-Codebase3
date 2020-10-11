@@ -1,7 +1,6 @@
 package gamestate.model;
 
 import java.awt.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import gamestate.controller.FishController;
@@ -18,8 +17,7 @@ public class Board implements IBoard {
 
   int rows;
   int cols;
-  Tile [][] tiles;
-  ArrayList<Penguin> penguins;
+  BoardSpace [][] boardSpaces;
 
   /**
    * Creates a board in which there are holes in given spaces, tiles have a random number of fish,
@@ -30,17 +28,23 @@ public class Board implements IBoard {
    * @param minTiles the minimum number of 1-fish tiles
    */
   public Board (int rows, int columns, ArrayList<BoardPosition> holes, int minTiles) {
+    //checkArguments(rows, columns, holes, minTiles);
     this.rows = rows;
     this.cols = columns;
-    this.tiles = new Tile[this.rows][this.cols];
+    this.boardSpaces = new BoardSpace[this.rows][this.cols];
     int numOneFish = initTilesRandom();
 
     numOneFish -= removeHoles(holes);
 
     setOneFishTiles(numOneFish, minTiles);
-
-    this.penguins = new ArrayList<>();
   }
+
+  /*
+  private void checkArguments(int rows, int columns,
+                              ArrayList<BoardPosition> holes, int minTiles) {
+
+  }
+  */
 
   /**
    * Creates a full uniform board with each tile having fishNum fish
@@ -49,13 +53,12 @@ public class Board implements IBoard {
    * @param fishNum the number of fish on each tile
    */
   public Board (int rows, int columns, int fishNum) {
+    //checkArgumentsUniform();
     this.rows = rows;
     this.cols = columns;
-    this.tiles = new Tile[this.rows][this.cols];
+    this.boardSpaces = new BoardSpace[this.rows][this.cols];
 
     initTiles(fishNum);
-
-    this.penguins = new ArrayList<>();
   }
 
   /**
@@ -64,16 +67,13 @@ public class Board implements IBoard {
    * @param minTiles the minimum amount of tiles that need to be 1-fish tiles.
    */
   private void setOneFishTiles(int numOneFish, int minTiles) {
-    Tile.TileBuilder tileBuilder = new Tile.TileBuilder();
-
     while (numOneFish <= minTiles) {
       int randRow = (int)(Math.random() * this.rows);
       int randCol = (int)(Math.random() * this.cols);
 
-      Tile candidateTile = tiles[randRow][randCol];
+      BoardSpace candidateTile = boardSpaces[randRow][randCol];
       if(!(candidateTile.isHole()) && (candidateTile.getNumFish() != 1)) {
-        tiles[randRow][randCol] = tileBuilder.setFish(MIN_FISH)
-                .setPosition(new BoardPosition(randRow, randCol)).build();
+        boardSpaces[randRow][randCol] = new Tile(MIN_FISH);
         numOneFish++;
       }
     }
@@ -92,7 +92,7 @@ public class Board implements IBoard {
       int col = hole.getCol();
 
       removeTile(hole);
-      if(tiles[row][col].getNumFish() == 1) {
+      if(boardSpaces[row][col].getNumFish() == 1) {
         numOneFishHoles++;
       }
     }
@@ -106,7 +106,6 @@ public class Board implements IBoard {
   private int initTilesRandom() {
     int range = MAX_FISH - MIN_FISH + 1;
     int numOneFish = 0;
-    Tile.TileBuilder tileBuilder = new Tile.TileBuilder();
     //Build whole board (no holes)
     for(int r = 0; r < this.rows; r++) {
       for(int c = 0; c < this.cols; c++) {
@@ -114,7 +113,7 @@ public class Board implements IBoard {
         if(fish == 1) {
           numOneFish++;
         }
-        tiles[r][c] = tileBuilder.setFish(fish).setPosition(new BoardPosition(r, c)).build();
+        boardSpaces[r][c] = new Tile(fish);
       }
     }
 
@@ -126,11 +125,10 @@ public class Board implements IBoard {
    * @param numFish nubmer of fish on each tile
    */
   private void initTiles(int numFish) {
-    Tile.TileBuilder tileBuilder = new Tile.TileBuilder();
     //Build whole board with same number of fish
     for(int r = 0; r < this.rows; r++) {
       for(int c = 0; c < this.cols; c++) {
-        tiles[r][c] = tileBuilder.setFish(numFish).setPosition(new BoardPosition(r,c)).build();
+        boardSpaces[r][c] = new Tile(numFish);
       }
     }
   }
@@ -144,17 +142,20 @@ public class Board implements IBoard {
       throw new IllegalArgumentException("Cannot remove tile out of bounds.");
     }
 
-    tiles[row][col].setHole();
+    boardSpaces[row][col] = new Hole();
   }
 
   @Override
-  public void renderBoard(BoardPanel bp, Graphics g) {
+  public void renderBoard(Graphics g) {
     for (int r = 0; r < this.rows; r++) {
       for (int c = 0; c < this.cols; c++) {
-        tiles[r][c].render(bp, g);
+        if(boardSpaces[r][c].isHole()) {
+          continue;
+        }
+        BoardPosition p = new BoardPosition(r, c);
+        boardSpaces[r][c].render(p, g);
       }
     }
-    // return bp;
   }
 
   @Override
@@ -177,6 +178,7 @@ public class Board implements IBoard {
     return cols;
   }
 
+  /*
   @Override
   public void placePenguin(Penguin p) {
     this.penguins.add(p);
@@ -185,178 +187,157 @@ public class Board implements IBoard {
     Penguin.PenguinColor color = p.getColor();
     switch (color) {
       case RED:
-        tiles[row][col].setStatus(Tile.TileStatus.RED);
+        boardSpaces[row][col].setStatus(Tile.TileStatus.RED);
         break;
       case BLACK:
-        tiles[row][col].setStatus(Tile.TileStatus.BLACK);
+        boardSpaces[row][col].setStatus(Tile.TileStatus.BLACK);
         break;
       case BROWN:
-        tiles[row][col].setStatus(Tile.TileStatus.BROWN);
+        boardSpaces[row][col].setStatus(Tile.TileStatus.BROWN);
         break;
       case WHITE:
-        tiles[row][col].setStatus(Tile.TileStatus.WHITE);
+        boardSpaces[row][col].setStatus(Tile.TileStatus.WHITE);
         break;
       default:
     }
   }
 
+   */
+/*
   @Override
-  public ArrayList<Tile> getValidMoves(BoardPosition p) {
-    ArrayList<Tile> validTiles = new ArrayList<>();
-    addUpPath(p, validTiles);
-    addDownPath(p, validTiles);
-    addTopRightPath(p, validTiles);
-    addBotRightPath(p, validTiles);
-    addTopLeftPath(p, validTiles);
-    addBotLeftPath(p, validTiles);
+  public ArrayList<BoardPosition> getValidMoves(BoardPosition p) {
+    ArrayList<BoardPosition> validPosns = new ArrayList<>();
+    addUpPath(p, validPosns);
+    addDownPath(p, validPosns);
+    addTopRightPath(p, validPosns);
+    addBotRightPath(p, validPosns);
+    addTopLeftPath(p, validPosns);
+    addBotLeftPath(p, validPosns);
 
-    return validTiles;
+    return validPosns;
+  }
+  */
+
+  @Override
+  public ArrayList<BoardPosition> getValidMoves(BoardPosition p,
+                                                ArrayList<BoardPosition> penguins) {
+    //TODO: Check inputs
+
+    ArrayList<BoardPosition> validPosns = new ArrayList<>();
+
+    addPath(p, validPosns, penguins, VERTICAL.UP, HORIZONTAL.ZERO);
+    addPath(p, validPosns, penguins, VERTICAL.DOWN, HORIZONTAL.ZERO);
+    addPath(p, validPosns, penguins, VERTICAL.UP, HORIZONTAL.LEFT);
+    addPath(p, validPosns, penguins, VERTICAL.UP, HORIZONTAL.RIGHT);
+    addPath(p, validPosns, penguins, VERTICAL.DOWN, HORIZONTAL.LEFT);
+    addPath(p, validPosns, penguins, VERTICAL.DOWN, HORIZONTAL.RIGHT);
+
+    return validPosns;
   }
 
+
   /**
-   * Adds all the tiles that can be moved to via an upwards movement to the list of valid tiles.
-   * @param p The position from which the move will begin.
-   * @param validTiles The list to add valid tiles for movement to.
+   * UP: NR = R - 2; NC = C
+   * DOWN: NR = R + 2; NC = C
+   * UP-LEFT: NR = R - 1; NC = (R % 2 == 0) ? C - 1 : C
+   * UP-RIGHT: NR = R - 1; NC = (R % 2 == 1) ? C + 1 : C
+   * DOWN-LEFT: NR = R + 1; NC = (R % 2 == 0) ? C - 1 : C
+   * DOWN-RIGHT: NR = R + 1; NC = (R % 2 == 1) ? C + 1 : C
    */
-  private void addUpPath(BoardPosition p, ArrayList<Tile> validTiles) {
+
+  /**
+   * Adds the valid positions for a player to move to in a given position to validPosns.
+   * We check against the holes on the board, going beyond the boundaries of the board, and
+   * a given list of positions of penguins on the board
+   *
+   * The comment above represents the next row (NR) and next column (NC) that you would move to
+   * in a straight line, adjacent movement based on the direction of the movement in terms of the
+   * current row (R) and the current column (C)
+   *
+   * @param p The starting position of a player
+   * @param validPosns The current list of valid positions to move to
+   * @param penguins The list of positions of penguins on the board
+   * @param vertical The vertical direction (up/down) to move in
+   * @param horizontal The horizontal direction (left/right/no horizontal) to move in
+   */
+  private void addPath(BoardPosition p, ArrayList<BoardPosition> validPosns,
+                       ArrayList<BoardPosition> penguins,
+                       VERTICAL vertical, HORIZONTAL horizontal) {
+
+    int nextRow = 0, nextCol = 0;
+    switch (vertical) {
+      case UP:
+        nextRow = p.getRow() - 2;
+        break;
+      case DOWN:
+        nextRow = p.getRow() + 2;
+        break;
+      default:
+        break;
+    }
+    switch(horizontal) {
+      case ZERO:
+        nextCol = p.getCol();
+        break;
+      case LEFT:
+        nextCol = (p.getRow() % 2 == 0) ? p.getCol() - 1 : p.getCol();
+        nextRow += (p.getRow() - nextRow) / -2;
+        break;
+      case RIGHT:
+        nextCol = (p.getRow() % 2 == 1) ? p.getCol() + 1 : p.getCol();
+        nextRow += (p.getRow() - nextRow) / -2;
+        break;
+      default:
+        break;
+    }
+
+    BoardPosition nextPosn = new BoardPosition(nextRow, nextCol);
+    if(isValidPosn(nextPosn) && !penguins.contains(nextPosn) && !validPosns.contains(nextPosn)) {
+      validPosns.add(nextPosn);
+      addPath(nextPosn, validPosns, penguins, vertical, horizontal);
+    }
+  }
+
+  private boolean isValidPosn(BoardPosition p) {
+    int row = p.getRow();
     int col = p.getCol();
-    for (int i = p.getRow(); i >= 0; i-=2) {
-      if (tiles[i][col].isHole()) {
-        return;
-      } else {
-        validTiles.add(tiles[i][col]);
-      }
+    if(row >= 0 && row < this.rows
+      && col >= 0 && col < this.cols) {
+      return (!boardSpaces[row][col].isHole());
+    }
+    return false;
+  }
+
+  private enum VERTICAL {
+    DOWN (1),
+    UP (-1);
+
+    private final int value;
+
+    VERTICAL(int value) {
+      this.value = value;
+    }
+
+    public int getValue() {
+      return this.value;
     }
   }
 
-  /**
-   * Adds all the tiles that can be moved to via a downwards movement to the list of valid tiles.
-   * @param p The position from which the move will begin.
-   * @param validTiles The list to add valid tiles for movement to.
-   */
-  private void addDownPath(BoardPosition p, ArrayList<Tile> validTiles) {
-    int col = p.getCol();
-    for (int i = p.getRow(); i < rows; i+=2) {
-      if (tiles[i][col].isHole()) {
-        return;
-      } else {
-        validTiles.add(tiles[i][col]);
-      }
+  private enum HORIZONTAL {
+    LEFT (-1),
+    ZERO(0),
+    RIGHT (1);
+
+    private final int value;
+
+    HORIZONTAL(int value) {
+      this.value = value;
+    }
+
+    public int getValue() {
+      return this.value;
     }
   }
-
-  /**
-   * Adds all the tiles that can be moved to via movement upwards and right to the list of valid
-   * tiles.
-   * @param p The position from which the move will begin.
-   * @param validTiles The list to add valid tiles for movement to.
-   */
-  private void addTopRightPath(BoardPosition p, ArrayList<Tile> validTiles) {
-    int nextRow = p.getRow() - 1;
-    if (nextRow < 0) {
-      return;
-    }
-    // if the current row # is odd, moving into a different column
-    int nextCol;
-    if (p.getRow() % 2 == 1) {
-      nextCol = p.getCol() + 1;
-      if (nextCol >= cols) {
-        return;
-      }
-    } else {
-      nextCol = p.getCol();
-    }
-
-    if (!tiles[nextRow][nextCol].isHole()) {
-      validTiles.add(tiles[nextRow][nextCol]);
-      addTopRightPath(new BoardPosition(nextRow, nextCol), validTiles);
-    }
-  }
-
-  /**
-   * Adds all the tiles that can be moved to via movement downwards and right to the list of valid
-   * tiles.
-   * @param p The position from which the move will begin.
-   * @param validTiles The list to add valid tiles for movement to.
-   */
-  private void addBotRightPath(BoardPosition p, ArrayList<Tile> validTiles) {
-    int nextRow = p.getRow() + 1;
-    if (nextRow >= rows) {
-      return;
-    }
-    // if the current row # is odd, moving into a different column
-    int nextCol;
-    if (p.getRow() % 2 == 1) {
-      nextCol = p.getCol() + 1;
-      if (nextCol >= cols) {
-        return;
-      }
-    } else {
-      nextCol = p.getCol();
-    }
-
-    if (!tiles[nextRow][nextCol].isHole()) {
-      validTiles.add(tiles[nextRow][nextCol]);
-      addBotRightPath(new BoardPosition(nextRow, nextCol), validTiles);
-    }
-  }
-
-  /**
-   * Adds all the tiles that can be moved to via movement upwards and left to the list of valid
-   * tiles.
-   * @param p The position from which the move will begin.
-   * @param validTiles The list to add valid tiles for movement to.
-   */
-  private void addTopLeftPath(BoardPosition p, ArrayList<Tile> validTiles) {
-    int nextRow = p.getRow() - 1;
-    if (nextRow < 0) {
-      return;
-    }
-    // if the current row # is even, moving into a different column
-    int nextCol;
-    if (p.getRow() % 2 == 0) {
-      nextCol = p.getCol() - 1;
-      if (nextCol < 0) {
-        return;
-      }
-    } else {
-      nextCol = p.getCol();
-    }
-
-    if (!tiles[nextRow][nextCol].isHole()) {
-      validTiles.add(tiles[nextRow][nextCol]);
-      addTopLeftPath(new BoardPosition(nextRow, nextCol), validTiles);
-    }
-  }
-
-  /**
-   * Adds all the tiles that can be moved to via movement downwards and left to the list of valid
-   * tiles.
-   * @param p The position from which the move will begin.
-   * @param validTiles The list to add valid tiles for movement to.
-   */
-  private void addBotLeftPath(BoardPosition p, ArrayList<Tile> validTiles) {
-    int nextRow = p.getRow() + 1;
-    if (nextRow >= rows) {
-      return;
-    }
-    // if the current row # is even, moving into a different column
-    int nextCol;
-    if (p.getRow() % 2 == 0) {
-      nextCol = p.getCol() - 1;
-      if (nextCol < 0) {
-        return;
-      }
-    } else {
-      nextCol = p.getCol();
-    }
-
-    if (!tiles[nextRow][nextCol].isHole()) {
-      validTiles.add(tiles[nextRow][nextCol]);
-      addBotLeftPath(new BoardPosition(nextRow, nextCol), validTiles);
-    }
-  }
-
 
 
 

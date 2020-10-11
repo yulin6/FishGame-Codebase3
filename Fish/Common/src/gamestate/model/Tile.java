@@ -15,7 +15,7 @@ import gamestate.view.BoardPanel;
 /**
  * Class to represent a tile in a game of Fish.
  */
-public class Tile implements ITile {
+public class Tile implements BoardSpace {
   public static final int HEIGHT = 100;
   public static final int WIDTH = 100;
   public static final double COLUMN_WIDTH = 4.0/3.0 * WIDTH;
@@ -24,109 +24,29 @@ public class Tile implements ITile {
 
   static Image FISH_ICON = null;
   final int FISH_ICON_HEIGHT = 20;
-  static Image PENGUIN_RED = null;
-  static Image PENGUIN_WHITE = null;
-  static Image PENGUIN_BROWN = null;
-  static Image PENGUIN_BLACK = null;
 
-  int fish;
-  TileStatus occupant;
-  BoardPosition p;
+  final int fish;
 
   /**
    * Constructs a Tile given a number of fish to be on it.
    * @param numFish Number of fish contained on the tile
    */
-  private Tile(int numFish, BoardPosition p) {
+  public Tile(int numFish) {
     BufferedImage image;
     if (FISH_ICON == null) {
       try {
-        File pathToFishIcon = new File("resources/fish33x20.png");
-        File pathRed = new File("resources/redpenguin.png");
-        File pathWhite = new File("resources/whitepenguin.png");
-        File pathBrown = new File("resources/brownpenguin.png");
-        File pathBlack = new File("resources/blackpenguin.png");
+        File pathToFishIcon = new File("Fish/Common/resources/fish33x20.png");
         image = ImageIO.read(pathToFishIcon);
         FISH_ICON = image;
-        image = ImageIO.read(pathRed);
-        PENGUIN_RED = image;
-        image = ImageIO.read(pathWhite);
-        PENGUIN_WHITE = image;
-        image = ImageIO.read(pathBrown);
-        PENGUIN_BROWN = image;
-        image = ImageIO.read(pathBlack);
-        PENGUIN_BLACK = image;
       } catch (IOException e) {
         e.printStackTrace();
       }
     }
     this.fish = numFish;
-    occupant = TileStatus.NONE;
-    this.p = p;
-  }
-
-  /**
-   * Builder class for Tile objects.
-   */
-  public static class TileBuilder {
-    private int fish;
-    private BoardPosition p;
-
-    /**
-     * Creates a TileBuilder.
-     */
-    TileBuilder() {
-    }
-
-    /**
-     * Sets the number of fish for the tile to be built.
-     * @param numFish Number of fish for the tile.
-     * @return The TileBuilder, for continued use.
-     */
-    public TileBuilder setFish(int numFish) {
-      this.fish = numFish;
-      return this;
-    }
-
-    /**
-     * Sets the position for the tile to be built.
-     * @param p Position of the tile on the board.
-     * @return The TileBuilder, for continued use.
-     */
-    public TileBuilder setPosition(BoardPosition p) {
-      this.p = p;
-      return this;
-    }
-
-    /**
-     * Returns the tile with the settings specified by the Builder.
-     * @return The built Tile.
-     */
-    public Tile build() {
-      return new Tile(fish, p);
-    }
   }
 
   @Override
-  public BoardPosition getPosition() {
-    return p;
-  }
-
-  @Override
-  public void setStatus(TileStatus s) {
-    this.occupant = s;
-  }
-
-  @Override
-  public void setUnoccupied() {
-    occupant = TileStatus.NONE;
-  }
-
-  @Override
-  public void setHole() { occupant = TileStatus.HOLE; }
-
-  @Override
-  public boolean isHole() { return (occupant == TileStatus.HOLE); }
+  public boolean isHole() { return false; }
 
   @Override
   public int getNumFish() {
@@ -134,35 +54,29 @@ public class Tile implements ITile {
   }
 
   @Override
-  public boolean isOccupied() {
-    return (occupant != TileStatus.NONE);
+  public void render(BoardPosition p, Graphics g) {
+    drawHexagon(p, g);
+    drawFish(p, g);
   }
 
-  @Override
-  public void render(BoardPanel bp, Graphics g) {
-    if (isHole()) {
-      return;
-    }
-    drawHexagon(g);
-    drawFish(g);
-    if (this.isOccupied()) {
-      drawPenguin(g);
-    }
-  }
-
-  private void drawHexagon(Graphics g) {
+  private void drawHexagon(BoardPosition p, Graphics g) {
     Polygon hex = new Polygon();
 
     //Determines if this tile is offset
     int shift = p.getRow() % 2; // 0 if left-half of column, 1 if right-half
-    int shiftRight = (int) (shift * 2.0/3.0 * WIDTH);
+    int shiftRight = (int) (shift * 2.0/3.0 * WIDTH); //Calculation for the offset if row % 2 == 1
 
-    PixelPosition topLeftPt = topLeftVertex(shiftRight);
-    PixelPosition topRightPt = topRightVertex(shiftRight);
-    PixelPosition midRightPt = midRightVertex(shiftRight);
-    PixelPosition botRightPt = botRightVertex(shiftRight);
-    PixelPosition botLeftPt = botLeftVertex(shiftRight);
-    PixelPosition midLeftPt = midLeftVertex(shiftRight);
+    //Calculate top left vertex and calculate in terms of width and height to determine the
+    //pixel positions of the other vertices
+    PixelPosition topLeftPt = topLeftVertex(p, shiftRight);
+    int x = topLeftPt.getX();
+    int y = topLeftPt.getY();
+
+    PixelPosition topRightPt = new PixelPosition(x + WIDTH/3, y);
+    PixelPosition midRightPt = new PixelPosition(x + (2 * WIDTH / 3), y + HEIGHT/2);
+    PixelPosition botRightPt = new PixelPosition(x + WIDTH/3, y + HEIGHT);
+    PixelPosition botLeftPt = new PixelPosition(x, y + HEIGHT);
+    PixelPosition midLeftPt = new PixelPosition(x - WIDTH/3, y + HEIGHT/2);
 
     hex.addPoint(topLeftPt.getX(), topLeftPt.getY());
     hex.addPoint(topRightPt.getX(), topRightPt.getY());
@@ -177,38 +91,14 @@ public class Tile implements ITile {
     g.drawPolygon(hex);
   }
 
-  private void drawFish(Graphics g) {
+  private void drawFish(BoardPosition p, Graphics g) {
     int shift = p.getRow() % 2;
     int shiftRight = (int) (shift * 2.0/3.0 * WIDTH);
     for (int i = 0; i < fish; i++) {
       g.drawImage(FISH_ICON,
-              (int) (COLUMN_WIDTH * p.getCol() + 1.0/3.0 * WIDTH + shiftRight) + R_OFFSET,
+              (int) (COLUMN_WIDTH * p.getCol() + WIDTH/3.0 + shiftRight) + R_OFFSET,
               (int) (p.getRow() / 2.0 * HEIGHT + D_OFFSET) + FISH_ICON_HEIGHT * i,
               null);
-    }
-  }
-
-  private void drawPenguin(Graphics g) {
-    int shift = p.getRow() % 2;
-    int shiftRight = (int) (shift * 2.0/3.0 * WIDTH);
-
-    int xcoord = (int) (COLUMN_WIDTH * p.getCol() + 1.0/3.0 * WIDTH + shiftRight) + R_OFFSET;
-    int ycoord = (int) (p.getRow() / 2.0 * HEIGHT + D_OFFSET) + HEIGHT / 2;
-
-    switch (this.occupant) {
-      case WHITE:
-        g.drawImage(PENGUIN_WHITE, xcoord, ycoord, null);
-        break;
-      case BLACK:
-        g.drawImage(PENGUIN_BLACK, xcoord, ycoord, null);
-        break;
-      case RED:
-        g.drawImage(PENGUIN_RED, xcoord, ycoord, null);
-        break;
-      case BROWN:
-        g.drawImage(PENGUIN_BROWN, xcoord, ycoord, null);
-        break;
-      default:
     }
   }
 
@@ -217,76 +107,9 @@ public class Tile implements ITile {
    * @param shiftRight The amount to shift the x coordinate of this position right by.
    * @return The (x,y) coordinates of the position as a PixelPosition.
    */
-  private PixelPosition topLeftVertex(int shiftRight) {
+  private PixelPosition topLeftVertex(BoardPosition p, int shiftRight) {
     return new PixelPosition(
-            (int) (COLUMN_WIDTH * p.getCol() + 1.0/3.0 * WIDTH + shiftRight) + R_OFFSET,
+            (int) (COLUMN_WIDTH * p.getCol() + WIDTH/3.0 + shiftRight) + R_OFFSET,
             (int) (p.getRow() / 2.0 * HEIGHT + D_OFFSET));
-  }
-
-  /**
-   * Calculates the position of the top right vertex of the hexagon representing this tile.
-   * @param shiftRight The amount to shift the x coordinate of this position right by.
-   * @return The (x,y) coordinates of the position as a PixelPosition.
-   */
-  private PixelPosition topRightVertex(int shiftRight) {
-    return new PixelPosition(
-            (int) (COLUMN_WIDTH * p.getCol() + 2.0/3.0 * WIDTH + shiftRight) + R_OFFSET,
-            (int) (p.getRow() / 2.0 * HEIGHT + D_OFFSET));
-  }
-
-  /**
-   * Calculates the position of the middle right vertex of the hexagon representing this tile.
-   * @param shiftRight The amount to shift the x coordinate of this position right by.
-   * @return The (x,y) coordinates of the position as a PixelPosition.
-   */
-  private PixelPosition midRightVertex(int shiftRight) {
-    return new PixelPosition(
-            (int) (COLUMN_WIDTH * p.getCol() + WIDTH + shiftRight) + R_OFFSET,
-            (int) ((p.getRow() + 1) / 2.0 * HEIGHT + D_OFFSET));
-  }
-
-  /**
-   * Calculates the position of the bottom right vertex of the hexagon representing this tile.
-   * @param shiftRight The amount to shift the x coordinate of this position right by.
-   * @return The (x,y) coordinates of the position as a PixelPosition.
-   */
-  private PixelPosition botRightVertex(int shiftRight) {
-    return new PixelPosition(
-            (int) (COLUMN_WIDTH * p.getCol() + 2.0/3.0 * WIDTH + shiftRight) + R_OFFSET,
-            (int) (p.getRow() * HEIGHT / 2.0 + HEIGHT + D_OFFSET));
-  }
-
-  /**
-   * Calculates the position of the bottom left vertex of the hexagon representing this tile.
-   * @param shiftRight The amount to shift the x coordinate of this position right by.
-   * @return The (x,y) coordinates of the position as a PixelPosition.
-   */
-  private PixelPosition botLeftVertex(int shiftRight) {
-    return new PixelPosition(
-            (int) (COLUMN_WIDTH * p.getCol() + 1.0/3.0 * WIDTH + shiftRight) + R_OFFSET,
-            (int) (p.getRow() * HEIGHT / 2.0 + HEIGHT + D_OFFSET));
-  }
-
-  /**
-   * Calculates the position of the middle left vertex of the hexagon representing this tile.
-   * @param shiftRight The amount to shift the x coordinate of this position right by.
-   * @return The (x,y) coordinates of the position as a PixelPosition.
-   */
-  private PixelPosition midLeftVertex(int shiftRight) {
-    return new PixelPosition(
-            (int) (COLUMN_WIDTH * p.getCol() + shiftRight) + R_OFFSET,
-            (int) ((p.getRow() + 1) / 2.0 * HEIGHT + D_OFFSET));
-  }
-
-  /**
-   * Enum to determine the tile's status - a hole, no penguins, or the color of a penguin.
-   */
-  public enum TileStatus {
-    RED,
-    WHITE,
-    BROWN,
-    BLACK,
-    NONE,
-    HOLE
   }
 }
