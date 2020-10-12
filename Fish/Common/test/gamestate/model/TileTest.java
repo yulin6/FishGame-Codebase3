@@ -10,54 +10,26 @@ import static org.junit.Assert.*;
  */
 public class TileTest {
 
-  Tile.TileBuilder tb = new Tile.TileBuilder();
   Tile t1;
   Tile t2;
   Tile t3;
-  BoardPosition pos1;
-  BoardPosition pos2;
-  BoardPosition pos3;
+  Tile t4;
 
   @Before
   public void setUp() {
-    pos1 = new BoardPosition(3, 2);
-    pos2 = new BoardPosition(1, 4);
-    pos3 = new BoardPosition(0, 2);
-
-    tb.setFish(3);
-    tb.setPosition(pos1);
-    t1 = tb.build();
-
-    tb.setFish(1);
-    tb.setPosition(pos2);
-    t2 = tb.build();
-
-    tb.setFish(5);
-    tb.setPosition(pos3);
-    t3 = tb.build();
+    t1 = new Tile(3);
+    t2 = new Tile(1);
+    t3 = new Tile(5);
   }
 
-  @Test
-  public void setStatus() {
-    assertFalse(t1.isOccupied());
-    t1.setStatus(Tile.TileStatus.RED);
-    assertTrue(t1.isOccupied());
+  @Test (expected = IllegalArgumentException.class)
+  public void TileException() {
+    t4 = new Tile(Board.MIN_FISH - 1);
   }
 
-  @Test
-  public void setUnoccupied() {
-    assertFalse(t2.isOccupied());
-    t2.setStatus(Tile.TileStatus.BLACK);
-    assertTrue(t2.isOccupied());
-    t2.setUnoccupied();
-    assertFalse(t2.isOccupied());
-  }
-
-  @Test
-  public void setHole() {
-    assertFalse(t3.isHole());
-    t3.setHole();
-    assertTrue(t3.isHole());
+  @Test (expected = IllegalArgumentException.class)
+  public void TileException2() {
+    t4 = new Tile(Board.MAX_FISH + 1);
   }
 
   @Test
@@ -67,5 +39,11 @@ public class TileTest {
     assertEquals(5, t3.getNumFish());
     assertNotEquals(t1.getNumFish(), t2.getNumFish());
     assertNotEquals(t2.getNumFish(), t3.getNumFish());
+  }
+
+  @Test
+  public void isHole() {
+    assertFalse(t1.isHole());
+    assertEquals(t1.isHole(), t2.isHole());
   }
 }

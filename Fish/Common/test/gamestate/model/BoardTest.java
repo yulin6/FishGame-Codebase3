@@ -17,7 +17,6 @@ public class BoardTest {
   Board uniform;
   ArrayList<BoardPosition> holes;
 
-
   @Before
   public void setUp() {
     holes = new ArrayList<>();
@@ -29,16 +28,20 @@ public class BoardTest {
 
   @Test
   public void removeTile() {
-    assertTrue(random.tiles[0][0].isHole());
-    random.removeTile(new BoardPosition(0, 0));
-    assertTrue(random.tiles[0][0].isHole());
-    assertFalse(random.tiles[0][1].isHole());
-    random.removeTile(new BoardPosition(0, 1));
-    assertTrue(random.tiles[0][1].isHole());
+    BoardPosition zerozero = new BoardPosition(0, 0);
+    BoardPosition zeroone = new BoardPosition(0, 1);
+    BoardPosition oneone = new BoardPosition(1, 1);
 
-    assertFalse(uniform.tiles[1][1].isHole());
+    assertTrue(random.getSpace(zerozero).isHole());
+    random.removeTile(new BoardPosition(0, 0));
+    assertTrue(random.getSpace(zerozero).isHole());
+    assertFalse(random.getSpace(zeroone).isHole());
+    random.removeTile(new BoardPosition(0, 1));
+    assertTrue(random.getSpace(zeroone).isHole());
+
+    assertTrue(random.getSpace(oneone).isHole());
     uniform.removeTile(new BoardPosition(1,1));
-    assertTrue(uniform.tiles[1][1].isHole());
+    assertTrue(random.getSpace(oneone).isHole());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -69,12 +72,21 @@ public class BoardTest {
 
   @Test
   public void getValidMoves() {
-    ArrayList<Tile> tiles = uniform.getValidMoves(new BoardPosition(1, 0));
-    ArrayList<BoardPosition> positions = new ArrayList<>();
-    for (Tile t : tiles) {
-      positions.add(t.getPosition());
-    }
+    ArrayList<BoardPosition> positions = uniform.getValidMoves(new BoardPosition(1, 0),
+            new ArrayList<>());
+    assertEquals(2, positions.size());
     assertTrue(positions.contains(new BoardPosition(0, 0)));
     assertTrue(positions.contains(new BoardPosition(0, 1)));
+
+    ArrayList<BoardPosition> positions2 = random.getValidMoves(new BoardPosition(1, 0),
+            new ArrayList<>());
+    assertEquals(3, positions2.size());
+    assertTrue(positions2.contains(new BoardPosition(2, 0)));
+    assertTrue(positions2.contains(new BoardPosition(0, 1)));
+    assertTrue(positions2.contains(new BoardPosition(2, 1)));
+
+    ArrayList<BoardPosition> positions3 = random.getValidMoves(new BoardPosition(1, 0),
+            positions2);
+    assertEquals(0, positions3.size());
   }
 }

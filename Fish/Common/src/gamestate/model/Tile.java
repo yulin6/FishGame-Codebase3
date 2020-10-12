@@ -10,10 +10,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import gamestate.view.BoardPanel;
-
 /**
  * Class to represent a tile in a game of Fish.
+ * A Tile has a number of fish on it as well as knowledge of its graphical
+ * representation. Tiles do not have knowledge of their position.
  */
 public class Tile implements BoardSpace {
   public static final int HEIGHT = 100;
@@ -29,13 +29,19 @@ public class Tile implements BoardSpace {
 
   /**
    * Constructs a Tile given a number of fish to be on it.
+   * If resources for Tile graphics are uninitialized, also obtains them and initializes.
    * @param numFish Number of fish contained on the tile
    */
   public Tile(int numFish) {
+    if (numFish < Board.MIN_FISH || numFish > Board.MAX_FISH) {
+      throw new IllegalArgumentException("Cannot construct tile with this number of Fish.");
+    }
+
     BufferedImage image;
     if (FISH_ICON == null) {
       try {
-        File pathToFishIcon = new File("Fish/Common/resources/fish33x20.png");
+        // Fish/Common/
+        File pathToFishIcon = new File("resources/fish33x20.png");
         image = ImageIO.read(pathToFishIcon);
         FISH_ICON = image;
       } catch (IOException e) {

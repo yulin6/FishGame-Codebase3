@@ -1,0 +1,2 @@
+//int windowWidth = (int) (cols * Tile.COLUMN_WIDTH + Tile.WIDTH + Tile.R_OFFSET);
+//int windowHeight = rows * Tile.HEIGHT / 2 + Tile.HEIGHT + Tile.D_OFFSET;

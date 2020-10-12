@@ -2,6 +2,8 @@ package gamestate.model;
 
 /**
  * Class to represent pixel positions, for use in GUI/rendering.
+ * Has x and y values, representing the exact coordinate of a given pixel
+ * (for use in a coordinate system typical for computer graphics).
  */
 public class PixelPosition {
   private final int x;

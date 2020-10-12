@@ -31,10 +31,11 @@ public class Penguin {
 
     if(PENGUIN_RED == null || PENGUIN_WHITE == null || PENGUIN_BLACK == null
             || PENGUIN_BROWN == null) {
-      File pathRed = new File("Fish/Common/resources/redpenguin.png");
-      File pathWhite = new File("Fish/Common/resources/whitepenguin.png");
-      File pathBrown = new File("Fish/Common/resources/brownpenguin.png");
-      File pathBlack = new File("Fish/Common/resources/blackpenguin.png");
+      // Fish/Common/
+      File pathRed = new File("resources/redpenguin.png");
+      File pathWhite = new File("resources/whitepenguin.png");
+      File pathBrown = new File("resources/brownpenguin.png");
+      File pathBlack = new File("resources/blackpenguin.png");
 
       try {
         image = ImageIO.read(pathRed);
@@ -108,5 +109,32 @@ public class Penguin {
       default:
     }
   }
+   */
+
+
+  /*
+  @Override
+  public void placePenguin(Penguin p) {
+    this.penguins.add(p);
+    int row = p.getPosition().getRow();
+    int col = p.getPosition().getCol();
+    Penguin.PenguinColor color = p.getColor();
+    switch (color) {
+      case RED:
+        boardSpaces[row][col].setStatus(Tile.TileStatus.RED);
+        break;
+      case BLACK:
+        boardSpaces[row][col].setStatus(Tile.TileStatus.BLACK);
+        break;
+      case BROWN:
+        boardSpaces[row][col].setStatus(Tile.TileStatus.BROWN);
+        break;
+      case WHITE:
+        boardSpaces[row][col].setStatus(Tile.TileStatus.WHITE);
+        break;
+      default:
+    }
+  }
+
    */
 }

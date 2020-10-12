@@ -51,8 +51,15 @@ public interface IBoard {
    */
   int getCols();
 
-
   /**
+   * Returns the BoardSpace corresponding to the passed-in BoardPosition.
+   * @param p The BoardPosition to get the BoardSpace at.
+   * @return BoardSpace (Tile/Hole) at the given position.
+   */
+  BoardSpace getSpace(BoardPosition p);
+
+
+  /*
    * Places a penguin onto the board.
    * @param p The penguin to add to the board
    */
