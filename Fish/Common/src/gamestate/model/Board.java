@@ -9,6 +9,29 @@ import gamestate.controller.FishController;
  * Class to represent a board of Fish.
  * A Board contains a grid of BoardSpaces, which are "filled" either with a Hole or
  * a Tile. A Board also contains the dimensions of its grid.
+ * See the below ASCII diagram for a reference of the coordinate system of the board.
+ *
+ *     XXXXXXXXX             XXXXXXXXX
+ *    X         X           X         X
+ *   X           X         X           X
+ *  X     0,0     X       X      0,1    X
+ *   X           XXXXXXXXXXX           XXXXXXXXXX
+ *    X         XX         XX         XX         X
+ *     XXXXXXXXXX           XXXXXXXXXXX           X
+ *     XXXXXXXXX      1,0    XXXXXXXXX     1,1     X
+ *    X         X           X         X           X
+ *   X           X         X           X         X
+ *  X     2,0     XXXXXXXXX     2,1     XXXXXXXXX
+ *   X           XXXXXXXXXXX           XXXXXXXXXX
+ *    X         XX         XX         XX         X
+ *     XXXXXXXXXX           XXXXXXXXXXX           X
+ *      XXXXXXXXX     3,0    XXXXXXXXXX    3,1     X
+ *     X        XX          XX        XX          XX
+ *    X          XX        XX          XX        XX
+ *   X     4,0    XXXXXXXXXX    4,1     XXXXXXXXX
+ *    X           X       XX           XX
+ *     X         XX         XX         XX
+ *      XXXXXXXXXX           XXXXXXXXXXX
  */
 public class Board implements IBoard {
   public static final int MAX_FISH = 5;
