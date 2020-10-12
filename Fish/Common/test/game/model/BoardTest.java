@@ -1,11 +1,11 @@
-package gamestate.model;
+package game.model;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 
-import gamestate.controller.FishController;
+import game.controller.FishController;
 
 import static org.junit.Assert.*;
 

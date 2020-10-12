@@ -1,11 +1,9 @@
-package gamestate.model;
+package game.model;
 
 import java.awt.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-import gamestate.controller.FishController;
-import gamestate.view.BoardPanel;
+import game.controller.FishController;
 
 public interface IBoard {
   /**
@@ -25,7 +23,7 @@ public interface IBoard {
   /**
    * Renders the current state of the board.
    */
-  void renderBoard(Graphics g);
+  void render(Graphics g);
 
   /**
    * Assigns a controller for the board.

@@ -1,4 +1,4 @@
-package gamestate.model;
+package game.model;
 
 /**
  * Class to represent pixel positions, for use in GUI/rendering.

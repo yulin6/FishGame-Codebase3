@@ -1,18 +1,18 @@
-package gamestate.controller;
+package game.controller;
 
 import java.util.ArrayList;
 
-import gamestate.model.Board;
-import gamestate.model.BoardPosition;
-import gamestate.model.Penguin;
-import gamestate.view.BoardFrame;
-import gamestate.view.BoardPanel;
+import game.model.Board;
+import game.model.BoardPosition;
+import game.model.IBoard;
+import game.view.BoardFrame;
+import game.view.BoardPanel;
 
 /**
  * Controller for a single game of FishGame. Has access to both frame and board.
  */
 public class FishController {
-  private Board board;
+  private IBoard board;
   private BoardFrame frame;
 
   /**
@@ -71,9 +71,9 @@ public class FishController {
 
   /**
    * Returns the board associated with this controller.
-   * @return The Board object of this controller.
+   * @return The IBoard object of this controller.
    */
-  public Board getBoard() {
+  public IBoard getBoard() {
     return board;
   }
 

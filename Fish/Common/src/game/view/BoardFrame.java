@@ -1,14 +1,15 @@
-package gamestate.view;
+package game.view;
 
 import java.awt.Dimension;
 
 import javax.swing.JFrame;
 
-import gamestate.controller.FishController;
-import gamestate.model.Tile;
+import game.controller.FishController;
+import game.model.Tile;
 
 /**
  * Class to wrap JFrame to represent the board's frame.
+ * TODO: rework into a GameFrame
  */
 public class BoardFrame extends JFrame {
   private FishController controller;

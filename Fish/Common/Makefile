@@ -4,12 +4,12 @@ TESTDEP = -cp /usr/share/java/junit4.jar:out/
 JAVAC = javac
 
 JAVAFILES = \
-	src/gamestate/view/*.java \
-	src/gamestate/model/*.java \
-	src/gamestate/controller/*.java \
+	src/game/view/*.java \
+	src/game/model/*.java \
+	src/game/controller/*.java \
 
 TESTFILES = \
-	test/gamestate/model/*.java \
+	test/game/model/*.java \
 
 default: sources testsources
 

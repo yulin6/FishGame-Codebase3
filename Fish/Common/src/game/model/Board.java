@@ -1,9 +1,9 @@
-package gamestate.model;
+package game.model;
 
 import java.awt.*;
 import java.util.ArrayList;
 
-import gamestate.controller.FishController;
+import game.controller.FishController;
 
 /**
  * Class to represent a board of Fish.
@@ -201,7 +201,7 @@ public class Board implements IBoard {
   }
 
   @Override
-  public void renderBoard(Graphics g) {
+  public void render(Graphics g) {
     for (int r = 0; r < this.rows; r++) {
       for (int c = 0; c < this.cols; c++) {
         if(boardSpaces[r][c].isHole()) {

@@ -1,4 +1,4 @@
-package gamestate.model;
+package game.model;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,5 +39,11 @@ public class BoardPositionTest {
   public void testEquals() {
     assertNotEquals(pos1, pos2);
     assertEquals(pos1, pos3);
+  }
+
+  @Test
+  public void testHashCode() {
+    assertNotEquals(pos1.hashCode(), pos2.hashCode());
+    assertEquals(pos1.hashCode(), pos3.hashCode());
   }
 }

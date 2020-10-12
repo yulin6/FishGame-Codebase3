@@ -9,7 +9,7 @@ In this project:
 Common/ contains the files relevant to programming Fish, which includes but
 is not limited to the source code and scripts used to build and test the project.
 Common/src contains the code for the software components of Fish, contained within
-their respective directories. At present, the only component is /gamestate.
+their respective directories. At present, the only component is /game.
 
 The Makefile within Common/ can be used to build the project with "make", and
 "make clean" removes the output directories generated that contain the .class files.
@@ -30,8 +30,8 @@ this project. See the later "Testing" section for more details.
 Roadmap:
 Common/src/ contains the plain Java source code written for this project
 divided by software component. The game state component is contained within
-/gamestate/, which has three subdirectories /model, /view, and /controller,
-which contain the respective aspects of the gamestate modelled with the MVC
+/game/, which has three subdirectories /model, /view, and /controller,
+which contain the respective aspects of the game modelled with the MVC
 approach.
 
 Planning/ contains documents describing the underlying structure of the Fish game
@@ -45,7 +45,7 @@ Assuming the current working directory is Common/:
 - "sh all-tests.sh" to run all tests for milestone 2 - "The Game Pieces"
   which may later be renamed for clarity
 - Individual tests for milestone 2 may be run with
-"java -cp /usr/share/java/junit4.jar:out/:out-test/ org.junit.runner.JUnitCore gamestate.model.<CLASSNAME>",
+"java -cp /usr/share/java/junit4.jar:out/:out-test/ org.junit.runner.JUnitCore game.model.<CLASSNAME>",
 where <CLASSNAME> is one of BoardPositionTest, PixelPositionTest, TileTest, or BoardTest
 - Test source code can be found within Common/test/, with further subdirectories
 depending on the software component the tests were written for.

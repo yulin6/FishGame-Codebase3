@@ -1,4 +1,4 @@
-package gamestate.model;
+package game.model;
 
 import java.awt.*;
 

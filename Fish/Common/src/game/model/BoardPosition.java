@@ -1,4 +1,4 @@
-package gamestate.model;
+package game.model;
 
 /**
  * Class to represent positions in a Board.
@@ -49,5 +49,11 @@ public class BoardPosition {
     } else {
       return false;
     }
+  }
+
+  @Override
+  public int hashCode() {
+    // multiply by prime numbers and sum
+    return this.row * 59 + this.col * 43;
   }
 }
