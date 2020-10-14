@@ -55,4 +55,15 @@ public class Player {
   public void addFish(int fishObtained) {
     this.fish += fishObtained;
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if(obj instanceof Player) {
+      Player p = (Player) obj;
+      return (this.age == p.age
+              && this.color == p.color
+              && this.fish == p.fish);
+    }
+    return false;
+  }
 }

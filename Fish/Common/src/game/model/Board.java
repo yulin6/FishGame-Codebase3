@@ -330,22 +330,29 @@ public class Board implements IBoard {
     }
   }
 
-  /**
-   * Checks whether the given BoardPosition is within the bounds of the board.
-   * @param p BoardPosition to check validity of.
-   * @return True if the BoardPosition falls within the bounds of the board, else false.
-   */
-  private boolean isValidPosn(BoardPosition p) {
+  @Override
+  public boolean isValidPosn(BoardPosition p) {
     int row = p.getRow();
     int col = p.getCol();
     return (row >= 0 && row < this.rows && col >= 0 && col < this.cols);
   }
 
+  /**
+   * An enum that represents the vertical direction of a move from a given hexagon tile on the
+   * board. An avatar can be moved either in a downward vertical direction or an upward vertical
+   * direction.
+   *
+   */
   private enum VERTICAL {
     DOWN,
     UP
   }
 
+  /**
+   * An enum that represents the horizontal direction of a move from a given hexagon tile on the
+   * board. An avatar can be moved either in an leftward horizontal direction, a rightward
+   * horizontal direction, or in no horizontal direction.
+   */
   private enum HORIZONTAL {
     LEFT,
     ZERO,

@@ -61,6 +61,13 @@ public interface IBoard {
    */
   BoardSpace getSpace(BoardPosition p);
 
+  /**
+   * Checks whether the given BoardPosition is within the bounds of the board.
+   * @param bp BoardPosition to check validity of.
+   * @return True if the BoardPosition falls within the bounds of the board, else false.
+   */
+  boolean isValidPosn(BoardPosition bp);
+
 
   /*
    * Places a penguin onto the board.

@@ -46,6 +46,18 @@ public interface IState {
    */
   Player getCurrentPlayer();
 
+  /**
+   * Adds a player to the game state
+   * @param p The player to add
+   */
+  void addPlayer(Player p);
+
+  /**
+   * Removes a player from the game state
+   * @param p The player to remove
+   */
+  void removePlayer(Player p);
+
 
 
 }
