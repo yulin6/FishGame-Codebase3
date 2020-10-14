@@ -8,11 +8,16 @@ import game.controller.FishController;
 public interface IBoard {
   /**
    * Gets the list of valid Tiles that can be moved to from a given board position.
+   * Valid positions are positions that can be reached via a straight-line movement
+   * from one hexagon to another.
+   * Holes in the board prevent movement through them; functionality is also
+   * available for specifying additional unmovable tiles, but an empty list
+   * can be given.
    * @param p The position on the board to begin a move from.
-   * @param penguins the list of positions of the penguins on the board
+   * @param invalidPosns the list of any additional invalid positions on the board
    * @return An ArrayList of valid Tile objects that can be moved to.
    */
-  ArrayList<BoardPosition> getValidMoves(BoardPosition p, ArrayList<BoardPosition> penguins);
+  ArrayList<BoardPosition> getValidMoves(BoardPosition p, ArrayList<BoardPosition> invalidPosns);
 
   /**
    * Removes a tile from the board. If already a hole, does nothing.
