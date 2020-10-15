@@ -86,10 +86,9 @@ public class GameState implements IState {
 
   @Override
   public boolean movesPossible() {
-    ArrayList<BoardPosition> penPositions = new ArrayList<>();
-    penPositions.addAll(penguins.keySet());
-    for(BoardPosition bp : penPositions) {
-      if(!board.getValidMoves(bp, penPositions).isEmpty()) {
+    ArrayList<BoardPosition> penPositions = new ArrayList<>(penguins.keySet());
+    for (BoardPosition bp : penPositions) {
+      if (!board.getValidMoves(bp, penPositions).isEmpty()) {
         return true;
       }
     }

@@ -203,7 +203,7 @@ public class GameStateTest {
     holes.add(new BoardPosition(1, 1));
 
 
-    holeBoard = new Board(2, 2, holes, 1);
+    holeBoard = new Board(2, 2, holes, 0);
     state1 = new GameState(players, holeBoard);
 
     state1.placeAvatar(new BoardPosition(1, 0), p1);
