@@ -69,10 +69,10 @@ public class GameState implements IState {
     // check that from has an avatar & to does not
     if(penguins.containsKey(from) && !penguins.containsKey(to)) {
       Penguin penguin = penguins.get(from);
-      if(penguins.get(from).getColor() == p.getColor()) {
-        penguins.put(to, penguin);
-        board.removeTile(from);
-        penguins.remove(from);
+      if(penguin.getColor() == p.getColor()) {
+          penguins.put(to, penguin);
+          board.removeTile(from);
+          penguins.remove(from);
       }
       else {
         throw new IllegalArgumentException("Player cannot move another player's penguins!");
@@ -124,15 +124,21 @@ public class GameState implements IState {
     }
   }
 
+  @Override
+  public Penguin getPenguinAtPosn(BoardPosition bp) {
+    if(penguins.containsKey(bp)) {
+      return penguins.get(bp);
+    }
+    else {
+      throw new IllegalArgumentException("No penguin at this board space!");
+    }
+  }
+
   /**
    * Gets the player that will move next based on increasing age.
    * @return The next player that will make a move
    */
   private Player getNextPlayer() {
-    if(currentPlayer == null) {
-      throw new IllegalArgumentException("Should be checking for the youngest if you don't" +
-              "have a current player yet!");
-    }
     if(players.size() == 0) {
       throw new IllegalArgumentException("Cannot find next youngest player without any players!");
     }

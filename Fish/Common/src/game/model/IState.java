@@ -57,6 +57,12 @@ public interface IState {
    */
   void setNextPlayer();
 
+  /**
+   * Gets the penguin at the given BoardPosition. If no Penguin is there, throw an exception
+   * @param bp The BoardPosition on the board where we want to find a penguin
+   * @return The penguin at the position, or an exception if no penguin is on that board space.
+   */
+  Penguin getPenguinAtPosn(BoardPosition bp);
 
 
 }

@@ -19,6 +19,9 @@ public class Player {
    * @param assignedColor The penguin-color of the player assigned by the referee.
    */
   public Player(int playerAge, Penguin.PenguinColor assignedColor) {
+    if(playerAge < 0) {
+      throw new IllegalArgumentException("Player cannot be less than 0 years old!");
+    }
     this.age = playerAge;
     this.color = assignedColor;
     this.fish = STARTING_FISH;

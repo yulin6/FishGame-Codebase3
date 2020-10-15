@@ -10,7 +10,9 @@ import org.junit.runners.Suite;
         TileTest.class,
         PixelPositionTest.class,
         PenguinTest.class,
-        HoleTest.class
+        HoleTest.class,
+        PlayerTest.class,
+        GameStateTest.class
 })
 
 public class ModelTestSuite {

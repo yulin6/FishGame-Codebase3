@@ -49,12 +49,14 @@ public class BoardTest {
     random.removeTile(new BoardPosition(-1, -1));
   }
 
+  /*
   @Test
   public void setController() {
     FishController fc = new FishController(2, 2, 4);
     uniform.setController(fc);
     assertEquals(fc, uniform.getController());
   }
+  */
 
   @Test
   public void getRows() {
