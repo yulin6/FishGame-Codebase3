@@ -40,8 +40,8 @@ public class Tile implements BoardSpace {
     BufferedImage image;
     if (FISH_ICON == null) {
       try {
-        // Fish/Common/
-        File pathToFishIcon = new File("resources/fish33x20.png");
+        File pathToFishIcon = new File("C:/Users/Derek/Documents/Northeastern/CS3500" +
+                "/projects/oakwood/Fish/Common/resources/fish33x20.png"); // FIX THIS
         image = ImageIO.read(pathToFishIcon);
         FISH_ICON = image;
       } catch (IOException e) {

@@ -2,8 +2,7 @@ package game.model;
 
 import java.awt.*;
 import java.util.ArrayList;
-
-import game.controller.FishController;
+import java.util.List;
 
 /**
  * Class to represent a board of Fish.
@@ -111,6 +110,34 @@ public class Board implements IBoard {
     this.boardSpaces = new BoardSpace[this.rows][this.cols];
 
     initTiles(fishNum);
+  }
+
+  /**
+   * Constructs a board with the specified amount of rows and columns
+   * as appropriate for the given board spaces.
+   * Board representation is the same as above; places the board spaces into the 2D array
+   * at the same row in each column for every pass.
+   * This is exclusively used for the xboard integration tests and makes the assumption
+   * that the input is always well-formed and valid, as specified in homework descriptions.
+   * @param entries The board spaces (tiles/holes) to place on the board.
+   */
+  public Board(int rows, int columns, List<List<Integer>> entries) {
+    this.rows = rows;
+    this.cols = columns;
+    this.boardSpaces = new BoardSpace[this.rows][this.cols];
+
+    for (int i = 0; i < entries.size(); i++) {
+      List<Integer> row = entries.get(i);
+      for (int j = 0; j < row.size(); j++) {
+        int numFish = row.get(j);
+        if (numFish == 0) {
+          boardSpaces[i][j] = new Hole();
+        }
+        else {
+          boardSpaces[i][j] = new Tile(numFish);
+        }
+      }
+    }
   }
 
   /**
