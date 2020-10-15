@@ -31,18 +31,6 @@ public interface IBoard {
   void render(Graphics g);
 
   /**
-   * Assigns a controller for the board.
-   * @param controller The controller to assign to the board.
-   */
-  void setController(FishController controller);
-
-  /**
-   * Gets the FishController associated with this board.
-   * @return the controller of the board.
-   */
-  FishController getController();
-
-  /**
    * Returns the amount of rows in the board.
    * @return integer number of rows
    */

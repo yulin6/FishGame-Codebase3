@@ -11,24 +11,32 @@ import game.model.Tile;
  * Class to wrap JFrame to represent the board's frame.
  * TODO: rework into a GameFrame
  */
-public class BoardFrame extends JFrame {
+public class FishFrame extends JFrame {
   private FishController controller;
-  private BoardPanel panel;
+  private FishPanel panel;
+  private int windowWidth;
+  private int windowHeight;
+  private double ROW_TO_HEIGHT_RATIO = 2.0/3.0;
 
   /**
-   * Constructs a new BoardFrame.
+   * Constructs a new BoardFrame. The two integer values passed in are used to size the window based
+   * on the dimensions of the game board.
+   *
+   * @param rows The number of rows on the game board
+   * @param cols The number of columns on the game board
    */
-  public BoardFrame() {
+  public FishFrame(int rows, int cols) {
     super();
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+    windowWidth = (int) (cols * Tile.COLUMN_WIDTH + Tile.R_OFFSET + Tile.WIDTH);
+    windowHeight = (int) (rows * Tile.HEIGHT * ROW_TO_HEIGHT_RATIO + Tile.D_OFFSET);
   }
 
   /**
    * Adds a BoardPanel to the BoardFrame for display.
    * @param bp BoardPanel to add that belongs to this BoardFrame
    */
-  public void addPanel(BoardPanel bp) {
+  public void addPanel(FishPanel bp) {
     this.panel = bp;
     this.add(bp);
   }
@@ -37,7 +45,7 @@ public class BoardFrame extends JFrame {
    * Gets the BoardPanel associated with this BoardFrame.
    * @return the BoardPanel belonging to this BoardFrame
    */
-  public BoardPanel getPanel() {
+  public FishPanel getPanel() {
     return this.panel;
   }
 
@@ -45,10 +53,6 @@ public class BoardFrame extends JFrame {
    * Sets this BoardFrame as visible.
    */
   public void display() {
-    int rows = controller.getBoard().getRows();
-    int cols = controller.getBoard().getCols();
-    int windowWidth = (int) (cols * Tile.COLUMN_WIDTH + Tile.R_OFFSET + Tile.WIDTH);
-    int windowHeight = rows * Tile.HEIGHT + Tile.D_OFFSET;
     this.setSize(new Dimension(windowWidth, windowHeight));
     this.setVisible(true);
   }

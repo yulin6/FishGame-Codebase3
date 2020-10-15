@@ -41,8 +41,6 @@ public class Board implements IBoard {
   final int cols;
   BoardSpace [][] boardSpaces;
 
-  FishController controller;
-
   /**
    * Creates a board in which there are holes in given spaces, tiles have a random number of fish,
    * and there is a minimum number of 1-fish tiles guaranteed
@@ -211,16 +209,6 @@ public class Board implements IBoard {
         boardSpaces[r][c].render(p, g);
       }
     }
-  }
-
-  @Override
-  public void setController(FishController controller) {
-    this.controller = controller;
-  }
-
-  @Override
-  public FishController getController() {
-    return controller;
   }
 
   @Override

@@ -9,17 +9,17 @@ import javax.swing.SwingUtilities;
  * Class to represent the visual panel for a board of Fish.
  * TODO: rework into a GamePanel
  */
-public class BoardPanel extends JPanel {
+public class FishPanel extends JPanel {
   /**
    * Creates a new BoardPanel, which determines size based on the board size.
    */
-  public BoardPanel() {
+  public FishPanel() {
     JPanel panel = new JPanel();
   }
 
   @Override
   protected void paintComponent(Graphics g) {
-    BoardFrame frame = (BoardFrame) SwingUtilities.windowForComponent(this);
-    frame.getController().getBoard().render(g);
+    FishFrame frame = (FishFrame) SwingUtilities.windowForComponent(this);
+    frame.getController().getState().render(g);
   }
 }
