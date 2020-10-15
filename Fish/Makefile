@@ -1,0 +1,26 @@
+OUTDIR = -d Common/out 
+TESTDIR = -d Common/out-test
+TESTDEP = -cp /usr/share/java/junit4.jar:Common/out/:Common/resources/
+JAVAC = javac
+
+JAVAFILES = \
+	Common/src/game/view/*.java \
+	Common/src/game/model/*.java \
+	Common/src/game/controller/*.java \
+
+TESTFILES = \
+	Common/test/game/model/*.java \
+
+default: sources testsources
+
+sources:
+	mkdir Common/out
+	$(JAVAC) $(OUTDIR) $(JAVAFILES) 
+
+testsources:
+	mkdir Common/out-test
+	$(JAVAC) $(TESTDIR) $(TESTDEP) $(TESTFILES)
+
+clean:
+	$(RM) -r Common/out
+	$(RM) -r Common/out-test

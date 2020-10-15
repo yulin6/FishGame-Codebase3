@@ -1,1 +1,1 @@
-// see Common/src/game/model/GameState.java
+// see src/game/model/GameState.java

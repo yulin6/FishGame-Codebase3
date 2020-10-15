@@ -6,13 +6,14 @@ a protocol to be published.
 
 In this project:
 
+The Makefile at the top-level directory (Fish/) can be used to build the project with "make", and
+"make clean" removes the output directories generated that contain the .class files.
+
 Common/ contains the files relevant to programming Fish, which includes but
 is not limited to the source code and scripts used to build and test the project.
 Common/src contains the code for the software components of Fish, contained within
-their respective directories. At present, the only component is /game.
-
-The Makefile within Common/ can be used to build the project with "make", and
-"make clean" removes the output directories generated that contain the .class files.
+their respective directories. At present, the only component is /game. Common/test contains
+unit tests for the classes of Fish.
 
 The resources/ folder within Common/ contains some files that are not source
 code that are associated with the project; currently it contains an image of a Fish icon
@@ -23,14 +24,14 @@ It also contains some images relating to penguins. The base penguin image was re
 https://www.hiclipart.com/free-transparent-background-png-clipart-qmoau/download
 and resized/recolored for use in this project.
 
-There are currently two .sh files, run.sh and all-tests.sh. run.sh will bring up
-a rendering of a game board, while all-tests.sh is part of the test harness for
-this project. See the later "Testing" section for more details.
+There are currently other additional files in Common/, including run.sh, which will bring up
+a rendering of a game board. Additionally, other directories will be generated as output
+when running make on the project.
 
 Roadmap:
 Common/src/ contains the plain Java source code written for this project
 divided by software component. The game state component is contained within
-/game/, which has three subdirectories /model, /view, and /controller,
+game/, which has three subdirectories /model, /view, and /controller,
 which contain the respective aspects of the game modelled with the MVC
 approach.
 
@@ -42,10 +43,7 @@ Testing:
 Assuming the current working directory is Common/:
 - "make clean" to clear project artifacts
 - "make" to generate a fresh build from the source code
-- "sh all-tests.sh" to run all tests for milestone 2 - "The Game Pieces"
-  which may later be renamed for clarity
-- Individual tests for milestone 2 may be run with
-"java -cp /usr/share/java/junit4.jar:out/:out-test/ org.junit.runner.JUnitCore game.model.<CLASSNAME>",
-where <CLASSNAME> is one of BoardPositionTest, PixelPositionTest, TileTest, or BoardTest
+- "cd ../" to move up a directory to the top-level Fish/ directory
+- "./xtest" to run the test script (this will cd Common, run the tests, and return)
 - Test source code can be found within Common/test/, with further subdirectories
 depending on the software component the tests were written for.

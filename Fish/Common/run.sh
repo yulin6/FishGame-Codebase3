@@ -1,1 +1,1 @@
-java -cp out/ gamestate/controller/FishController
+java -cp out/:resources/ game/controller/FishController
