@@ -29,6 +29,16 @@ public class PlayerTest {
   }
 
   @Test
+  public void copyConstructor() {
+    Player p5 = new Player(p4);
+    assertEquals(0, p4.getFish());
+    assertEquals(0, p5.getFish());
+    p4.addFish(2);
+    assertEquals(2, p4.getFish());
+    assertEquals(0, p5.getFish());
+  }
+
+  @Test
   public void getAge() {
     assertEquals(20, p1.getAge());
     assertNotEquals(43, p1.getAge());

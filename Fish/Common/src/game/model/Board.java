@@ -91,7 +91,6 @@ public class Board implements IBoard {
     }
   }
 
-
   /**
    * Creates a full uniform board with each tile having fishNum fish
    * @param rows the number of rows of tiles on the board
@@ -135,6 +134,29 @@ public class Board implements IBoard {
         }
         else {
           boardSpaces[i][j] = new Tile(numFish);
+        }
+      }
+    }
+  }
+
+  /**
+   * Copy constructor for Board objects. Copies the 2D array of BoardSpaces from the given Board
+   * as input, as well as other fields.
+   * @param b The Board to make a copy of.
+   */
+  public Board(Board b) {
+    this.rows = b.rows;
+    this.cols = b.cols;
+
+    this.boardSpaces = new BoardSpace[this.rows][this.cols];
+    for (int i = 0; i < rows; i++) {
+      for (int j = 0; j < cols; j++) {
+        BoardSpace space = b.boardSpaces[i][j];
+        if (space instanceof Hole) {
+          this.boardSpaces[i][j] = new Hole();
+        }
+        else if (space instanceof Tile) {
+          this.boardSpaces[i][j] = new Tile((Tile) space);
         }
       }
     }

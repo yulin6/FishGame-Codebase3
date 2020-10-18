@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Polygon;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -49,6 +48,15 @@ public class Tile implements BoardSpace {
       }
     }
     this.fish = numFish;
+  }
+
+  /**
+   * Copy constructor for Tile objects. Returns an entirely new Tile that is a copy of the
+   * passed-in one.
+   * @param t Tile to copy from.
+   */
+  public Tile(Tile t) {
+    this.fish = t.fish;
   }
 
   @Override

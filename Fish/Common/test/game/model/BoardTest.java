@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Base64;
 
 import game.controller.FishController;
 
@@ -24,6 +25,17 @@ public class BoardTest {
     holes.add(new BoardPosition(1, 1));
     random = new Board(3, 4, holes, 3);
     uniform = new Board(2, 2, 4);
+  }
+
+  @Test
+  public void copyConstructor() {
+    Board b = new Board(random);
+    BoardPosition spot = new BoardPosition(0, 1);
+    assertTrue(b.getSpace(spot) instanceof Tile);
+    assertTrue(random.getSpace(spot) instanceof Tile);
+    random.removeTile(spot);
+    assertTrue(b.getSpace(spot) instanceof Tile);
+    assertTrue(random.getSpace(spot) instanceof Hole);
   }
 
   @Test

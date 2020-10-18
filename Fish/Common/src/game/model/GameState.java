@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * Class to represent a game state for a game of Fish.
@@ -11,7 +12,7 @@ import java.util.HashSet;
  * - state of the board for the game to be played with
  * - current placements of penguins
  * - information about the players in the game
- * - order in which they play
+ * - current player information, which is used to determine next in order of play
  */
 public class GameState implements IState {
   private final IBoard board;
@@ -19,6 +20,12 @@ public class GameState implements IState {
   private final HashSet<Player> players;
   private Player currentPlayer;
 
+  /**
+   * Constructor for objects of GameState type. Takes a set of players as well as an IBoard that
+   * represents the board state of the given game of Fish.
+   * @param playerSet The set of players to be stored in the GameState.
+   * @param b The board to be represented within this GameState.
+   */
   public GameState(HashSet<Player> playerSet, IBoard b) {
     board = b;
     penguins = new HashMap<>();
@@ -28,6 +35,27 @@ public class GameState implements IState {
     setNextPlayer();
   }
 
+  /**
+   * Copy constructor for objects of the GameState type, to be used for checking and
+   * returning future moves without actually changing the current state of the game.
+   * @param g The GameState object to make a copy of.
+   */
+  public GameState(GameState g) {
+    this.board = new Board((Board) g.board);
+    this.penguins = new HashMap<>();
+    for (Map.Entry<BoardPosition, Penguin> entry : g.penguins.entrySet()) {
+      this.penguins.put(entry.getKey(), entry.getValue());
+    }
+    this.players = new HashSet<>();
+    for (Player p : g.players) {
+      this.players.add(new Player(p));
+    }
+    this.currentPlayer = new Player(g.currentPlayer);
+  }
+
+  /**
+   * Checks that the player colors of the GameState are valid, throwing an exception if not.
+   */
   private void checkPlayerColors() {
     ArrayList<Penguin.PenguinColor> colors = new ArrayList<>();
     for(Player p : players) {
@@ -39,7 +67,6 @@ public class GameState implements IState {
       }
     }
   }
-
 
   @Override
   public void placeAvatar(BoardPosition bp, Player p) {

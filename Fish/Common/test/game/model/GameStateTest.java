@@ -24,8 +24,8 @@ public class GameStateTest {
   Player p4;
   HashSet<Player> players;
 
-  IState state1;
-  IState state2;
+  GameState state1;
+  GameState state2;
 
   @Before
   public void setUp() {
@@ -62,6 +62,14 @@ public class GameStateTest {
   @Test(expected = IllegalArgumentException.class)
   public void testStateConstructorNoPlayers() {
     state1 = new GameState(new HashSet<>(), holeBoard);
+  }
+
+  @Test
+  public void copyConstructor() {
+    GameState copy1 = new GameState(state1);
+
+    state1.setNextPlayer();
+    assertNotEquals(copy1.getCurrentPlayer(), state1.getCurrentPlayer());
   }
 
   @Test

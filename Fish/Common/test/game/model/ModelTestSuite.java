@@ -12,7 +12,8 @@ import org.junit.runners.Suite;
         PenguinTest.class,
         HoleTest.class,
         PlayerTest.class,
-        GameStateTest.class
+        GameStateTest.class,
+        IllegalStateTest.class
 })
 
 public class ModelTestSuite {

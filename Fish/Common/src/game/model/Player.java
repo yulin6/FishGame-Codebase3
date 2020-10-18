@@ -9,7 +9,7 @@ package game.model;
  */
 public class Player {
   private final int age;
-  private Penguin.PenguinColor color;
+  private final Penguin.PenguinColor color;
   private int fish;
   public static int STARTING_FISH = 0;
 
@@ -25,6 +25,17 @@ public class Player {
     this.age = playerAge;
     this.color = assignedColor;
     this.fish = STARTING_FISH;
+  }
+
+  /**
+   * Copy constructor for Player objects. Copies the age, assigned color, and number of fish
+   * belonging to the player.
+   * @param p The Player object to make a copy of.
+   */
+  public Player(Player p) {
+    this.age = p.age;
+    this.color = p.color;
+    this.fish = p.fish;
   }
 
   /**

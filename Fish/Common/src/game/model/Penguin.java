@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 
@@ -30,11 +31,13 @@ public class Penguin {
 
     if (PENGUIN_RED == null || PENGUIN_WHITE == null || PENGUIN_BLACK == null
             || PENGUIN_BROWN == null) {
-      // Fish/Common/
-      File pathRed = new File("resources/redpenguin.png");
-      File pathWhite = new File("resources/whitepenguin.png");
-      File pathBrown = new File("resources/brownpenguin.png");
-      File pathBlack = new File("resources/blackpenguin.png");
+      URL pathRed = Penguin.class.getClassLoader().getResource("redpenguin.png");
+      URL pathWhite = Penguin.class.getClassLoader().getResource("whitepenguin.png");
+      URL pathBrown = Penguin.class.getClassLoader().getResource("brownpenguin.png");
+      URL pathBlack = Penguin.class.getClassLoader().getResource("blackpenguin.png");
+      //File pathWhite = new File("resources/whitepenguin.png");
+      //File pathBrown = new File("resources/brownpenguin.png");
+      //File pathBlack = new File("resources/blackpenguin.png");
 
       try {
         image = ImageIO.read(pathRed);
@@ -49,6 +52,14 @@ public class Penguin {
         e.printStackTrace();
       }
     }
+  }
+
+  /**
+   * Copy constructor for Penguin objects. Copies the penguin color from the passed-in Penguin.
+   * @param p Penguin to copy from.
+   */
+  public Penguin(Penguin p) {
+    this.color = p.color;
   }
 
   /**
