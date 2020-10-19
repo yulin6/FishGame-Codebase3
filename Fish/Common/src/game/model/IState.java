@@ -1,6 +1,7 @@
 package game.model;
 
 import java.awt.Graphics;
+import java.util.ArrayList;
 
 /**
  * Interface to handle varying representation of game states.
@@ -63,6 +64,15 @@ public interface IState {
    * @return The penguin at the position, or an exception if no penguin is on that board space.
    */
   Penguin getPenguinAtPosn(BoardPosition bp);
+
+  /**
+   * Returns all the possible Actions from this game state.
+   *
+   * INVARIANT The list of all possible moves contains all of the possible moves for the current
+   * player of the game state. They are guaranteed to be valid.
+   * @return a list of all the Actions possible
+   */
+  ArrayList<Action> getPossibleActions();
 
 
 }

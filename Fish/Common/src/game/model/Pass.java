@@ -6,4 +6,22 @@ package game.model;
  */
 public class Pass implements Action {
 
+  private Player p;
+
+  public Pass(Player p) {
+    this.p = p;
+  }
+
+  @Override
+  public void perform(GameState g) {
+    g.setNextPlayer();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if(obj instanceof Pass) {
+      return this.p.equals(((Pass) obj).p);
+    }
+    return false;
+  }
 }

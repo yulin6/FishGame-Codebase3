@@ -13,4 +13,12 @@ public interface Action {
    */
   void perform(GameState g);
 
+  /**
+   * Equality checker between two actions
+   * @param obj The object to be compared against
+   * @return Whether this action and the given object are equal
+   */
+  @Override
+  boolean equals(Object obj);
+
 }

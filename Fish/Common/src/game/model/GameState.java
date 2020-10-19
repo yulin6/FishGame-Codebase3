@@ -160,6 +160,32 @@ public class GameState implements IState {
     }
   }
 
+  @Override
+  public ArrayList<Action> getPossibleActions() {
+    ArrayList<Action> actions = new ArrayList<>();
+
+    ArrayList<BoardPosition> sourcePositions = new ArrayList<>();
+    for(BoardPosition bp : penguins.keySet()) {
+      if(penguins.get(bp).getColor().equals(currentPlayer.getColor())) {
+        sourcePositions.add(bp);
+      }
+    }
+    ArrayList<BoardPosition> penPositions = new ArrayList<>(penguins.keySet());
+    for (BoardPosition bp : sourcePositions) {
+      ArrayList<BoardPosition> destinations = board.getValidMoves(bp, penPositions);
+      for(BoardPosition to : destinations) {
+        Action a = new Move(bp, to, currentPlayer);
+        actions.add(a);
+      }
+    }
+
+    if(actions.isEmpty()) {
+      actions.add(new Pass(currentPlayer));
+    }
+
+    return actions;
+  }
+
   /**
    * Gets the player that will move next based on increasing age.
    * @return The next player that will make a move

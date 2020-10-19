@@ -32,12 +32,13 @@ public class GameTree {
    */
   public IState lookAhead(GameState checkFrom, Action a) {
     GameState copy = new GameState(checkFrom);
-    try {
-      a.perform(copy);
-    } catch (IllegalArgumentException e) {
+    boolean isValid = doAction(copy, a);
+    if(isValid) {
+      return copy;
+    }
+    else {
       return new IllegalState();
     }
-    return copy;
   }
 
   /**
@@ -74,22 +75,29 @@ public class GameTree {
   }
 
   /**
-   * Applies a player's action to a passed-in GameState object.
+   * Applies a player's action to a passed-in GameState object. Returns true if successful, false
+   * if not successful.
    * @param g The GameState to do the action on.
    * @param a The action to perform on the GameState - either a Move or a Pass.
+   * @return Whether or not the action could be performed on the given game state
    */
-  private void doAction(GameState g, Action a) {
+  private boolean doAction(GameState g, Action a) {
     // Figure out if we want to throw exceptions here. This is so far only called
     // in a private method where we should only be giving it legal actions.
-    if (a instanceof Move) {
+    if (a != null) {
       // legality checking, etc.
-      // do the move
+      if(g.getPossibleActions().contains(a)) {
+        // do the move
+        a.perform(g);
+        return true;
+      }
+      else {
+        return false;
+      }
       // advance to next player
     }
-    else if (a instanceof Pass) {
-      // legality checking to see that the player can't move
-      // if can't move, do nothing
-      // advance to next player
+    else {
+      return false;
     }
   }
 }
