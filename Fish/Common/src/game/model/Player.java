@@ -1,5 +1,7 @@
 package game.model;
 
+import java.util.Objects;
+
 /**
  * Class to represent a Player of the Fish game.
  * A player is composed of information about the player, specifically
@@ -79,5 +81,10 @@ public class Player {
               && this.fish == p.fish);
     }
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(age, color, fish);
   }
 }

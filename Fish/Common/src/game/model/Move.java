@@ -1,5 +1,7 @@
 package game.model;
 
+import java.util.Objects;
+
 /**
  * Class representing a player's choice to move a penguin from one board location to another
  * (only valid if the player can make the move, the validity of which is checked in
@@ -12,6 +14,13 @@ public class Move implements Action {
   private final BoardPosition to;
   private final Player p;
 
+  /**
+   * Constructs a Move action, which composes the source and destination positions, as well as
+   * the Player making the move.
+   * @param to The board position the move is being made to.
+   * @param from The board position the move is being made from.
+   * @param p The player making the move.
+   */
   public Move(BoardPosition to, BoardPosition from, Player p) {
     this.to = to;
     this.from = from;
@@ -33,5 +42,10 @@ public class Move implements Action {
               && this.p.equals(m.p));
     }
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(from, to, p);
   }
 }

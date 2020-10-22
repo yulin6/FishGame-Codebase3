@@ -1,5 +1,7 @@
 package game.model;
 
+import java.util.Objects;
+
 /**
  * Class representing a player's choice to pass (only allowed if the player cannot move any
  * penguins on the board).
@@ -9,6 +11,10 @@ public class Pass implements Action {
 
   private final Player p;
 
+  /**
+   * Constructor for a Pass object.
+   * @param p The player who is making the pass.
+   */
   public Pass(Player p) {
     this.p = p;
   }
@@ -24,5 +30,10 @@ public class Pass implements Action {
       return this.p.equals(((Pass) obj).p);
     }
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(p);
   }
 }

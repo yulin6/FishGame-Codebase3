@@ -2,8 +2,8 @@ package game.model;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -15,7 +15,6 @@ import java.util.Map;
  * - information about the players in the game
  * - current player information, which is used to determine next in order of play
  * - a list of players that have already made a move, before the turn order returns to the top
- * - a final ordered list of colors that is used to resolve ties in age by penguin color.
  */
 public class GameState implements IState {
   private final IBoard board;
@@ -23,9 +22,6 @@ public class GameState implements IState {
   private final HashSet<Player> players;
   private Player currentPlayer;
   private final HashSet<Player> movedPlayers;
-  private static final ArrayList<Penguin.PenguinColor> TIEBREAK_ORDER =
-          new ArrayList<>(Arrays.asList(Penguin.PenguinColor.BLACK, Penguin.PenguinColor.BROWN,
-                  Penguin.PenguinColor.RED, Penguin.PenguinColor.WHITE));
 
   /**
    * Constructor for objects of GameState type. Takes a set of players as well as an IBoard that
@@ -60,7 +56,7 @@ public class GameState implements IState {
     }
     this.movedPlayers = new HashSet<>();
     for (Player p : g.movedPlayers) {
-      this.players.add(new Player(p));
+      this.movedPlayers.add(new Player(p));
     }
     this.currentPlayer = new Player(g.currentPlayer);
   }
@@ -106,10 +102,16 @@ public class GameState implements IState {
       throw new IllegalArgumentException("To or from board positions are a hole on the board.");
     }
     // check that from has an avatar & to does not
-    if(penguins.containsKey(from) && !penguins.containsKey(to)) {
+    if (penguins.containsKey(from) && !penguins.containsKey(to)) {
       Penguin penguin = penguins.get(from);
-      if(penguin.getColor() == p.getColor()) {
+      if (penguin.getColor() == p.getColor()) {
           penguins.put(to, penguin);
+          for (Player curr : players) {
+            if (curr.getColor() == currentPlayer.getColor()) {
+              curr.addFish(board.getSpace(from).getNumFish());
+              currentPlayer = curr;
+            }
+          }
           board.removeTile(from);
           penguins.remove(from);
       }
@@ -154,7 +156,7 @@ public class GameState implements IState {
 
   @Override
   public void setNextPlayer() {
-    if(currentPlayer == null) {
+    if (currentPlayer == null) {
       currentPlayer = getYoungestPlayer();
     }
     else {
@@ -173,6 +175,15 @@ public class GameState implements IState {
     }
   }
 
+  /**
+   * Return a copy of the HashMap of penguins. BoardPositions and Penguins are immutable, so
+   * it's safe to not copy-construct these.
+   * @return A copy of the mapping of positions and penguins.
+   */
+  public HashMap<BoardPosition, Penguin> getPenguins() {
+    return new HashMap<>(penguins);
+  }
+
   @Override
   public ArrayList<Action> getPossibleActions() {
     ArrayList<Action> actions = new ArrayList<>();
@@ -184,10 +195,10 @@ public class GameState implements IState {
       }
     }
     ArrayList<BoardPosition> penPositions = new ArrayList<>(penguins.keySet());
-    for (BoardPosition bp : sourcePositions) {
-      ArrayList<BoardPosition> destinations = board.getValidMoves(bp, penPositions);
+    for (BoardPosition from : sourcePositions) {
+      ArrayList<BoardPosition> destinations = board.getValidMoves(from, penPositions);
       for(BoardPosition to : destinations) {
-        Action a = new Move(bp, to, currentPlayer);
+        Action a = new Move(to, from, currentPlayer);
         actions.add(a);
       }
     }
@@ -207,36 +218,32 @@ public class GameState implements IState {
     if(players.size() == 0) {
       throw new IllegalArgumentException("Cannot find next youngest player without any players!");
     }
+    if (movedPlayers.containsAll(players)) {
+      movedPlayers.clear();
+      return getYoungestPlayer();
+    }
     Player nextYoungest = null;
     for (Player p : players) {
       if (movedPlayers.contains(p)) {
         continue;
       }
-      if (p.getAge() >= currentPlayer.getAge()) {
-        if (nextYoungest == null) {
+      else if (nextYoungest == null) {
+        nextYoungest = p;
+      }
+      else if (p.getAge() < nextYoungest.getAge()) {
+        nextYoungest = p;
+      } else if (p.getAge() == nextYoungest.getAge()) {
+        if (p.getColor().tieCode < nextYoungest.getColor().tieCode) {
           nextYoungest = p;
-        }
-        else if (p.getAge() < nextYoungest.getAge()) {
-          nextYoungest = p;
-        }
-        else if (p.getAge() == nextYoungest.getAge()) {
-          if (TIEBREAK_ORDER.indexOf(p.getColor()) <
-                  TIEBREAK_ORDER.indexOf(nextYoungest.getColor())) {
-            nextYoungest = p;
-          }
         }
       }
-    }
-    if(nextYoungest == null) {
-      movedPlayers.clear();
-      return getYoungestPlayer();
     }
     return nextYoungest;
   }
 
   /**
-   * Gets the youngest player in the game
-   * @return The player in the game with the lowest age
+   * Gets the youngest player in the game.
+   * @return The player in the game with the lowest age.
    */
   private Player getYoungestPlayer() {
     if(players.size() == 0) {
@@ -250,8 +257,12 @@ public class GameState implements IState {
         else if (p.getAge() < youngest.getAge()) {
           youngest = p;
         }
+        else if (p.getAge() == youngest.getAge()) {
+          if (p.getColor().tieCode < youngest.getColor().tieCode) {
+            youngest = p;
+          }
+        }
       }
     return youngest;
   }
-
 }

@@ -35,9 +35,6 @@ public class Penguin {
       URL pathWhite = Penguin.class.getClassLoader().getResource("whitepenguin.png");
       URL pathBrown = Penguin.class.getClassLoader().getResource("brownpenguin.png");
       URL pathBlack = Penguin.class.getClassLoader().getResource("blackpenguin.png");
-      //File pathWhite = new File("resources/whitepenguin.png");
-      //File pathBrown = new File("resources/brownpenguin.png");
-      //File pathBlack = new File("resources/blackpenguin.png");
 
       try {
         image = ImageIO.read(pathRed);
@@ -97,11 +94,20 @@ public class Penguin {
 
   /**
    * Enum for colors of a penguin.
+   * The enums are associated with a "tie code", which breaks ties in the event that two players
+   * are the same age. The lower the tie code, the earlier the player is meant to go. P1, age 21
+   * and assigned black, will go before P2, age 21 and assigned brown.
    */
   public enum PenguinColor {
-    RED,
-    WHITE,
-    BROWN,
-    BLACK
+    BLACK(0),
+    BROWN(1),
+    RED(2),
+    WHITE(3);
+
+    int tieCode;
+
+    PenguinColor(int code) {
+      tieCode = code;
+    }
   }
 }

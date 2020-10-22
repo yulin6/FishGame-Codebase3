@@ -71,6 +71,7 @@ public class PlayerTest {
     assertEquals(5, p1.getFish());
   }
 
+  @Test
   public void equals() {
     assertNotEquals(p1, p2);
     assertEquals(p2, p4);

@@ -7,18 +7,18 @@ import java.util.function.Consumer;
 /**
  * Class to represent a tree of all possible game states resulting from an initial game state,
  * which should be the state of the game immediately after all penguins have been placed onto
- * the game board. GameTrees can be queried in order to obtain future potential game states.
- * A GameTree stores the GameState object from which it was made, which represent the current
- * state at the root node of the tree; GameState is as described in GameState.java. "Child"
- * GameTree objects store GameState objects later in the game, representing states after moves
- * have been made.
+ * the game board. A GameTree stores the GameState object from which it was made, which
+ * represent the current state at the root node of the tree; GameState is as described in
+ * GameState.java. "Child" GameTree objects store GameState objects later in the game,
+ * representing states after moves have been made.
  */
 public class GameTree {
   private final GameState state;
 
   /**
    * Constructor for a GameTree. Takes an initial game state and makes a copy of it to be stored
-   * as the root state for this tree.
+   * as the root state for this tree. The GameTree represents a complete tree for a game state
+   * after which all penguins have been added.
    * @param root The state that represents the root of this tree.
    */
   public GameTree(GameState root) {
@@ -26,8 +26,8 @@ public class GameTree {
   }
 
   /**
-   * Gets the GameState in this GameTree
-   * @return the GameState that is in this GameTree
+   * Gets the GameState in this GameTree.
+   * @return the GameState that is in this GameTree.
    */
   public GameState getGameState() {
     return this.state;
@@ -44,7 +44,7 @@ public class GameTree {
   public GameTree lookAhead(Action a) {
     GameState copy = new GameState(this.state);
     boolean isValid = isLegal(copy, a);
-    if(isValid) {
+    if (isValid) {
       doAction(copy, a);
       return new GameTree(copy);
     }

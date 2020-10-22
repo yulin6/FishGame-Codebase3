@@ -2,6 +2,7 @@ package game.controller;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.HashSet;
 
 import game.model.Board;
 import game.model.BoardPosition;
