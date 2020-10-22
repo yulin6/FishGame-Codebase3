@@ -26,6 +26,14 @@ public class GameTree {
   }
 
   /**
+   * Gets the GameState in this GameTree
+   * @return the GameState that is in this GameTree
+   */
+  public GameState getGameState() {
+    return this.state;
+  }
+
+  /**
    * Given a potential action (the action may be invalid, and a action can either be a penguin move
    * or a pass), returns the resultant tree node that represents the state of the game after that
    * action has been performed.
