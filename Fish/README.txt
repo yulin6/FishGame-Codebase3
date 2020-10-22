@@ -35,9 +35,19 @@ game/, which has three subdirectories /model, /view, and /controller,
 which contain the respective aspects of the game modelled with the MVC
 approach.
 
+Currently, most files are contained within /model. Files related to the pieces include
+Tile.java, Hole.java, Board.java, IBoard.java, BoardSpace.java, BoardPosition.java, PixelPosition.java, etc.
+Files related to the game state include GameState.java, Penguin.java, Player.java, IState.java, etc.
+Files related to the game tree include GameTree.java, Action.java, Move.java, and Pass.java.
+
 Planning/ contains documents describing the underlying structure of the Fish game
 in broader terms as conceptualized before implementing the game. It also contains
 descriptions of software components of Fish and their interfaces.
+
+Making the project:
+"make" in the same directory this README.txt is originally located in, assuming
+no changes have been made to the Makefile provided. It will remove any output
+folders/classes if they exist, then build the project. 
 
 Testing:
 Assuming the current working directory is Common/:
@@ -47,3 +57,6 @@ Assuming the current working directory is Common/:
 - "./xtest" to run the test script (this will cd Common, run the tests, and return)
 - Test source code can be found within Common/test/, with further subdirectories
 depending on the software component the tests were written for.
+- Individual tests can be run with
+"java -cp /usr/share/java/junit4.jar:out/:out-test/:resources/ org.junit.runner.JUnitCore <classname>"
+where <classname> is the test class to run, properly prepended with the package it belongs to.
