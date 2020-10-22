@@ -69,7 +69,7 @@ public class GameStateTest {
     GameState copy1 = new GameState(state1);
 
     state1.setNextPlayer();
-    assertNotEquals(copy1.getCurrentPlayer(), state1.getCurrentPlayer());
+    assertNotSame(copy1.getCurrentPlayer(), state1.getCurrentPlayer());
   }
 
   @Test
@@ -96,7 +96,7 @@ public class GameStateTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testGetPenguinAtUnoccupied() {
-    BoardPosition placement = new BoardPosition(2,2);
+    BoardPosition placement = new BoardPosition(2, 2);
 
     state1.placeAvatar(placement, p1);
     state1.getPenguinAtPosn(new BoardPosition(1, 1));
@@ -104,7 +104,7 @@ public class GameStateTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testPlaceAvatarAtOccupiedSpace() {
-    BoardPosition placement = new BoardPosition(2,2);
+    BoardPosition placement = new BoardPosition(2, 2);
 
     state1.placeAvatar(placement, p1);
     state1.placeAvatar(placement, p2);
@@ -112,14 +112,14 @@ public class GameStateTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testPlaceAvatarOOB() {
-    BoardPosition placement = new BoardPosition(-1,0);
+    BoardPosition placement = new BoardPosition(-1, 0);
 
     state1.placeAvatar(placement, p1);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testPlaceAvatarInHole() {
-    BoardPosition placement = new BoardPosition(3,1);
+    BoardPosition placement = new BoardPosition(3, 1);
 
     state1.placeAvatar(placement, p1);
   }
@@ -164,7 +164,7 @@ public class GameStateTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testMoveAvatarOOB() {
-    BoardPosition placementFrom = new BoardPosition(3,0);
+    BoardPosition placementFrom = new BoardPosition(3, 0);
     BoardPosition placementTo = new BoardPosition(0, 10);
 
     state1.placeAvatar(placementFrom, p1);
@@ -173,7 +173,7 @@ public class GameStateTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testMoveAvatarToHole() {
-    BoardPosition placementFrom = new BoardPosition(3,0);
+    BoardPosition placementFrom = new BoardPosition(3, 0);
     BoardPosition placementTo = new BoardPosition(3, 1);
 
     state1.placeAvatar(placementFrom, p1);
@@ -182,7 +182,7 @@ public class GameStateTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testMoveOtherPlayerAvatar() {
-    BoardPosition placementFrom = new BoardPosition(3,0);
+    BoardPosition placementFrom = new BoardPosition(3, 0);
     BoardPosition placementTo = new BoardPosition(3, 1);
 
     state1.placeAvatar(placementFrom, p1);
@@ -191,7 +191,7 @@ public class GameStateTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testMoveAvatarToOccupiedTile() {
-    BoardPosition placementFrom = new BoardPosition(3,0);
+    BoardPosition placementFrom = new BoardPosition(3, 0);
     BoardPosition placementTo = new BoardPosition(3, 1);
 
     state1.placeAvatar(placementFrom, p1);
@@ -221,7 +221,7 @@ public class GameStateTest {
     state2 = new GameState(players, uniformBoard);
 
     //Pneguins surround each other, no more moves
-    state2.placeAvatar(new BoardPosition(0,0), p1);
+    state2.placeAvatar(new BoardPosition(0, 0), p1);
     state2.placeAvatar(new BoardPosition(0, 1), p2);
     state2.placeAvatar(new BoardPosition(1, 0), p3);
     state2.placeAvatar(new BoardPosition(1, 1), p4);
@@ -240,6 +240,30 @@ public class GameStateTest {
     assertEquals(p4, state2.getCurrentPlayer());
     state2.setNextPlayer();
     assertEquals(p3, state2.getCurrentPlayer());
+  }
+
+  @Test
+  public void testTiedAges() {
+    // should go in order of 17, 21Bl, 21Br, 21Wh
+    Player age21Black = new Player(21, Penguin.PenguinColor.BLACK);
+    Player age21Brown = new Player(21, Penguin.PenguinColor.BROWN);
+    Player age17Red = new Player(17, Penguin.PenguinColor.RED);
+    Player age21White = new Player(21, Penguin.PenguinColor.WHITE);
+    HashSet<Player> tiedPlayers = new HashSet<>();
+    tiedPlayers.add(age21Black);
+    tiedPlayers.add(age21Brown);
+    tiedPlayers.add(age17Red);
+    tiedPlayers.add(age21White);
+
+    GameState tiedAges = new GameState(tiedPlayers, holeBoard);
+    assertEquals(age17Red, tiedAges.getCurrentPlayer());
+    tiedAges.setNextPlayer();
+    assertEquals(age21Black, tiedAges.getCurrentPlayer());
+    tiedAges.setNextPlayer();
+    assertEquals(age21Brown, tiedAges.getCurrentPlayer());
+    tiedAges.setNextPlayer();
+    assertEquals(age21White, tiedAges.getCurrentPlayer());
+
   }
 
   @Test

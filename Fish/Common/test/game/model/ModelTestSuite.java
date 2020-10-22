@@ -13,7 +13,9 @@ import org.junit.runners.Suite;
         HoleTest.class,
         PlayerTest.class,
         GameStateTest.class,
-        IllegalStateTest.class
+        MoveTest.class,
+        PassTest.class,
+        GameTreeTest.class
 })
 
 public class ModelTestSuite {

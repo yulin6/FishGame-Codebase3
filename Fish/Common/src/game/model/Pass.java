@@ -3,10 +3,11 @@ package game.model;
 /**
  * Class representing a player's choice to pass (only allowed if the player cannot move any
  * penguins on the board).
+ * Contains the player making this pass action.
  */
 public class Pass implements Action {
 
-  private Player p;
+  private final Player p;
 
   public Pass(Player p) {
     this.p = p;
