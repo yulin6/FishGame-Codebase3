@@ -8,7 +8,7 @@ Date: 10/22/20
 
 The API for players to communicate with referees will provide them with the proper functionality required to play the game. The functionalities of the API will be as follows, and the protocol for their use is specified under each. Any illegal actions that a player attempts to perform will result in them being kicked out of the game, though querying if an illegal action is legal is allowed. See the JSON object definitions below the following section as necessary.
 
-###Player-referee protocol:
+### Player-referee protocol:
 
 Placing an avatar
 - In order to place an avatar, a player should first verify the Phase of the game is “placing
@@ -46,7 +46,7 @@ Receiving tournament information
  information about which player won this game, whether a player will advance to the next game, etc. If the query is sent during a still-running game, a response of “cannot query now” will be sent, but the player will not be ejected from the game, as it is a query and not an action.
 
 
-###JSON object definitions:
+### JSON object definitions:
 
 Phase:
 - A Phase is a JSON value, specifically a string, one of “placing”, “playing”, and “over
