@@ -12,11 +12,11 @@ The API for players to communicate with referees will provide them with the prop
 
 Placing an avatar
 - In order to place an avatar, a player should first verify the Phase of the game is “placing
-” (see “Getting phase”) and that it is currently their turn, then retrieve the current state of the board to find a position to place an avatar at. Once a valid position is located, the player places the avatar by specifying a Posn to place it at.
+” (see “Getting phase”) and that it is currently their turn, then retrieve the current state of the board to find a position to place an avatar at. Once a valid position is located, the player places the avatar by specifying a Posn to place it at. 
 
 Making a move
 - To make a move, a player should first verify the state of the game is in the “playing” stage and
- that it is currently their turn. After, they should retrieve the current state of the game to find a position to move one of their avatars to. After verifying their move is valid (see “Getting move legality”), the player specifies two Posn(s), a start position representing one of their penguins’ positions and an end position that represents where they would like to move that penguin.
+ that it is currently their turn. After, they should retrieve the current state of the game to find a position to move one of their avatars to. After verifying their move is valid (see “Getting move legality”), the player specifies two Posn(s), a start position representing one of their penguins’ positions and an end position that represents where they would like to move that penguin. 
 
 Getting information about the game
 - Various information about the game can be queried for, including the current status of all
@@ -44,7 +44,8 @@ Receiving information about the end of a game
 Receiving tournament information 
 - If the game is over, the player can send a query about the tournament info, which may contain
  information about which player won this game, whether a player will advance to the next game, etc. If the query is sent during a still-running game, a response of “cannot query now” will be sent, but the player will not be ejected from the game, as it is a query and not an action.
-
+ 
+For all actions (as opposed to queries) being performed, a JSON value ("true"/"false") representing the success or failure of the action is returned; if it was a failure, the player has been ejected.
 
 ## JSON object definitions:
 
