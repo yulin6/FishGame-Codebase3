@@ -18,6 +18,10 @@ Making a move
 - To make a move, a player should first verify the state of the game is in the “playing” stage and
  that it is currently their turn. After, they should retrieve the current state of the game to find a position to move one of their avatars to. After verifying their move is valid (see “Getting move legality”), the player specifies two Posn(s), a start position representing one of their penguins’ positions and an end position that represents where they would like to move that penguin. 
 
+Making a pass
+- To make a pass, a player should check the state, phase, and current player to ensure that their
+ pass is valid. Afterwards, they make the pass using this functionality. 
+
 Getting information about the game
 - Various information about the game can be queried for, including the current status of all
   players, the location of the penguins on the board, and the state of the board. This can be requested through the API, and will be provided as a State JSON object.
@@ -31,7 +35,13 @@ Getting the current player
 
 Getting move legality
 - Much like making a move, a player will specify a start position and an end position, which will
- be used to verify whether their move is legal. If the move is legal, the player will receive the resulting game state in the form of a State JSON object. Otherwise, they will receive a false boolean value.
+ be used to verify whether their move is legal. If the move is legal, the player will receive the
+  resulting game state in the form of a State JSON object. Otherwise, they will receive a false
+   boolean value. The player component must also specify the color of the player making the move.
+   
+Getting pass legality
+- A player can query the results of a given player (specified by color) passing their turn, and if
+ the pass is legal, the resulting State will be returned; otherwise they will receive a false value.
 
 Performing function on all possible next game states
 - To perform a function on all possible next game states, the player must provide a function
