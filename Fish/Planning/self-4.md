@@ -11,7 +11,7 @@ https://github.ccs.neu.edu/CS4500-F20/oakwood/blob/5b4a7ebd5d4267e6e6ed7ec9bcb00
 
 
 - the publicly visible methods/functions for game treees 
-https://github.ccs.neu.edu/CS4500-F20/oakwood/blob/5b4a7ebd5d4267e6e6ed7ec9bcb00fa0bd0ab9a6/Fish/Common/src/game/model/GameTree.java#L24-L70
+https://github.ccs.neu.edu/CS4500-F20/oakwood/blob/5b4a7ebd5d4267e6e6ed7ec9bcb00fa0bd0ab9a6/Fish/Common/src/game/model/GameTree.java#L18-L70
 https://github.ccs.neu.edu/CS4500-F20/oakwood/blob/5b4a7ebd5d4267e6e6ed7ec9bcb00fa0bd0ab9a6/Fish/Common/src/game/model/GameTree.java#L89-L104
 
 
