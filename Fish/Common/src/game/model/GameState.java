@@ -150,6 +150,11 @@ public class GameState implements IState {
   }
 
   @Override
+  public IBoard getBoard() {
+    return this.board;
+  }
+
+  @Override
   public void removePlayer(Player p) {
     players.remove(p);
   }
@@ -167,12 +172,17 @@ public class GameState implements IState {
 
   @Override
   public Penguin getPenguinAtPosn(BoardPosition bp) {
-    if(penguins.containsKey(bp)) {
+    if(isPenguinAtPosn(bp)) {
       return penguins.get(bp);
     }
     else {
       throw new IllegalArgumentException("No penguin at this board space!");
     }
+  }
+
+  @Override
+  public boolean isPenguinAtPosn(BoardPosition bp) {
+    return penguins.containsKey(bp);
   }
 
   /**

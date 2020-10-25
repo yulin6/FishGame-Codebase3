@@ -48,6 +48,12 @@ public interface IState {
   Player getCurrentPlayer();
 
   /**
+   * Gets the board for this game state
+   * @return the Fish game board of this game state
+   */
+  IBoard getBoard();
+
+  /**
    * Removes a player from the game state
    * @param p The player to remove
    */
@@ -64,6 +70,13 @@ public interface IState {
    * @return The penguin at the position, or an exception if no penguin is on that board space.
    */
   Penguin getPenguinAtPosn(BoardPosition bp);
+
+  /**
+   * Determines if there is a penguin at a given BoardPosition on the game board
+   * @param bp The board position being checked for penguin occupancy
+   * @return True if penguin is on given board position, flase otherwise
+   */
+  boolean isPenguinAtPosn(BoardPosition bp);
 
   /**
    * Returns all the possible Actions from this game state.
