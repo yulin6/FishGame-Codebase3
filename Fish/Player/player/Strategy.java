@@ -1,7 +1,6 @@
 package player;
 
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -21,7 +20,7 @@ import game.model.Penguin;
  * left to right through each row, moving to the next row if all spaces in the row are ineligible).
  * Please see Board documentation for interpretation of rows and columns.
  *
- * A Strategy also contains the functionality that allows players to select and perform the next
+ * A Strategy also contains the functionality that allows players to select the next
  * move that will allow for a minimal maximum gain given N > 0 number of the performing player's
  * turns to look ahead. A minimal maximum gain after N turns is the highest score a player can earn
  * after playing the specified number of turns if all other players pick one of the moves that
@@ -47,7 +46,7 @@ public class Strategy implements IStrategy{
   }
 
   @Override
-  public Action doMinMaxAction(GameTree gt, int numTurns) {
+  public Action getMinMaxAction(GameTree gt, int numTurns) {
     // Base Case - return move that corresponds to maximum result (i.e. most fish)
     // Map moves possible from lowest level to fish on target tile
     // Iterate through all keys (Actions) in map and return the one that has the highest value
@@ -79,11 +78,30 @@ public class Strategy implements IStrategy{
       return actions.get(0);
     }
     for(Action a : actions) {
-      int maxFish = getMinMaxValue(gt.lookAhead(a), numTurns - 1,
-              gt.getGameState().getCurrentPlayer().getColor());
+      int maxFish;
+      if(numTurns > 1) {
+        maxFish = getMinMaxValue(gt.lookAhead(a), numTurns - 1,
+                gt.getGameState().getCurrentPlayer().getColor());
+      }
+      else {
+        Move m = (Move)a;
+        BoardPosition source = m.getStart();
+        maxFish = gs.getBoard().getSpace(source).getNumFish();
+      }
       actionToFish.put(a, maxFish);
     }
 
+    ArrayList<Action> highestActions = findBestActions(actionToFish);
+    if(highestActions.size() > 1) {
+      return doTiebreak(highestActions);
+    }
+    else {
+      return highestActions.get(0);
+    }
+
+  }
+
+  private ArrayList<Action> findBestActions(HashMap<Action, Integer> actionToFish) {
     int highestMin = 0;
     ArrayList<Action> highestActions = new ArrayList<>();
     for(Action a : actionToFish.keySet()) {
@@ -97,14 +115,7 @@ public class Strategy implements IStrategy{
         highestActions.add(a);
       }
     }
-
-    if(highestActions.size() > 1) {
-      return doTiebreak(highestActions);
-    }
-    else {
-      return highestActions.get(0);
-    }
-
+    return highestActions;
   }
 
   /**
@@ -180,45 +191,56 @@ public class Strategy implements IStrategy{
      */
 
     GameState gs = gt.getGameState();
-    ArrayList<Action> possibleMoves = gs.getPossibleActions();
-    IBoard b = gs.getBoard();
 
 
     if(c == gs.getCurrentPlayer().getColor()) {
-      if(possibleMoves.get(0) instanceof Pass) {
+      if(gs.getPossibleActions().get(0) instanceof Pass) {
         return 0;
       }
       else {
         if(numTurns > 1) {
-          int miniMax = 0;
-          for(Action a : possibleMoves) {
-            int future = getMinMaxValue(gt.lookAhead(a), numTurns - 1, c);
-            Move m = (Move)a;
-            int now = b.getSpace(m.getStart()).getNumFish();
-            if(now + future > miniMax) {
-              miniMax = now + future;
-            }
-          }
-          return miniMax;
+          return findMinOrMax(gt, numTurns, c, true);
         }
         else if(numTurns == 1) {
-          return getMaxFish(gt, possibleMoves);
+          return getMaxFish(gt);
         }
+        throw new IllegalArgumentException("numTurns cannot be less than one!");
       }
     }
 
     else {
-      ArrayList<Integer> fishFromActions = new ArrayList<>();
-      for(Action a : possibleMoves) {
-        fishFromActions.add(getMinMaxValue(gt.lookAhead(a), numTurns, c));
-      }
-
+      return findMinOrMax(gt, numTurns, c, false);
     }
   }
 
-  private int getMaxFish(GameTree gt, ArrayList<Action> possibleMoves) {
+  private int findMinOrMax(GameTree gt, int numTurns, Penguin.PenguinColor c, boolean findMax) {
+    int current = findMax ? Board.MIN_FISH - 1 : Board.MAX_FISH + 1;
+    GameState gs = gt.getGameState();
+    ArrayList<Action> possibleMoves = gs.getPossibleActions();
+    IBoard b = gs.getBoard();
+    numTurns = findMax ? numTurns - 1 : numTurns;
+    for(Action a : possibleMoves) {
+      int potential = getMinMaxValue(gt.lookAhead(a), numTurns, c);
+      if(findMax) {
+        Move m = (Move)a;
+        int now = b.getSpace(m.getStart()).getNumFish();
+        if(now + potential > current) {
+          current = now + potential;
+        }
+      }
+      else {
+        if(potential < current) {
+          current = potential;
+        }
+      }
+    }
+    return current;
+  }
+
+  private int getMaxFish(GameTree gt) {
     int maxFish = 0;
     GameState gs = gt.getGameState();
+    ArrayList<Action> possibleMoves = gs.getPossibleActions();
     IBoard b = gs.getBoard();
 
     /*

@@ -24,5 +24,5 @@ public interface IStrategy {
    * @return The action that will allow for the minimal-maximal gain after looking ahead numTurns
    *         turns
    */
-  Action doMinMaxAction(GameTree gt, int numTurns);
+  Action getMinMaxAction(GameTree gt, int numTurns);
 }
