@@ -199,5 +199,8 @@ public class StrategyTest {
     assertEquals(minMaxAction4, result);
 
     Action minMaxAction5 = strat.getMinMaxAction(minMaxTestGt, 4);
+    source = new BoardPosition(1, 0);
+    result = new Move(dest, source, p);
+    assertEquals(minMaxAction5, result);
   }
 }

@@ -166,7 +166,7 @@ public class Strategy implements IStrategy{
   private int getMinMaxValue(GameTree gt, int numTurns, Penguin.PenguinColor c) {
 
     //PSEUDOCODE
-    /**
+    /*
      * gs = gt.getgamestate();
      *
      * if c is currentPlayer color
@@ -192,7 +192,6 @@ public class Strategy implements IStrategy{
 
     GameState gs = gt.getGameState();
 
-
     if(c == gs.getCurrentPlayer().getColor()) {
       if(gs.getPossibleActions().get(0) instanceof Pass) {
         return 0;
@@ -214,7 +213,7 @@ public class Strategy implements IStrategy{
   }
 
   private int findMinOrMax(GameTree gt, int numTurns, Penguin.PenguinColor c, boolean findMax) {
-    int current = findMax ? Board.MIN_FISH - 1 : Board.MAX_FISH + 1;
+    int current = findMax ? Integer.MIN_VALUE : Integer.MAX_VALUE;
     GameState gs = gt.getGameState();
     ArrayList<Action> possibleMoves = gs.getPossibleActions();
     IBoard b = gs.getBoard();
