@@ -33,6 +33,22 @@ public class Move implements Action {
     g.setNextPlayer();
   }
 
+  /**
+   * Gets the starting position of this Move
+   * @return The starting BoardPosition of this Move
+   */
+  public BoardPosition getStart() {
+    return from;
+  }
+
+  /**
+   * Gets the destination position of this Move
+   * @return The destination BoardPosition of this Move
+   */
+  public BoardPosition getDestination() {
+    return to;
+  }
+
   @Override
   public boolean equals(Object obj) {
     if(obj instanceof Move) {
