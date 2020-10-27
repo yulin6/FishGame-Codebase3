@@ -48,11 +48,12 @@ public class StrategyTest {
   BoardPosition minMaxPlacement3;
   BoardPosition minMaxPlacement4;
 
-
   Player player1;
   Player player2;
   Player player3;
   Player player4;
+  Player tp1;
+  Player tp2;
 
   GameState state1;
   GameState trivialGs;
@@ -61,7 +62,7 @@ public class StrategyTest {
   Strategy strat;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     holes = new ArrayList<>();
     holes.add(new BoardPosition(0, 0));
     holes.add(new BoardPosition(3, 1));
@@ -86,8 +87,8 @@ public class StrategyTest {
     bps.add(new BoardPosition(0,1));
     trivialBoard = new Board(2,2, bps, 0);
     HashSet<Player> trivialPlayers = new HashSet<>();
-    Player tp1 = new Player(10, Penguin.PenguinColor.BLACK);
-    Player tp2 = new Player(11, Penguin.PenguinColor.BROWN);
+    tp1 = new Player(10, Penguin.PenguinColor.BLACK);
+    tp2 = new Player(11, Penguin.PenguinColor.BROWN);
     trivialPlayers.add(tp1);
     trivialPlayers.add(tp2);
 
@@ -176,8 +177,8 @@ public class StrategyTest {
 
   @Test
   public void getMinMaxAction() {
-    Action minMaxAction = strat.getMinMaxAction(minMaxTestGt, 2);
     Player p = minMaxTestGt.getGameState().getCurrentPlayer();
+    Action minMaxAction = strat.getMinMaxAction(minMaxTestGt, 2);
     BoardPosition source = minMaxPlacement1;
     BoardPosition dest = new BoardPosition(2, 1);
     Action result = new Move(dest, source, p);
@@ -185,22 +186,60 @@ public class StrategyTest {
 
     Action minMaxAction2 = strat.getMinMaxAction(minMaxTestGt, 3);
     assertEquals(minMaxAction2, result);
+  }
 
+  @Test
+  public void getMinMaxAction1Turn()
+  {
+    Player p = minMaxTestGt.getGameState().getCurrentPlayer();
     Action minMaxAction3 = strat.getMinMaxAction(minMaxTestGt, 1);
-    dest = new BoardPosition(0, 0);
-    result = new Move(dest, source, p);
+    BoardPosition source = minMaxPlacement1;
+    BoardPosition dest = new BoardPosition(0, 0);
+    Action result = new Move(dest, source, p);
     assertEquals(minMaxAction3, result);
+  }
 
-    BoardPosition newPen = new BoardPosition(2,1);
+  @Test
+  public void getMinMaxActionMultiplePenguins() {
+    Player p = minMaxTestGt.getGameState().getCurrentPlayer();
+    BoardPosition newPen = new BoardPosition(2, 1);
     minMaxTestGt.getGameState().placeAvatar(newPen, p);
     Action minMaxAction4 = strat.getMinMaxAction(minMaxTestGt, 1);
-    dest = new BoardPosition(0, 1);
-    result = new Move(dest, newPen, p);
+    BoardPosition dest = new BoardPosition(0, 1);
+    Move result = new Move(dest, newPen, p);
     assertEquals(minMaxAction4, result);
 
     Action minMaxAction5 = strat.getMinMaxAction(minMaxTestGt, 4);
-    source = new BoardPosition(1, 0);
+    BoardPosition source = new BoardPosition(1, 0);
     result = new Move(dest, source, p);
     assertEquals(minMaxAction5, result);
   }
+
+  @Test
+  public void getMinMaxActionPass() {
+    Action minMaxAction6 = strat.getMinMaxAction(gtFull, 2);
+    assertEquals(new Pass(tp1), minMaxAction6);
+  }
+
+  @Test
+  public void getMinMaxActionTiebreaker() {
+    Board uniform = new Board(3, 3, 4);
+    HashSet<Player> uniPlayers = new HashSet<>();
+    uniPlayers.add(tp1);
+    uniPlayers.add(tp2);
+    GameState uniGs = new GameState(uniPlayers, uniform);
+    GameTree uniGt = new GameTree(uniGs);
+
+    BoardPosition pen1 = new BoardPosition(0, 0);
+    BoardPosition pen2 = new BoardPosition(2, 0);
+
+    uniGt.getGameState().placeAvatar(pen1, tp2);
+    uniGt.getGameState().placeAvatar(pen2, tp1);
+
+    Action tiedDestMove = strat.getMinMaxAction(uniGt, 1);
+    BoardPosition expectedDest = new BoardPosition(0, 1);
+    Action expectedMove = new Move(expectedDest, pen2, tp1);
+    assertEquals(expectedMove, tiedDestMove);
+  }
+
 }
