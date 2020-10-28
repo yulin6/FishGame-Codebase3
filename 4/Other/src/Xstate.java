@@ -2,9 +2,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Scanner;
@@ -28,11 +26,16 @@ public class Xstate {
 
     List<TestPlayer> tplayers = s.getTestPlayers();
     LinkedHashSet<Player> realPlayers = s.getPlayers();
-    HashMap<Penguin.PenguinColor, Player> colorPlayers = new HashMap<>();
+    LinkedHashMap<Penguin.PenguinColor, Player> colorPlayers = new LinkedHashMap<>();
     for (Player p : realPlayers) {
       colorPlayers.put(p.getColor(), p);
     }
     Board b = s.getBoard();
+
+    if (realPlayers.isEmpty()) {
+      System.out.println(gson.toJson(false));
+      return;
+    }
 
     GameState gs = new GameState(realPlayers, b);
     for (TestPlayer tp : tplayers) {
@@ -42,7 +45,15 @@ public class Xstate {
       }
     }
 
+    if (tplayers.isEmpty()) {
+      System.out.println(gson.toJson(false));
+      return;
+    }
     Player mover = colorPlayers.get(tplayers.get(0).getColor());
+    if (tplayers.get(0).getPlaces().isEmpty()) {
+      System.out.println(gson.toJson(false));
+      return;
+    }
     BoardPosition start = tplayers.get(0).getPlaces().get(0);
     List<Action> moves = gs.getPossibleActions();
 

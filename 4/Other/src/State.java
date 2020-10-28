@@ -27,16 +27,34 @@ public class State {
     HashMap<BoardPosition, Penguin> map = gs.getPenguins();
     Set<BoardPosition> positions = map.keySet();
     this.players = new ArrayList<>();
+    boolean firstPlayer = true;
+    Player fp = null;
     for (Player p : pset) {
+      if (firstPlayer) {
+        firstPlayer = false;
+        fp = p;
+        continue;
+      }
       List<BoardPosition> penguins = new ArrayList<>();
       for (BoardPosition bp : positions) {
         if (map.get(bp).getColor() == p.getColor()) {
           penguins.add(bp);
         }
       }
+
       TestPlayer tp = new TestPlayer(p.getColor(), p.getFish(), penguins);
       this.players.add(tp);
     }
+    assert(fp != null);
+    List<BoardPosition> penguins = new ArrayList<>();
+    for (BoardPosition bp : positions) {
+      if (map.get(bp).getColor() == fp.getColor()) {
+        penguins.add(bp);
+      }
+    }
+
+    TestPlayer tp = new TestPlayer(fp.getColor(), fp.getFish(), penguins);
+    this.players.add(tp);
 
     this.board = new ArrayList<>();
     for (int i = 0; i < b.getRows(); i++) {
@@ -49,7 +67,15 @@ public class State {
   }
 
   public Board getBoard() {
-    return new Board(board.size(), board.get(0).size(), board);
+    int rows = board.size();
+    int cols = 0;
+    for (List<Integer> integers : board) {
+      if (integers.size() > cols) {
+        cols = integers.size();
+      }
+    }
+
+    return new Board(rows, cols, board);
   }
 
   public LinkedHashSet<Player> getPlayers() {

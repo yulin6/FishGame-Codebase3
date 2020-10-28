@@ -7,7 +7,9 @@ import java.util.List;
 /**
  * Class to represent a board of Fish.
  * A Board contains a grid of BoardSpaces, which are "filled" either with a Hole or
- * a Tile. A Board also contains the dimensions of its grid.
+ * a Tile. A Hole object represents a hole in the board, while a Tile object represents a tile in
+ * the board, with a number of fish on it.
+ * A Board also contains the dimensions of its grid.
  * See the below ASCII diagram for a reference of the coordinate system of the board.
  *
  *     XXXXXXXXX             XXXXXXXXX
@@ -125,9 +127,13 @@ public class Board implements IBoard {
     this.cols = columns;
     this.boardSpaces = new BoardSpace[this.rows][this.cols];
 
-    for (int i = 0; i < entries.size(); i++) {
+    for (int i = 0; i < rows; i++) {
       List<Integer> row = entries.get(i);
-      for (int j = 0; j < row.size(); j++) {
+      for (int j = 0; j < columns; j++) {
+        if (j >= row.size()) {
+          boardSpaces[i][j] = new Hole();
+          continue;
+        }
         int numFish = row.get(j);
         if (numFish == 0) {
           boardSpaces[i][j] = new Hole();
