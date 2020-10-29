@@ -6,7 +6,7 @@ Subject: Design and API of a referee component for Fish
 
 Date: 10/28/20
 
-### Referee Component Concept/Explanation
+### Referee Component Concept and Interface
 
 The purpose of a referee component is to manage and run a given game of Fish for a given number of players. In addition to functionality referees provide for players in the player-referee protocol (can be found in player-protocol.md), referees need to start the game (handle all of the pieces), run the rounds (from penguin-placement to penguin-movement to game-end phases), and end the game, reporting back to the tournament administrator that set up a given referee. Specifically, it handles requests from players to interact with the game (place penguins/move penguins), both valid and invalid (cheating/failing). The tournament administrator should receive information about winning player(s) moving forward in the tournament and any cheating/failing players that should be removed from the tournament entirely. 
 
