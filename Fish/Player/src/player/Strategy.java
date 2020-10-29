@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import game.model.Action;
-import game.model.Board;
 import game.model.Move;
 import game.model.Pass;
 import game.model.BoardPosition;
@@ -47,28 +46,9 @@ public class Strategy implements IStrategy{
 
   @Override
   public Action getMinMaxAction(GameTree gt, int numTurns) {
-    // Base Case - return move that corresponds to maximum result (i.e. most fish)
-    // Map moves possible from lowest level to fish on target tile
-    // Iterate through all keys (Actions) in map and return the one that has the highest value
-    // If same fish in multiple moves, do tiebreak (lowest row number of source position of penguin,
-    // then lowest column number if row numbers are the same, repeated for target position if source
-    // positions are the same)
-    // Returns a maximum number of fish
-
-    //Propagate Upward - Fish of current move + fish from calculated max move from lower level
-
-
-    //PSEUDOCODE
-    /**
-     * map(moves, fishValues)
-     *
-     * for all possible moves
-     *  put(move, getMinMaxAction(gt.lookAhead(move), numTurns - 1,
-     *      gt.getGameState().getCurrentPlayer().getColor())
-     *
-     * a is action that will allow for minmax given n turns ahead
-     * a.perform(...)
-     */
+    if (numTurns <= 0) {
+      throw new IllegalArgumentException("Need to look ahead at least 1 turn.");
+    }
 
     HashMap<Action, Integer> actionToFish = new HashMap<>();
 
@@ -101,6 +81,11 @@ public class Strategy implements IStrategy{
 
   }
 
+  /**
+   * Find the list of best actions given a mapping of actions to their calculated minimax gains.
+   * @param actionToFish The mapping of Action (Move/Pass) objects to their calculated gain.
+   * @return The optimal action (maximal minimax gain).
+   */
   private ArrayList<Action> findBestActions(HashMap<Action, Integer> actionToFish) {
     int highestMin = 0;
     ArrayList<Action> highestActions = new ArrayList<>();
@@ -124,7 +109,7 @@ public class Strategy implements IStrategy{
    * destination --> lowest column number of destination. It can be assumed that all the actions
    * in the ArrayList are moves since the calling function checks for Passes beforehand
    * @param highestActions The actions that provide the same minimal gain
-   * @return
+   * @return The action that fulfills the lowest row/col start/dest as explained above best.
    */
   private Action doTiebreak(ArrayList<Action> highestActions) {
     Move tiebreakingAction = null;
@@ -163,33 +148,18 @@ public class Strategy implements IStrategy{
     return tiebreakingAction;
   }
 
+  /**
+   * Gets the minimal maximum value of a given tree and number of turns ahead for a given
+   * player's color. Looks through all possible options for actions by both players and
+   * opponents, assuming opponents will minimize the player's gain and the player will maximize
+   * its own gain.
+   * @param gt The root GameTree object to look through some amount of turns for.
+   * @param numTurns The number of turns to look ahead (minimum 1).
+   * @param c The color of the player to find the minimax gain of (the color that is not an
+   *          "enemy" color.
+   * @return The best minimax gain achievable from the tree in the given amount of turns.
+   */
   private int getMinMaxValue(GameTree gt, int numTurns, Penguin.PenguinColor c) {
-
-    //PSEUDOCODE
-    /*
-     * gs = gt.getgamestate();
-     *
-     * if c is currentPlayer color
-     *  - return 0 if possible moves are only pass
-     *  - otherwise:
-     *   if numTurns > 1
-     *    for each possible move
-     *      recurse over lookahead with move, decrement numTurns because player's turn
-     *      return largest value out of all recursive lookaheads - made optimal minmax move in the
-     *        future
-     *
-     * if c is not currentPlayer color
-     *  for each possible move
-     *    recurse over lookahead with move, don't decrement numTurns because not player's turn
-     *    return smallest value out of all recursive lookaheads - made most preventative move as
-     *      enemy
-     *
-     * if numTurns == 1 && c is currentPlayer color [BASE CASE]
-     *  return value of move that has highest fish at target tile out of gs.getPossibleMoves
-     *
-     *
-     */
-
     GameState gs = gt.getGameState();
 
     if(c == gs.getCurrentPlayer().getColor()) {
@@ -212,6 +182,19 @@ public class Strategy implements IStrategy{
     }
   }
 
+  /**
+   * Finds the minimum or maximum value of the possible actions looking ahead a given number of
+   * turns, starting from the root state of the given GameTree. (If the current turn is an
+   * opponent's turn, findMax should be false, and the minimum value of the child nodes is
+   * return; findMax being true indicates it's the player's turn, and the maximum value should be
+   * found).
+   * @param gt The GameTree to search to find the appropriate minimax gain value.
+   * @param numTurns The number of turns to look ahead.
+   * @param c The player whose minimax gain should be determined.
+   * @param findMax True if the maximum should be found, else false and it finds the minimum.
+   * @return The highest or lowert value of minimax gain of the child nodes as determined by the
+   * findMax parameter.
+   */
   private int findMinOrMax(GameTree gt, int numTurns, Penguin.PenguinColor c, boolean findMax) {
     int current = findMax ? Integer.MIN_VALUE : Integer.MAX_VALUE;
     GameState gs = gt.getGameState();
@@ -236,24 +219,18 @@ public class Strategy implements IStrategy{
     return current;
   }
 
+  /**
+   * Gets the maximum number of fish attainable by any single move at the current phase of the
+   * game. Checks the source tiles, not the destination tiles, for number of fish, as fish are
+   * not obtained until a penguin moves off a given tile.
+   * @param gt The GameTree object to look through to find the max number of fish from.
+   * @return The maximum number of fish that can be obtained.
+   */
   private int getMaxFish(GameTree gt) {
     int maxFish = 0;
     GameState gs = gt.getGameState();
     ArrayList<Action> possibleMoves = gs.getPossibleActions();
     IBoard b = gs.getBoard();
-
-    /*
-    for(Action a : possibleMoves) {
-      Move m = (Move)a;
-      BoardPosition dest = m.getDestination();
-      int fish = b.getSpace(dest).getNumFish();
-      if(fish > maxFish) {
-        maxFish = fish;
-      }
-    }
-
-    return maxFish;
-    */
 
     for(Action a : possibleMoves) {
       Move m = (Move)a;
@@ -266,14 +243,56 @@ public class Strategy implements IStrategy{
 
     return maxFish;
   }
-
-  /**
-  private int minMaxTurn(GameTree gt, int turnsLeft, int maxFish) {
-    return 0;
-  }
-
-  private int maxOpponentTurns(GameTree gt, int turnsLeft, int maxFish) {
-    return 0;
-  }
-   **/
 }
+
+/*
+general notes
+    // Base Case - return move that corresponds to maximum result (i.e. most fish)
+    // Map moves possible from lowest level to fish on target tile
+    // Iterate through all keys (Actions) in map and return the one that has the highest value
+    // If same fish in multiple moves, do tiebreak (lowest row number of source position of penguin,
+    // then lowest column number if row numbers are the same, repeated for target position if source
+    // positions are the same)
+    // Returns a maximum number of fish
+
+    //Propagate Upward - Fish of current move + fish from calculated max move from lower level
+
+
+    //PSEUDOCODE
+    /**
+     * map(moves, fishValues)
+     *
+     * for all possible moves
+     *  put(move, getMinMaxAction(gt.lookAhead(move), numTurns - 1,
+     *      gt.getGameState().getCurrentPlayer().getColor())
+     *
+     * a is action that will allow for minmax given n turns ahead
+     * a.perform(...)
+
+
+  getMinMaxValue pseudocode
+//PSEUDOCODE
+/*
+ * gs = gt.getgamestate();
+ *
+ * if c is currentPlayer color
+ *  - return 0 if possible moves are only pass
+ *  - otherwise:
+ *   if numTurns > 1
+ *    for each possible move
+ *      recurse over lookahead with move, decrement numTurns because player's turn
+ *      return largest value out of all recursive lookaheads - made optimal minmax move in the
+ *        future
+ *
+ * if c is not currentPlayer color
+ *  for each possible move
+ *    recurse over lookahead with move, don't decrement numTurns because not player's turn
+ *    return smallest value out of all recursive lookaheads - made most preventative move as
+ *      enemy
+ *
+ * if numTurns == 1 && c is currentPlayer color [BASE CASE]
+ *  return value of move that has highest fish at target tile out of gs.getPossibleMoves
+ *
+ *
+
+ */

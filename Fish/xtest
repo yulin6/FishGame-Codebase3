@@ -2,3 +2,6 @@
 cd Common/
 java -cp /usr/share/java/junit4.jar:out/:out-test/:resources/ org.junit.runner.JUnitCore game.model.ModelTestSuite
 cd ../
+cd Player/
+java -cp /usr/share/java/junit4.jar:../Common/out/:../Common/out-test/:../Common/resources/ org.junit.runner.JUnitCore player.PlayerTestSuite
+cd ../

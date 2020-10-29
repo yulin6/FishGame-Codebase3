@@ -108,7 +108,7 @@ public class Xstate {
 
   }
 
-  private static BoardPosition generateMove(BoardPosition bp, DIRECTION d) {
+  public static BoardPosition generateMove(BoardPosition bp, DIRECTION d) {
     VERTICAL vertical;
     HORIZONTAL horizontal;
     switch (d) {
@@ -169,7 +169,7 @@ public class Xstate {
     return new BoardPosition(nextRow, nextCol);
   }
 
-  private enum DIRECTION {
+  public enum DIRECTION {
     N,
     NE,
     SE,
@@ -178,7 +178,7 @@ public class Xstate {
     NW
   }
 
-  private enum VERTICAL {
+  public enum VERTICAL {
     UP,
     DOWN
   }

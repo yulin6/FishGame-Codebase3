@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 
-import game.model.Board;
 import game.model.BoardPosition;
 import game.model.Penguin;
 
