@@ -103,8 +103,9 @@ public class GameTree {
    * is in a player-cannot-move state.
    */
   private void generateChildren() {
+    children = new HashMap<>();
     if(!this.state.movesPossible()) {
-      children = new HashMap<>();
+      return;
     }
     for(Action a: this.state.getPossibleActions()) {
       GameState nextState = new GameState(this.state);
