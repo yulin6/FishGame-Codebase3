@@ -7,11 +7,11 @@ JAVAFILES = \
 	Common/src/game/view/*.java \
 	Common/src/game/model/*.java \
 	Common/src/game/controller/*.java \
-	Player/player/*.java \
+	Player/src/player/*.java \
 
 TESTFILES = \
 	Common/test/game/model/*.java \
-	Player/player/*.java \
+	Player/test/player/*.java \
 
 default: clean sources testsources
 
