@@ -28,6 +28,10 @@ There are currently other additional files in Common/, including run.sh, which w
 a rendering of a game board. Additionally, other directories will be generated as output
 when running make on the project.
 
+Player/ contains the files relevant to programming the player component of the Fish game, which
+includes but is not limited to its source code and tests, including files such as Strategy.java and
+its interface.
+
 Roadmap:
 Common/src/ contains the plain Java source code written for this project
 divided by software component. The game state component is contained within
@@ -39,6 +43,11 @@ Currently, most files are contained within /model. Files related to the pieces i
 Tile.java, Hole.java, Board.java, IBoard.java, BoardSpace.java, BoardPosition.java, PixelPosition.java, etc.
 Files related to the game state include GameState.java, Penguin.java, Player.java, IState.java, etc.
 Files related to the game tree include GameTree.java, Action.java, Move.java, and Pass.java.
+
+Player/src also contains source code for the player component; it contains files including Strategy
+.java and its interface, IStrategy.java.
+
+Player/test contains unit tests for the source code in the Player/src folder.
 
 Planning/ contains documents describing the underlying structure of the Fish game
 in broader terms as conceptualized before implementing the game. It also contains
@@ -54,9 +63,14 @@ Assuming the current working directory is Common/:
 - "make clean" to clear project artifacts
 - "make" to generate a fresh build from the source code
 - "cd ../" to move up a directory to the top-level Fish/ directory
-- "./xtest" to run the test script (this will cd Common, run the tests, and return)
+- "./xtest" to run the test script (this will cd Common, run the tests, cd back, cd to Player, run
+the tests for that directory, then cd back again)
 - Test source code can be found within Common/test/, with further subdirectories
-depending on the software component the tests were written for.
-- Individual tests can be run with
+depending on the software component the tests were written for. Player/test contains unit tests for
+the player component.
+- Individual tests for Common can be run from inside Common/ with
 "java -cp /usr/share/java/junit4.jar:out/:out-test/:resources/ org.junit.runner.JUnitCore <classname>"
+where <classname> is the test class to run, properly prepended with the package it belongs to.
+- Individual tests for Player can be run from inside Player/ with
+"java -cp /usr/share/java/junit4.jar:../Common/out/:../Common/out-test/:../Common/resources/ org.junit.runner.JUnitCore <classname>"
 where <classname> is the test class to run, properly prepended with the package it belongs to.
