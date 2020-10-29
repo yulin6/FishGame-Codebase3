@@ -1,6 +1,7 @@
 package game.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -9,20 +10,31 @@ import java.util.function.Consumer;
  * which should be the state of the game immediately after all penguins have been placed onto
  * the game board. A GameTree stores the GameState object from which it was made, which
  * represent the current state at the root node of the tree; GameState is as described in
- * GameState.java. "Child" GameTree objects store GameState objects later in the game,
- * representing states after moves have been made.
+ * GameState.java. The children HashMap connects this GameTree nodes to all of the child
+ * GameTree nodes by associating the child with the action that produces the child.
+ *
+ * The constructor initializes the children mapping to null. It is generated once when
+ * getAllChidlren is called the first time. This is how we handle "lazily" generating the tree.
+ *
+ * During running of the game, there are three states that each GameTree node can represent:
+ * player-can-move, player-cannot-move, and game-is-over. If there are one or more Move Actions in
+ * the children map, this GameTree node is in a player-can-move state. If there is only one Pass
+ * Action in the children map, the GameTree node is in a player-cannot-move state. If this GameTree
+ * node represents a game-is-over status, this node is a leaf node, and the children map is empty.
  */
 public class GameTree {
   private final GameState state;
+  private HashMap<Action, GameTree> children;
 
   /**
    * Constructor for a GameTree. Takes an initial game state and makes a copy of it to be stored
    * as the root state for this tree. The GameTree represents a complete tree for a game state
-   * after which all penguins have been added.
+   * after which all penguins have been added. The children HashMap is initialized to null.
    * @param root The state that represents the root of this tree.
    */
   public GameTree(GameState root) {
     state = new GameState(root);
+    children = null;
   }
 
   /**
@@ -54,9 +66,8 @@ public class GameTree {
   }
 
   /**
-   * Applies a function to all children of the state represented by this GameTree, and returns a
-   * list of GameTree objects representing the child nodes of this node after the function is
-   * applied.
+   * Applies a function to all children of this GameTree node, and returns a list of GameTree
+   * nodes representing the child nodes of this node after the function is applied.
    * @param func Function to apply to the list of GameTree children of this root node; a
    *             Consumer is a generic interface representing functions accepting 1 input type
    *             and 0 output types (void functions).
@@ -70,20 +81,36 @@ public class GameTree {
   }
 
   /**
-   * Gets all the children of this GameTree's root node by applying each possible action to it and
-   * returns the list of children.
-   * The list of child GameTree objects is created by copy-constructing the current state and
-   * then performing an action on it, so the parent is unaffected.
+   * Gets all the children of this GameTree's root node.
+   * If the mapping of Actions to child GameTree nodes is null, this function first calls
+   * generateChildren() to generate the children mapping of Actions to child GameTree nodes. This
+   * should only happen once per GameTree object.
    * @return The list of GameTree objects representing the children of this GameTree.
    */
   private List<GameTree> getAllChildren() {
-    ArrayList<GameTree> childrenList = new ArrayList<>();
-    for (Action a : this.state.getPossibleActions()) {
+    if(children == null) {
+      generateChildren();
+    }
+    return new ArrayList<>(children.values());
+  }
+
+  /**
+   * Creates the mapping of Actions to child GameTree nodes for this GameTree node. If there are
+   * no moves possible on the board, the children mapping is empty, making this GameTree node a leaf
+   * node.
+   * If there are one or more Move Actions in the children map, this GameTree node is in a
+   * player-can-move state. If there is only one Pass Action in the children map, the GameTree node
+   * is in a player-cannot-move state.
+   */
+  private void generateChildren() {
+    if(!this.state.movesPossible()) {
+      children = new HashMap<>();
+    }
+    for(Action a: this.state.getPossibleActions()) {
       GameState nextState = new GameState(this.state);
       this.doAction(nextState, a);
-      childrenList.add(new GameTree(nextState));
+      children.put(a, new GameTree(nextState));
     }
-    return childrenList;
   }
 
   /**
