@@ -13,7 +13,7 @@ import game.model.Player;
  * Move-Response-Query is a JSON Object in the form of { "state" : State, "from" : Position,
  * "to" : Position }. State and Position are as defined in previous testing tasks.
  */
-public class MovResQue {
+public class MoveResponseQuery {
   private State state;
   private List<Integer> from;
   private List<Integer> to;

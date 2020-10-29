@@ -3,7 +3,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -22,7 +21,7 @@ public class Xtree {
     Gson gson = new GsonBuilder().create();
     String rawJson = parseInput(System.in);
 
-    MovResQue mrq = gson.fromJson(rawJson, MovResQue.class);
+    MoveResponseQuery mrq = gson.fromJson(rawJson, MoveResponseQuery.class);
     BoardPosition from = mrq.getFrom();
     BoardPosition to = mrq.getTo();
 
