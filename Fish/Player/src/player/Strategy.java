@@ -25,7 +25,8 @@ import game.model.Penguin;
  * after playing the specified number of turns if all other players pick one of the moves that
  * minimize the player's gain.
  */
-public class Strategy implements IStrategy{
+public class Strategy implements IStrategy {
+
   @Override
   public BoardPosition placePenguin(GameTree gt) {
     GameState gs = gt.getGameState();

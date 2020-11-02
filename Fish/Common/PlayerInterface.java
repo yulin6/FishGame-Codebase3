@@ -1,3 +1,7 @@
+/*
+ * Deprecated. See ../Player/src/IPlayer.java
+ */
+
 /**
  * Interface for a player component to communicate with the referee.
  * In order to not expose internal objects of the Fish game to players, these functions return
