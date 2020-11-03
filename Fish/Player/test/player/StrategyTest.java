@@ -109,7 +109,6 @@ public class StrategyTest {
     gt = new GameTree(state1);
     gtFull = new GameTree(trivialGs);
 
-
     minMaxTestTiles = new ArrayList<>();
 
     ArrayList<Integer> firstRow = new ArrayList<>();

@@ -54,4 +54,16 @@ public interface IPlayer {
    */
   void finishPlaying();
 
+  /**
+   * Returns the age of the player represented by the player component as an integer.
+   * @return The age value of the player.
+   */
+  int getAge();
+
+  /**
+   * Returns the assigned color of the player for its game of Fish.
+   * @return The color of the player (and its penguins).
+   */
+  Penguin.PenguinColor getColor();
+
 }

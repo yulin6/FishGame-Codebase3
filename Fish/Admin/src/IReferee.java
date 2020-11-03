@@ -38,7 +38,7 @@ public interface IReferee {
   /**
    * Returns the list of winning players from the game (all player(s) that have the greatest
    * number of accumulated fish during the game's playing).
-   * @return The list of winning players represented as player component objects (IPlayer objects).
+   * @return The list of winning players represented as player component objects (player.IPlayer objects).
    */
   List<IPlayer> getWinningPlayers();
 

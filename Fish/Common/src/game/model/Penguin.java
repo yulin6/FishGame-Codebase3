@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -106,8 +107,23 @@ public class Penguin {
 
     int tieCode;
 
+    /**
+     * Constructor for PenguinColor items, which are associated with a tie-code, as explained in
+     * the PenguinColor enum description.
+     * @param code The tie code of the color.
+     */
     PenguinColor(int code) {
       tieCode = code;
+    }
+
+    /**
+     * Returns a color at random from the colors represented by this enum.
+     * @return The color (one of black, brown, red, and white).
+     */
+    public static PenguinColor getRandomColor() {
+      Random rng = new Random();
+      int randnum = rng.nextInt(PenguinColor.values().length);
+      return PenguinColor.values()[randnum];
     }
   }
 }

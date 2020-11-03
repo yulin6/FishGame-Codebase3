@@ -156,6 +156,11 @@ public class GameState implements IState {
 
   @Override
   public void removePlayer(Player p) {
+    for (BoardPosition bp : penguins.keySet()) {
+      if (penguins.get(bp).getColor() == p.getColor()) {
+        penguins.remove(bp);
+      }
+    }
     players.remove(p);
   }
 
@@ -218,6 +223,11 @@ public class GameState implements IState {
     }
 
     return actions;
+  }
+
+  @Override
+  public HashSet<Player> getPlayers() {
+    return players;
   }
 
   /**

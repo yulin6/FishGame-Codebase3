@@ -2,6 +2,7 @@ package game.model;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Interface to handle varying representation of game states.
@@ -86,6 +87,12 @@ public interface IState {
    * @return a list of all the Actions possible
    */
   ArrayList<Action> getPossibleActions();
+
+  /**
+   * Returns the set of players in the game.
+   * @return The complete set of Player objects in the game in a HashSet.
+   */
+  HashSet<Player> getPlayers();
 
 
 }

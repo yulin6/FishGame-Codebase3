@@ -70,4 +70,19 @@ public class Player implements IPlayer {
       this.color = null;
     }
   }
+
+  @Override
+  public int getAge() {
+    return age;
+  }
+
+  @Override
+  public Penguin.PenguinColor getColor() {
+    if (this.color == null) {
+      throw new IllegalArgumentException("Cannot get color of a player not playing a game.");
+    }
+    else {
+      return color;
+    }
+  }
 }

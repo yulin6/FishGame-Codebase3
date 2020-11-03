@@ -7,7 +7,8 @@ import game.model.ModelTestSuite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         ModelTestSuite.class,
-        PlayerTestSuite.class
+        PlayerTestSuite.class,
+        AdminTestSuite.class
 })
 
 public class FullTestSuite {
