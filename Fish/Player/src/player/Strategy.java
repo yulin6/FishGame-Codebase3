@@ -60,13 +60,13 @@ public class Strategy implements IStrategy {
     }
     for(Action a : actions) {
       int maxFish;
+      Move m = (Move)a;
+      BoardPosition source = m.getStart();
       if(numTurns > 1) {
-        maxFish = getMinMaxValue(gt.lookAhead(a), numTurns - 1,
-                gt.getGameState().getCurrentPlayer().getColor());
+        maxFish = gs.getBoard().getSpace(source).getNumFish() + getMinMaxValue(gt.lookAhead(a),
+              numTurns - 1, gt.getGameState().getCurrentPlayer().getColor());
       }
       else {
-        Move m = (Move)a;
-        BoardPosition source = m.getStart();
         maxFish = gs.getBoard().getSpace(source).getNumFish();
       }
       actionToFish.put(a, maxFish);
@@ -79,7 +79,6 @@ public class Strategy implements IStrategy {
     else {
       return highestActions.get(0);
     }
-
   }
 
   /**
@@ -202,9 +201,10 @@ public class Strategy implements IStrategy {
     ArrayList<Action> possibleMoves = gs.getPossibleActions();
     IBoard b = gs.getBoard();
     numTurns = findMax ? numTurns - 1 : numTurns;
-    for(Action a : possibleMoves) {
+
+    for (Action a : possibleMoves) {
       int potential = getMinMaxValue(gt.lookAhead(a), numTurns, c);
-      if(findMax) {
+      if (findMax) {
         Move m = (Move)a;
         int now = b.getSpace(m.getStart()).getNumFish();
         if(now + potential > current) {
@@ -218,6 +218,7 @@ public class Strategy implements IStrategy {
       }
     }
     return current;
+
   }
 
   /**

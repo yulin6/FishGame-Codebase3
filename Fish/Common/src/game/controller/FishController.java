@@ -59,6 +59,27 @@ public class FishController {
   }
 
   /**
+   * Alternative constructor for a controller that takes a GameState directly.
+   * @param gs GameState to make controller with.
+   */
+  public FishController(GameState gs) {
+    state = gs;
+
+    this.frame = new FishFrame(gs.getBoard().getRows(), gs.getBoard().getCols());
+    this.frame.addPanel(new FishPanel());
+
+    this.frame.setController(this);
+  }
+
+  /**
+   * Getter for the frame of this controller.
+   * @return The frame, which can be used to display the state.
+   */
+  public FishFrame getView() {
+    return this.frame;
+  }
+
+  /**
    * Constructs a board with the specified parameters, holes, and min number of 1-fish tiles.
    * @param rows Number of rows to make the board with.
    * @param cols Number of columns to make the board with.

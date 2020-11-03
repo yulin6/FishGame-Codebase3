@@ -1,0 +1,2 @@
+#!/bin/bash
+java -cp Other/out/:Other/dep/gson-2.8.6.jar:../Fish/Common/resources Xstrategy
