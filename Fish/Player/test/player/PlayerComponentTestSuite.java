@@ -6,8 +6,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         StrategyTest.class,
-        PlayerTest.class
+        PlayerComponentTest.class
 })
 
-public class PlayerTestSuite {
+public class PlayerComponentTestSuite {
 }

@@ -16,9 +16,10 @@ public interface IStrategy {
   BoardPosition placePenguin(GameTree gt);
 
   /**
-   * Given a number n > 0, returns the move for the performing player that will allow for a
-   * minimal-maximal gain after looking ahead n turns for the player. The performing player is the
-   * currentPlayer in the GameState contained in the root of the given GameTree.
+   * Given a number n > 0, returns the Action (a Move, or Pass if no valid Move) for the performing
+   * player that will allow for a minimal-maximal gain after looking ahead n turns for the player.
+   * The performing player is the currentPlayer in the GameState contained in the root of the given
+   * GameTree.
    * @param gt The GameTree used to calculate the minimal-maximal gain.
    * @param numTurns The number of turns for the performing player to look ahead
    * @return The action that will allow for the minimal-maximal gain after looking ahead numTurns

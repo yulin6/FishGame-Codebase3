@@ -1,1 +1,1 @@
-// see src/player/Player.java
+// see src/player/PlayerComponent.java
