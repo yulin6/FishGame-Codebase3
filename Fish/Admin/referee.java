@@ -1,1 +1,1 @@
-// see src/Referee.java
+// see src/referee/Referee.java
