@@ -1,3 +1,5 @@
+package referee;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,7 +18,7 @@ import player.IPlayer;
 import player.PlayerComponent;
 
 /**
- * Class implementing a referee component for a game of Fish. As specified in the IReferee
+ * Class implementing a referee component for a game of Fish. As specified in the referee.IReferee
  * interface, a referee component should:
  * - accept a list of players for a game to be run
  * - notify players that a game is beginning and ending
@@ -30,7 +32,7 @@ import player.PlayerComponent;
  *      phase of communications.
  * - report outcome of the game to other components (tournament manager, etc.)
  *
- * The data representation for a Referee includes:
+ * The data representation for a referee.Referee includes:
  * - a mapping of penguin colors to player components
  * - a GameTree representing the current state of the overseen game
  * - a list of player components that won the game (empty at initialization, filled at game end)
@@ -57,9 +59,9 @@ public class Referee implements IReferee {
   private static final int TEST_SEED = 100;
 
   /**
-   * Constructor for a Referee that takes a list of players, a number of rows and a number of
+   * Constructor for a referee.Referee that takes a list of players, a number of rows and a number of
    * columns for a game board, and sets up a game for which the players will play in, with the
-   * Referee handling all interactions between players and the game.
+   * referee.Referee handling all interactions between players and the game.
    * @param players The list of players. Assumes that the list of players given is in ascending
    *                order of player age.
    * @param rows the number of rows the referee is instructed to create the board with
@@ -84,7 +86,7 @@ public class Referee implements IReferee {
   /**
    * Alternative constructor for Referees used for testing. Accepts a fixed GameState instead of
    * various parameters with which to generate a new game.
-   * @param gs GameState to make a new GameTree out of to represent this Referee's game.
+   * @param gs GameState to make a new GameTree out of to represent this referee.Referee's game.
    */
   public Referee(GameState gs) {
     this.playerMap = new HashMap<>();
@@ -247,8 +249,7 @@ public class Referee implements IReferee {
       }
       else {
         try {
-          GameTree child = gt.lookAhead(currTurn);
-          this.gt = child;
+          this.gt = gt.lookAhead(currTurn);
         } catch (IllegalStateException ise) {
           // player made an illegal move
           invalidPlayer(gs, currPlayer, currPComponent, cheaters);
@@ -266,12 +267,12 @@ public class Referee implements IReferee {
   /**
    * Handles the response to either failing or invalid behavior by removing the player from all
    * of the places where it is used, from the GameState to the data representations in the
-   * Referee. Moves the player component into the provided list (failures/cheaters).
+   * referee.Referee. Moves the player component into the provided list (failures/cheaters).
    * Decrements the number of players actively playing in the game.
    * @param gs The GameState to remove the player (its penguins) from.
    * @param p The Player object to remove from the GameState.
    * @param pcomp The component (object implementing IPLayer interface) to mark as failing or
-   *              cheating in this Referee.
+   *              cheating in this referee.Referee.
    * @param list The list of player components (should be failures/cheaters) to add the component
    *            to.
    */
@@ -283,7 +284,7 @@ public class Referee implements IReferee {
 
   /**
    * Looks through the state of the game to identify the winning players and add them to the list
-   * of winning players in this Referee.
+   * of winning players in this referee.Referee.
    */
   private void setWinningPlayers() {
     int maxFish = 0;
@@ -346,6 +347,10 @@ public class Referee implements IReferee {
       throw new IllegalArgumentException("Can't check the list of cheaters when the game hasn't " +
               "ended.");
     }
+  }
+
+  public GameState getGameState() {
+    return this.gt.getGameState();
   }
 
   /**

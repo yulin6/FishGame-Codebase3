@@ -21,8 +21,8 @@ import game.view.FishPanel;
  * used to test the rendering of just the game board.
  */
 public class FishController {
-  private IState state;
-  private FishFrame frame;
+  private final IState state;
+  private final FishFrame frame;
 
   /**
    * Constructor for a FishController for a board with random fish amounts and fixed holes.

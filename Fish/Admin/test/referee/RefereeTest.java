@@ -1,17 +1,16 @@
+package referee;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.reflect.Array;
-import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
 import game.model.Board;
-import game.model.BoardPosition;
 import game.model.GameState;
-import game.model.GameTree;
+import game.model.IBoard;
 import game.model.Penguin;
 import game.model.Player;
 import player.FailingPlayerComponent;
@@ -24,7 +23,7 @@ import static org.junit.Assert.*;
 /**
  * Class to test the methods of the implementation of the referee component for a game of Fish.
  * Should be able to perform all the functionality described in the referee interface
- * (../src/IReferee.java).
+ * (../src/referee.IReferee.java).
  */
 public class RefereeTest {
   Player p1;
@@ -84,6 +83,7 @@ public class RefereeTest {
 
   @Test
   public void runTrivialGame() {
+    // 4 players & 8 tiles -> no moves possible and all players tie to win w/0 fish
     Referee randomRef = new Referee(pcomponents, 2, 4);
     randomRef.notifyGameStart();
     randomRef.runGame();
@@ -92,13 +92,15 @@ public class RefereeTest {
   }
 
   @Test
-  public void runCleanGame() {
+  public void runFullCleanGame() {
     Referee randomRef = new Referee(pcomponents, 5, 5);
     randomRef.notifyGameStart();
     randomRef.runGame();
     randomRef.notifyGameEnd();
     assertEquals(0, randomRef.getCheaters().size());
     assertEquals(0, randomRef.getFailures().size());
+    assertNotEquals(0, randomRef.getWinningPlayers().size());
+    assertTrue(randomRef.getWinningPlayers().size() <= pcomponents.size());
   }
 
   @Test
@@ -220,5 +222,28 @@ public class RefereeTest {
     ref.runGame();
     ref.notifyGameEnd();
     assertEquals(1, ref.getWinningPlayers().size());
+  }
+
+  @Test
+  public void knownOutcomeRunTiedGame() {
+    List<Integer> r1 = Arrays.asList(2, 3, 1, 2, 1);
+    List<Integer> r2 = Arrays.asList(2, 0, 2, 0, 3);
+    List<Integer> r3 = Arrays.asList(4, 0, 0, 3);
+
+    List<List<Integer>> rows = Arrays.asList(r1, r2, r3);
+
+    IBoard b = new Board(3, 5, rows);
+    Player p1 = new Player(5, Penguin.PenguinColor.RED);
+    Player p2 = new Player(6, Penguin.PenguinColor.BLACK);
+    HashSet<Player> players = new HashSet<>(Arrays.asList(p1, p2));
+
+    GameState gs = new GameState(players, b);
+    Referee ref = new Referee(gs);
+    ref.runGame();
+    ref.notifyGameEnd();
+
+    assertEquals(2, ref.getWinningPlayers().size());
+    assertEquals(0, ref.getCheaters().size());
+    assertEquals(0, ref.getFailures().size());
   }
 }

@@ -9,14 +9,13 @@ import game.model.Tile;
 
 /**
  * Class to wrap JFrame to represent the board's frame.
- * TODO: rework into a GameFrame
  */
 public class FishFrame extends JFrame {
   private FishController controller;
   private FishPanel panel;
-  private int windowWidth;
-  private int windowHeight;
-  private double ROW_TO_HEIGHT_RATIO = 2.0/3.0;
+  private final int windowWidth;
+  private final int windowHeight;
+  private static final double TILE_HEIGHTS_PER_ROW = 0.5;
 
   /**
    * Constructs a new BoardFrame. The two integer values passed in are used to size the window based
@@ -29,7 +28,8 @@ public class FishFrame extends JFrame {
     super();
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     windowWidth = (int) (cols * Tile.COLUMN_WIDTH + Tile.R_OFFSET + Tile.WIDTH);
-    windowHeight = (int) (rows * Tile.HEIGHT * ROW_TO_HEIGHT_RATIO + Tile.D_OFFSET);
+    windowHeight =
+            (int) (TILE_HEIGHTS_PER_ROW * rows * Tile.HEIGHT + Tile.HEIGHT + Tile.D_OFFSET);
   }
 
   /**
