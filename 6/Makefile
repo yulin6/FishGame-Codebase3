@@ -7,7 +7,8 @@ JAVAFILES = \
     ../Fish/Common/src/game/model/*.java \
     ../Fish/Common/src/game/controller/*.java \
     ../Fish/Common/src/game/view/*.java \
-    ../4/Other/src/*.java
+    ../4/Other/src/*.java \
+    ../Fish/Player/src/player/*.java \
 
 default: sources
 
