@@ -13,6 +13,7 @@ import game.model.GameTree;
 import game.model.Penguin;
 import game.model.Player;
 import player.IPlayer;
+import player.PlayerComponent;
 
 /**
  * Class implementing a referee component for a game of Fish. As specified in the IReferee
@@ -52,6 +53,9 @@ public class Referee implements IReferee {
   private final int penguinsPerPlayer;
   private static final int PENGUIN_MAX = 6;
 
+  // Entirely arbitrary value to use in constructor of PlayerComponent for testing
+  private static final int TEST_SEED = 100;
+
   /**
    * Constructor for a Referee that takes a list of players, a number of rows and a number of
    * columns for a game board, and sets up a game for which the players will play in, with the
@@ -70,6 +74,26 @@ public class Referee implements IReferee {
               " number of players");
     }
     GameState gs = makeNewState(players, rows, cols);
+    this.gt = new GameTree(gs);
+    this.winners = new ArrayList<>();
+    this.failures = new ArrayList<>();
+    this.cheaters = new ArrayList<>();
+    this.phase = GamePhase.SETUP;
+  }
+
+  /**
+   * Alternative constructor for Referees used for testing. Accepts a fixed GameState instead of
+   * various parameters with which to generate a new game.
+   * @param gs GameState to make a new GameTree out of to represent this Referee's game.
+   */
+  public Referee(GameState gs) {
+    this.playerMap = new HashMap<>();
+    for (Player p : gs.getPlayers()) {
+      playerMap.put(p.getColor(), new PlayerComponent(p.getAge(), TEST_SEED));
+      playerMap.get(p.getColor()).startPlaying(p.getColor());
+    }
+    this.numPlayers = gs.getPlayers().size();
+    this.penguinsPerPlayer = PENGUIN_MAX - this.numPlayers;
     this.gt = new GameTree(gs);
     this.winners = new ArrayList<>();
     this.failures = new ArrayList<>();
@@ -124,15 +148,17 @@ public class Referee implements IReferee {
     int minTiles = penguinsPerPlayer * numPlayers;
 
     Random rng = new Random();
-    int numHoles = rng.nextInt(rows * cols - minTiles);
-
     ArrayList<BoardPosition> holes = new ArrayList<>();
-    for (int i = 0; i < numHoles; i++) {
-      int randRow = rng.nextInt(rows);
-      int randCol = rng.nextInt(cols);
-      BoardPosition randPos = new BoardPosition(randRow, randCol);
-      if (!holes.contains(randPos)) {
-        holes.add(randPos);
+
+    if (rows * cols - minTiles > 0) {
+      int numHoles = rng.nextInt(rows * cols - minTiles);
+      for (int i = 0; i < numHoles; i++) {
+        int randRow = rng.nextInt(rows);
+        int randCol = rng.nextInt(cols);
+        BoardPosition randPos = new BoardPosition(randRow, randCol);
+        if (!holes.contains(randPos)) {
+          holes.add(randPos);
+        }
       }
     }
 
@@ -160,7 +186,6 @@ public class Referee implements IReferee {
       this.phase = GamePhase.PLACING;
       doPlacingPhase();
       doPlayingPhase();
-      notifyGameEnd();
     }
   }
 
@@ -263,6 +288,8 @@ public class Referee implements IReferee {
   private void setWinningPlayers() {
     int maxFish = 0;
 
+    // Can never get a player that has failured or cheated here because they are removed from the
+    // game state as well
     for (Player p : this.gt.getGameState().getPlayers()) {
       IPlayer pcomp = playerMap.get(p.getColor());
       int numFish = p.getFish();

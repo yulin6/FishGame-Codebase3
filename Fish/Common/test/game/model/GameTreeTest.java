@@ -165,6 +165,7 @@ public class GameTreeTest {
   @Test
   public void applyAllChildren() {
     Consumer<List<GameTree>> testConsumer = gameTrees -> {
+      System.out.println("Test \"applyAllChildren\" w/printing as func to apply");
       for (GameTree g : gameTrees) {
         System.out.println("Is m2 Legal: " + g.isLegal(g.getGameState(), m2));
         System.out.println("Is m3 Legal: " + g.isLegal(g.getGameState(), m3));

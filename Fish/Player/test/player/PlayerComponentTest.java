@@ -3,7 +3,6 @@ package player;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -14,6 +13,7 @@ import game.model.BoardPosition;
 import game.model.GameState;
 import game.model.GameTree;
 import game.model.Move;
+import game.model.Pass;
 import game.model.Penguin;
 import game.model.Player;
 
@@ -44,6 +44,7 @@ public class PlayerComponentTest {
   int rows = 6;
   int cols = 4;
   int seed = 24;
+  int seed2 = 99;
   List<Integer> r1;
   List<Integer> r2;
   List<Integer> r3;
@@ -94,9 +95,6 @@ public class PlayerComponentTest {
     GameState gs = new GameState(players, b);
 
     gt = new GameTree(gs);
-
-
-
   }
 
   @Test
@@ -163,21 +161,64 @@ public class PlayerComponentTest {
     Move m = new Move(new BoardPosition(4, 2), new BoardPosition(1, 0), p1);
     assertEquals(m, a1);
     a1.perform(gt.getGameState());
+
+    Action a2 = pc2.takeTurn(gt);
+    m = new Move(new BoardPosition(3, 2), new BoardPosition(1, 2), p2);
+    assertEquals(m, a2);
   }
 
   @Test
   public void takeTurnPass() {
+    List<Integer> r1 = Arrays.asList(1, 2, 3);
+    List<Integer> r2 = Arrays.asList(4, 5, 1);
+    List<Integer> r3 = Arrays.asList(2, 3, 4);
+    List<List<Integer>> rows = Arrays.asList(r1, r2, r3);
+    Board b2 = new Board(3, 3, rows);
 
+    Player p1 = new Player(0, Penguin.PenguinColor.RED);
+    Player p2 = new Player(1, Penguin.PenguinColor.BROWN);
+    Player p3 = new Player(2, Penguin.PenguinColor.BLACK);
+
+    HashSet<Player> pset = new HashSet<>(Arrays.asList(p1, p2, p3));
+    GameState gs2 = new GameState(pset, b2);
+    gs2.placeAvatar(new BoardPosition(0, 0), p1);
+    gs2.placeAvatar(new BoardPosition(1, 1), p1);
+    gs2.placeAvatar(new BoardPosition(2, 2), p1);
+
+    gs2.placeAvatar(new BoardPosition(0, 1), p2);
+    gs2.placeAvatar(new BoardPosition(1, 0), p2);
+    gs2.placeAvatar(new BoardPosition(2, 0), p2);
+
+    gs2.placeAvatar(new BoardPosition(2, 1), p3);
+    gs2.placeAvatar(new BoardPosition(1, 2), p3);
+    gs2.placeAvatar(new BoardPosition(0, 2), p3);
+
+    GameTree gt2 = new GameTree(gs2);
+
+    PlayerComponent pred = new PlayerComponent(p1.getAge(), seed2);
+    pred.startPlaying(Penguin.PenguinColor.RED);
+    Action stratAction = pred.takeTurn(gt2);
+    Action expectedPass = new Pass(p1);
+    assertEquals(expectedPass, stratAction);
   }
 
   @Test
   public void finishPlaying() {
     pc1.startPlaying(Penguin.PenguinColor.WHITE);
     assertEquals(Penguin.PenguinColor.WHITE, pc1.getColor());
+    pc1.finishPlaying();
+
+    try {
+      pc1.finishPlaying();
+    } catch (IllegalArgumentException iae) {
+      // expect an exception here; ignore and allow to pass for test to succeed
+    }
   }
 
   @Test (expected = IllegalArgumentException.class)
   public void finishPlayingIAE() {
+    pc2.startPlaying(Penguin.PenguinColor.RED);
+    pc2.finishPlaying();
     pc1.finishPlaying();
   }
 

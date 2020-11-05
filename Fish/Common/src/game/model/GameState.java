@@ -156,7 +156,7 @@ public class GameState implements IState {
 
   @Override
   public void removePlayer(Player p) {
-    for (BoardPosition bp : penguins.keySet()) {
+    for (BoardPosition bp : new HashSet<BoardPosition>(penguins.keySet())) {
       if (penguins.get(bp).getColor() == p.getColor()) {
         penguins.remove(bp);
       }

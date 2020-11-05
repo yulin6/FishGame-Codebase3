@@ -15,6 +15,9 @@ import game.model.Move;
 import game.model.Pass;
 import game.model.Player;
 
+/**
+ * Xtree testing harness for milestone 5.
+ */
 public class Xtree {
 
   public static void main(String[] args) {
@@ -189,53 +192,3 @@ public class Xtree {
     return tiebreakingAction;
   }
 }
-
-/*
-
-Testing Task Create a test harness named xtree
-The harness consumes its JSON input from STDIN and produces its results to STDOUT.
-Create three tests and place them in the specified folder.
-
-The tests are formulated as pairs of files: <n>-in.json, the input, and <n>-out.json,
-the expected result, for an integer <n> greater or equal to 1.
-
-Its inputs are objects with three fields:
-
-    Move-Response-Query is
-     { "state" : State,
-       "from" : Position,
-       "to" : Position }
-
-    INTERPRETATION The object describes the current state and the move that the
-    currently active player picked.
-    CONSTRAINT The object is invalid, if the specified move is illegal in the given state.
-
-Well-formed and Valid
-You may assume that all inputs for your test harnesses will be well-formed JSON
-and valid according to the homework descriptions.
-
-Its expected output is the action that the next player can take to get a penguin to a
-place that neighbors the one that the first player just conquered:
-
-    Action is
-    either
-     false
-    or
-     [ Position, Position ]
-
-    INTERPRETATION The array describes the opponent's move from the first
-    position to the second; if the desired kind of move isn't possible, the
-    harness delivers false.
-
-The tie breaking needs a refinement for cases when two distinct penguins can move to the same spot:
-if more than one position satisfies the "closeness" condition, a tie breaker algorithm picks
-by the top-most row of the "from" position, the left-most column of the "from" position,
-the top-most row of the "to" position, and the left-most column of the "to" position---in exactly this order.
-
-Like in 4 — The Game Tree, the neighboring tiles are searched in the following order:
-North, NorthEast, SouthEast, South, SouthWest, and NorthWest.
-
-Can you use the query functionality from 4 — The Game Tree
-to implement this evaluation of the game tree?
-
- */
