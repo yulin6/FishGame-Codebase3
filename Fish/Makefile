@@ -8,10 +8,12 @@ JAVAFILES = \
 	Common/src/game/model/*.java \
 	Common/src/game/controller/*.java \
 	Player/src/player/*.java \
+    Admin/src/referee/*.java \
 
 TESTFILES = \
 	Common/test/game/model/*.java \
 	Player/test/player/*.java \
+    Admin/test/referee/*.java \
 
 default: clean sources testsources
 
