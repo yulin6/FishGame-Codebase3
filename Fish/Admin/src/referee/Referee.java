@@ -32,7 +32,7 @@ import player.PlayerComponent;
  *      phase of communications.
  * - report outcome of the game to other components (tournament manager, etc.)
  *
- * The data representation for a referee.Referee includes:
+ * The data representation for a Referee includes:
  * - a mapping of penguin colors to player components
  * - a GameTree representing the current state of the overseen game
  * - a list of player components that won the game (empty at initialization, filled at game end)
@@ -59,9 +59,9 @@ public class Referee implements IReferee {
   private static final int TEST_SEED = 100;
 
   /**
-   * Constructor for a referee.Referee that takes a list of players, a number of rows and a number of
+   * Constructor for a Referee that takes a list of players, a number of rows and a number of
    * columns for a game board, and sets up a game for which the players will play in, with the
-   * referee.Referee handling all interactions between players and the game.
+   * Referee handling all interactions between players and the game.
    * @param players The list of players. Assumes that the list of players given is in ascending
    *                order of player age.
    * @param rows the number of rows the referee is instructed to create the board with
@@ -322,7 +322,7 @@ public class Referee implements IReferee {
       return this.winners;
     }
     else {
-      throw new IllegalArgumentException("Can't check the list of cheaters when the game hasn't " +
+      throw new IllegalArgumentException("Can't check the list of winners when the game hasn't " +
               "ended.");
     }
   }
@@ -333,7 +333,7 @@ public class Referee implements IReferee {
       return this.failures;
     }
     else {
-      throw new IllegalArgumentException("Can't check the list of cheaters when the game hasn't " +
+      throw new IllegalArgumentException("Can't check the list of failures when the game hasn't " +
               "ended.");
     }
   }

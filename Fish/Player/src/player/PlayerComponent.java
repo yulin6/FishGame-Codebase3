@@ -30,7 +30,7 @@ public class PlayerComponent implements IPlayer {
   private final int age;
   private static final int MIN_LOOKAHEAD = 1;
   private static final int MAX_LOOKAHEAD = 3;
-  private Random rng;
+  private final Random rng;
 
   /**
    * Creates a new PlayerComponent with the existing Strategy implementation of a strategy

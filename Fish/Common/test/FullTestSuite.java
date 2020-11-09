@@ -3,6 +3,7 @@ import org.junit.runners.Suite;
 
 import game.model.ModelTestSuite;
 import player.PlayerComponentTestSuite;
+import referee.AdminTestSuite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({

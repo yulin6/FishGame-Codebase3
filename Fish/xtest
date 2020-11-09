@@ -1,9 +1,9 @@
 #!/bin/bash
-cd Common/
+cd Common/ || exit
 java -cp /usr/share/java/junit4.jar:out/:out-test/:resources/ org.junit.runner.JUnitCore game.model.ModelTestSuite
 cd ../
-cd Player/
+cd Player/ || exit
 java -cp /usr/share/java/junit4.jar:../Common/out/:../Common/out-test/:../Common/resources/ org.junit.runner.JUnitCore player.PlayerComponentTestSuite
 cd ../
-cd Admin/
+cd Admin/ || exit
 java -cp /usr/share/java/junit4.jar:../Common/out/:../Common/out-test/:../Common/resources/ org.junit.runner.JUnitCore referee.AdminTestSuite

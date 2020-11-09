@@ -170,6 +170,9 @@ public class Board implements IBoard {
 
   /**
    * Sets tiles on the board randomly to 1-fish tiles if the amount is insufficient.
+   * Will terminate because contract checking is performed in the constructor, ensuring that the
+   * number of tiles that need to be set to 1-fish tiles is less than or equal to the amount of
+   * tiles generated, and eventually these tiles will be randomly selected and set to have 1 fish.
    * @param numOneFish the amount of tiles that are currently 1-fish tiles.
    * @param minTiles the minimum amount of tiles that need to be 1-fish tiles.
    */
