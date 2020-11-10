@@ -39,7 +39,8 @@ Sorted by priority, highest to lowest being top to bottom. Generally, lower-leve
 - Investigate our exe failing against staff tests.
 - Investigate our tests against staff executable.
 
-[ ] Refactor definition and implementation of GameTree in order to better represent a recursive data structure.
+[X] Refactor definition and implementation of GameTree in order to better represent a recursive
+ data structure.
 - Need to elaborate and correct the game tree definition, which did not have a recursive tree shape.
 - Need to be clear about how the generation of a tree is suspended.
 - Need to be clear about if the game tree node can represent all three kinds of nodes: game-is
@@ -47,9 +48,9 @@ Sorted by priority, highest to lowest being top to bottom. Generally, lower-leve
  obvious.
 - Need to explain first query functionality in signature/purpose statement clearly.
 
-[ ] Inspect failing integration tests for Milestone 5.
-- Our tests failed against the staff executable.
+[X] Inspect failing integration tests for Milestone 5.
+- Find out why tests failed against the staff executable.
 
-[ ] Add documentation to Strategy for an unmentioned case.
+[X] Add documentation to Strategy for an unmentioned case where a player lacks moves.
 - Need to specify what happens when the current player does not have valid moves in the purpose
  statement of choosing turn action.
