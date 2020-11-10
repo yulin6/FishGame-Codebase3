@@ -7,7 +7,7 @@ Sorted by priority, highest to lowest being top to bottom. Generally, lower-leve
     - The tile cannot be a hole/none, a hole is a place on the board that is not a tile.
     - The tiles all have the same color, it is the penguin which goes on the tile has different colors.
 
-[ ] Perform refactor of board for data definition and interpretation, then correct its methods
+[X] Perform refactor of board for data definition and interpretation, then correct its methods
 - Need sufficient interpretation of the board, more elaboration on Hole and Tile within a board.
     - The interpretation need to include how `row` and `column` from the game board world are
  represented/interpreted.
@@ -26,10 +26,10 @@ Sorted by priority, highest to lowest being top to bottom. Generally, lower-leve
     - The function would get the starting position and add it to the validTiles ArrayList six time due to the for loop in helper methods.
     - The helper methods are not guarantee to stop when they reach the edge of the board.
 
-[ ] Inspect failing integration tests for Milestone 3.
+[X] Inspect failing integration tests for Milestone 3.
 - Our executable failed vs staff tests.
 
-[ ] Add to the data interpretation of GameState(s) and add more testing to cover more turn-taking
+[] Add to the data interpretation of GameState(s) and add more testing to cover more turn-taking
  scenarios.
 - Need a signature for functionality to create game states.
 - Need a purpose statement for functionality to create game states.

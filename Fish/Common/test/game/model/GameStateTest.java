@@ -163,6 +163,54 @@ public class GameStateTest {
     assertEquals(p4.getColor(), state1.getPenguinAtPosn(placement4To).getColor());
   }
 
+  @Test
+  public void fullPlayerRotation() {
+    BoardPosition p1f = new BoardPosition(0, 0);
+    BoardPosition p2f = new BoardPosition(1, 1);
+    BoardPosition p3f = new BoardPosition(2, 2);
+    BoardPosition p4f = new BoardPosition(3, 3);
+    BoardPosition p1t = new BoardPosition(4, 0);
+    BoardPosition p2t = new BoardPosition(0, 1);
+    BoardPosition p3t = new BoardPosition(6, 2);
+    BoardPosition p4t = new BoardPosition(1, 3);
+    BoardPosition p1t2 = new BoardPosition(4, 1);
+    BoardPosition p2t2 = new BoardPosition(2, 1);
+    BoardPosition p3t2 = new BoardPosition(7, 2);
+    BoardPosition p4t2 = new BoardPosition(0, 3);
+
+    state2.placeAvatar(p1f, p1);
+    state2.placeAvatar(p2f, p2);
+    state2.placeAvatar(p3f, p3);
+    state2.placeAvatar(p4f, p4);
+
+    assertEquals(state2.getCurrentPlayer(), p3);
+    state2.moveAvatar(p3t, p3f, p3);
+    state2.setNextPlayer();
+    assertEquals(state2.getCurrentPlayer(), p2);
+    state2.moveAvatar(p2t, p2f, p2);
+    state2.setNextPlayer();
+    assertEquals(state2.getCurrentPlayer(), p1);
+    state2.moveAvatar(p1t, p1f, p1);
+    state2.setNextPlayer();
+    assertEquals(state2.getCurrentPlayer(), p4);
+    state2.moveAvatar(p4t, p4f, p4);
+    state2.setNextPlayer();
+    // have cycled through each player once; repeat
+    assertEquals(state2.getCurrentPlayer(), p3);
+    state2.moveAvatar(p3t2, p3t, p3);
+    state2.setNextPlayer();
+    assertEquals(state2.getCurrentPlayer(), p2);
+    state2.moveAvatar(p2t2, p2t, p2);
+    state2.setNextPlayer();
+    assertEquals(state2.getCurrentPlayer(), p1);
+    state2.moveAvatar(p1t2, p1t, p1);
+    state2.setNextPlayer();
+    assertEquals(state2.getCurrentPlayer(), p4);
+    state2.moveAvatar(p4t2, p4t, p4);
+    state2.setNextPlayer();
+    assertEquals(state2.getCurrentPlayer(), p3);
+  }
+
   @Test(expected = IllegalArgumentException.class)
   public void testMoveAvatarOOB() {
     BoardPosition placementFrom = new BoardPosition(3, 0);
