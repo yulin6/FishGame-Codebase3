@@ -29,13 +29,13 @@ Sorted by priority, highest to lowest being top to bottom. Generally, lower-leve
 [X] Inspect failing integration tests for Milestone 3.
 - Our executable failed vs staff tests.
 
-[] Add to the data interpretation of GameState(s) and add more testing to cover more turn-taking
+[X] Add to the data interpretation of GameState(s) and add more testing to cover more turn-taking
  scenarios.
 - Need a signature for functionality to create game states.
 - Need a purpose statement for functionality to create game states.
 - Need more unit tests for turn-taking functionality.
 
-[ ] Inspect failing integration tests for Milestone 4.
+[X] Inspect failing integration tests for Milestone 4.
 - Investigate our exe failing against staff tests.
 - Investigate our tests against staff executable.
 

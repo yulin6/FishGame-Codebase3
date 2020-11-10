@@ -46,5 +46,7 @@ Feedback: no signature for functionality to create game states, no purpose state
 
 Feedback: insufficient coverage of unit tests for turn-taking functionality
 - Approach: Added unit tests for cases of multiple moves being performed in a row on the same
- GameState.
-- Commit: 
+ GameState, cycling through two full rounds of player turns to check the current player is
+  appropriately updated.
+- Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/blob/master/Fish/Common/test/game/model/GameStateTest.java#L166-L212
+
