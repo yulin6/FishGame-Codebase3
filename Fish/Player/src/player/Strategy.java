@@ -1,6 +1,5 @@
 package player;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -36,8 +35,6 @@ public class Strategy implements IStrategy {
       for(int c = 0; c < b.getCols(); c++) {
         BoardPosition bp = new BoardPosition(r, c);
         if(!b.getSpace(bp).isHole() && !gs.isPenguinAtPosn(bp)) {
-          //gs.placeAvatar(bp, gs.getCurrentPlayer());
-          //gs.setNextPlayer();
           return bp;
         }
       }
@@ -51,34 +48,53 @@ public class Strategy implements IStrategy {
       throw new IllegalArgumentException("Need to look ahead at least 1 turn.");
     }
 
-    HashMap<Action, Integer> actionToFish = new HashMap<>();
+    HashMap<Action, Integer> actionToFish = fillActionToFish(gt, numTurns);
+    if (actionToFish.isEmpty()) {
+      return new Pass(gt.getGameState().getCurrentPlayer());
+    }
 
+    ArrayList<Action> highestActions = findBestActions(actionToFish);
+    if (highestActions.size() > 1) {
+      return doTiebreak(highestActions);
+    }
+    else {
+      return highestActions.get(0);
+    }
+  }
+
+  /**
+   * Function to produce the mapping of Action(s) to expected number of fish, assuming that
+   * opposing players will always take actions to minimize the number of fish earned by the
+   * current player.
+   * @param gt The GameTreeNode to populate the mapping from.
+   * @param numTurns The number of turns to look ahead from the current turn to produce the
+   *                 optimal moves for.
+   * @return A HashMap of Action(s) to Integer(s), where the Action objects correspond to some
+   * expected number of fish obtained over numTurns turns.
+   */
+  private HashMap<Action, Integer> fillActionToFish(GameTreeNode gt, int numTurns) {
+    HashMap<Action, Integer> actionToFish = new HashMap<>();
     GameState gs = gt.getGameState();
     ArrayList<Action> actions = gs.getPossibleActions();
-    if(actions.get(0).equals(new Pass(gs.getCurrentPlayer()))) {
-      return actions.get(0);
+
+    if (actions.get(0).equals(new Pass(gs.getCurrentPlayer()))) {
+      return actionToFish;
     }
-    for(Action a : actions) {
+
+    for (Action a : actions) {
       int maxFish;
-      Move m = (Move)a;
+      Move m = (Move) a;
       BoardPosition source = m.getStart();
       if(numTurns > 1) {
         maxFish = gs.getBoard().getSpace(source).getNumFish() + getMinMaxValue(gt.lookAhead(a),
-              numTurns - 1, gt.getGameState().getCurrentPlayer().getColor());
+                numTurns - 1, gt.getGameState().getCurrentPlayer().getColor());
       }
       else {
         maxFish = gs.getBoard().getSpace(source).getNumFish();
       }
       actionToFish.put(a, maxFish);
     }
-
-    ArrayList<Action> highestActions = findBestActions(actionToFish);
-    if(highestActions.size() > 1) {
-      return doTiebreak(highestActions);
-    }
-    else {
-      return highestActions.get(0);
-    }
+    return actionToFish;
   }
 
   /**
@@ -115,32 +131,45 @@ public class Strategy implements IStrategy {
     Move tiebreakingAction = null;
     for(Action a : highestActions) {
       Move m = (Move)a;
-      BoardPosition start = m.getStart();
-      BoardPosition destination = m.getDestination();
 
-      if(tiebreakingAction == null) {
+      if (tiebreakingAction == null) {
         tiebreakingAction = m;
         continue;
       }
+      tiebreakingAction = compareBoardPositions(m, tiebreakingAction);
+    }
+    return tiebreakingAction;
+  }
 
-      BoardPosition lowestStart = tiebreakingAction.getStart();
-      BoardPosition lowestDest = tiebreakingAction.getDestination();
+  /**
+   * Returns the Move that satisfies the conditions of tiebreaking as specified in the purpose
+   * statement of doTiebreak. As in doTiebreak, all comparisons are made on Move(s) because
+   * checking for a Pass is performed in the calling method.
+   * @param m The move to evaluate against the current best-tiebreaking move.
+   * @param tiebreakingAction The current best-tiebreaking move.
+   * @return The move (either the evaluated move or the current best-tiebreaking move) that
+   * better satisfies the tiebreaking conditions.
+   */
+  private Move compareBoardPositions(Move m, Move tiebreakingAction) {
+    BoardPosition start = m.getStart();
+    BoardPosition destination = m.getDestination();
+    BoardPosition lowestStart = tiebreakingAction.getStart();
+    BoardPosition lowestDest = tiebreakingAction.getDestination();
 
-      if(start.getRow() < lowestStart.getRow()) {
-        tiebreakingAction = m;
+    if (start.getRow() < lowestStart.getRow()) {
+      return m;
+    }
+    else if (start.getRow() == lowestStart.getRow()) {
+      if (start.getCol() < lowestStart.getCol()) {
+        return m;
       }
-      else if(start.getRow() == lowestStart.getRow()) {
-        if(start.getCol() < lowestStart.getCol()) {
-          tiebreakingAction = m;
+      else if (start.getCol() == lowestStart.getCol()) {
+        if (destination.getRow() < lowestDest.getRow()) {
+          return m;
         }
-        else if(start.getCol() == lowestStart.getCol()) {
-          if(destination.getRow() < lowestDest.getRow()) {
-            tiebreakingAction = m;
-          }
-          else if(destination.getRow() == lowestDest.getRow()) {
-            if(destination.getCol() < lowestDest.getCol()) {
-              tiebreakingAction = m;
-            }
+        else if (destination.getRow() == lowestDest.getRow()) {
+          if (destination.getCol() < lowestDest.getCol()) {
+            return m;
           }
         }
       }
@@ -162,8 +191,8 @@ public class Strategy implements IStrategy {
   private int getMinMaxValue(GameTreeNode gt, int numTurns, Penguin.PenguinColor c) {
     GameState gs = gt.getGameState();
 
-    if(c == gs.getCurrentPlayer().getColor()) {
-      if(gs.getPossibleActions().get(0) instanceof Pass) {
+    if (c == gs.getCurrentPlayer().getColor()) {
+      if (gs.getPossibleActions().get(0) instanceof Pass) {
         return 0;
       }
       else {
@@ -212,13 +241,12 @@ public class Strategy implements IStrategy {
         }
       }
       else {
-        if(potential < current) {
+        if (potential < current) {
           current = potential;
         }
       }
     }
     return current;
-
   }
 
   /**
@@ -234,11 +262,11 @@ public class Strategy implements IStrategy {
     ArrayList<Action> possibleMoves = gs.getPossibleActions();
     IBoard b = gs.getBoard();
 
-    for(Action a : possibleMoves) {
-      Move m = (Move)a;
+    for (Action a : possibleMoves) {
+      Move m = (Move) a;
       BoardPosition source = m.getStart();
       int fish = b.getSpace(source).getNumFish();
-      if(fish > maxFish) {
+      if (fish > maxFish) {
         maxFish = fish;
       }
     }

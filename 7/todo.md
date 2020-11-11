@@ -38,7 +38,7 @@ Sorted by priority, highest to lowest being top to bottom. Generally, lower-leve
 [] Inspect the correctness of how turns are currently handled in the GameState. The current
  approach is that "the GameState exists and is manipulated by the Referee", where placing an
   avatar and moving an avatar don't advance the current turn, and the referee is the one who
-adjusts the queue by calling setNextPlayer.  
+adjusts the queue by calling setNextPlayer.
 
 [X] Inspect failing integration tests for Milestone 3. Look into after relevant milestone code is
 fixed. 
@@ -70,6 +70,11 @@ run rounds in a loop, where a round is each player making one placement/movement
   functionality, now that it's implemented. Will likely require a new type of Action for placing
    penguins.
 
+[] Inspect code in Strategy - it works, but is difficult to read due to the length of individual
+ methods, making it hard to understand all of the functionality performed by a single method. Try
+  to move things into the smallest possible piece of functionality as a single method, and
+   compose methods. 
+
 [X] Add documentation to Strategy for an unmentioned case where a player lacks moves.
 - Need to specify what happens when the current player does not have valid moves in the purpose
  statement of choosing turn action.
@@ -82,5 +87,10 @@ run rounds in a loop, where a round is each player making one placement/movement
  connections to child nodes. Rename IPlayer to clarify to readers that it is the interface
   specifically for player components, to avoid confusion between it and internal players.
   
+[] Edit GameTreeNode to remove the use of the doAction function where it's unnecessary, as
+ legality checking is already performed beforehand.
+  
 [] Review the use of class-based constants and file paths to resources (images for rendering, etc.)
 to make sure they're in logical locations.
+
+[] (Fill in with feedback for Milestone 6 and place in to-do list for priority appropriately).
