@@ -6,6 +6,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import game.model.Action;
 import game.model.Board;
@@ -199,32 +204,51 @@ public class Referee implements IReferee {
    */
   private void doPlacingPhase() {
     while (this.phase == GamePhase.PLACING) {
-      GameState gs = this.gt.getGameState();
-      Player currPlayer = gs.getCurrentPlayer();
-      Penguin.PenguinColor currColor = currPlayer.getColor();
-      IPlayer currPComponent = playerMap.get(currColor);
-
-      BoardPosition candidatePos = currPComponent.placePenguin(gt);
-      if (candidatePos == null) {
-        // player failed to provide an appropriate position
-        invalidPlayer(gs, currPlayer, currPComponent,failures);
-      }
-      else {
-        try {
-          gs.placeAvatar(candidatePos, currPlayer);
-        } catch (IllegalArgumentException iae) {
-          // player made an illegal move
-          invalidPlayer(gs, currPlayer, currPComponent, cheaters);
-        }
-
-        // Logic will need to be added here for invalid communication-related behavior
-      }
-
-      gs.setNextPlayer();
-      if (gs.getPenguins().size() == penguinsPerPlayer * numPlayers) {
+      doPlacingPhaseRound();
+      if (gt.getGameState().getPenguins().size() == penguinsPerPlayer * numPlayers) {
         this.phase = GamePhase.PLAYING;
       }
     }
+  }
+
+  /**
+   * Performs one round of the placing phase, where a round is defined as one penguin-placing
+   * from each of the players that are still valid. Communications are not made with disqualified
+   * players as the current player is obtained from the game state, which entirely removes
+   * players when they are disqualified.
+   */
+  private void doPlacingPhaseRound() {
+    GameState gs = this.gt.getGameState();
+    Player currPlayer = gs.getCurrentPlayer();
+    Penguin.PenguinColor currColor = currPlayer.getColor();
+    IPlayer currPComponent = playerMap.get(currColor);
+    BoardPosition candidatePos;
+
+    final Runnable getPlacingPos = new Thread(() -> {
+      candidatePos = currPComponent.placePenguin(gt);
+    });
+
+    final ExecutorService es = Executors.newSingleThreadExecutor();
+    final Future<BoardPosition> future = es.submit(getPlacingPos, candidatePos);
+    try {
+      future = es.submit(15, TimeUnit.SECONDS);
+    }
+
+    if (candidatePos == null) {
+      // player failed to provide an appropriate position
+      invalidPlayer(gs, currPlayer, currPComponent, failures);
+    }
+    else {
+      try {
+        gs.placeAvatar(candidatePos, currPlayer);
+      } catch (IllegalArgumentException iae) {
+        // player made an illegal move
+        invalidPlayer(gs, currPlayer, currPComponent, cheaters);
+      }
+    }
+
+    gs.setNextPlayer();
+    this.gt = new GameTree(gs);
   }
 
   /**
@@ -236,30 +260,41 @@ public class Referee implements IReferee {
    */
   private void doPlayingPhase() {
     while (this.phase == GamePhase.PLAYING) {
-      GameState gs = this.gt.getGameState();
-      Player currPlayer = gs.getCurrentPlayer();
-      Penguin.PenguinColor currColor = currPlayer.getColor();
-      IPlayer currPComponent = playerMap.get(currColor);
-
-      Action currTurn = currPComponent.takeTurn(gt);
-      if (currTurn == null) {
-        // player failed to provide an appropriate action
-        invalidPlayer(gs, currPlayer, currPComponent, failures);
-        gs.setNextPlayer();
-      }
-      else {
-        try {
-          this.gt = gt.lookAhead(currTurn);
-        } catch (IllegalStateException ise) {
-          // player made an illegal move
-          invalidPlayer(gs, currPlayer, currPComponent, cheaters);
-          gs.setNextPlayer();
-        }
-        // Logic will need to be added here for invalid communication-related behavior
-      }
+      doPlayingPhaseRound();
       if (!this.gt.getGameState().movesPossible()) {
         this.phase = GamePhase.END;
         setWinningPlayers();
+      }
+    }
+  }
+
+  /**
+   * Performs one round of the playing phase, where a round is defined as one Action (Move/Pass)
+   * from each of the players that are still valid. Communications are not made with disqualified
+   * players as the current player is obtained from the game state, which entirely removes
+   * players when they are disqualified.
+   */
+  private void doPlayingPhaseRound() {
+    GameState gs = this.gt.getGameState();
+    Player currPlayer = gs.getCurrentPlayer();
+    Penguin.PenguinColor currColor = currPlayer.getColor();
+    IPlayer currPComponent = playerMap.get(currColor);
+
+    // TODO - add a future around this line
+    Action currTurn = currPComponent.takeTurn(gt);
+
+    if (currTurn == null) {
+      // player failed to provide an appropriate action
+      invalidPlayer(gs, currPlayer, currPComponent, failures);
+      gs.setNextPlayer();
+    }
+    else {
+      try {
+        this.gt = gt.lookAhead(currTurn);
+      } catch (IllegalStateException ise) {
+        // player made an illegal move
+        invalidPlayer(gs, currPlayer, currPComponent, cheaters);
+        gs.setNextPlayer();
       }
     }
   }
