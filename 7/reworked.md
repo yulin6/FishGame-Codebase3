@@ -2,9 +2,9 @@
 Feedback: For the TileStatus enum in Tile class: The tiles all have the same color, it is the penguin which
  goes on the tile has different colors. The tile cannot be none, it is a place on the board that is none. The tile
   cannot be a hole. The hole is an attribute of the board, but not of the tile.
-- Approach: Large refactor of the entire Tile class was performed. Tile objects after the
- refactor represent actual tiles, with their only knowledge being the number of fish they have
- . Due to the size of the refactor, specific lines are not highlighted in this commit link.
+- Approach: Large reworking of the entire Tile class was performed. Tile objects after the
+ reworking represent actual tiles, with their only knowledge being the number of fish they have. 
+ Due to the size of the changes, specific lines are not highlighted in this commit link.
 - Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/bd771b0dde4b8a09a9d8b0c09c6088f3b35b53b8#diff-1efc0a0b264deae6b06270fb0d16cfd9
 
 Feedback: for a data (or type) definition for a representation of boards/interpretation 
@@ -61,18 +61,43 @@ Feedback: the game tree definition does not have a recursive tree shape, it is u
  generation of a tree is suspended, it is unclear if the game tree node can represent all three kinds of nodes:
  game-is-over, current-player-is-stuck, and current-player-can-move;  only current-player-can-move
   is obvious, signature/purpose statement does not explain the first query+functionality clearly
-- Approach: Added a mapping of possible actions in the GameTree that is initially null and
+- Approach: 
+    - Added a mapping of possible actions in the GameTree that is initially null and
  generated once at the first time it was needed, and reused thereon, creating a recursive tree
-  shape (has access to its children). Clarified in the GameTree data interpretation that all
+  shape (has access to its children). 
+    - Clarified in the GameTree data interpretation that all
    three kinds of GameState(s) are valid nodes in the tree representation. current-player-is-stuck
     is treated as a state where the current player can only pass as their turn. game-is-over is
-     represented as a leaf node of the tree. Additional documentation was added to clarify the
+     represented as a leaf node of the tree. 
+    - Additional documentation was added to clarify the
       query functionality - the passed-in function object that implements the appropriate interface
        is called on each of the children of the current node.
 - Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/f6835672e803c21ccc1b5c74cc23c587547b919b
+
+Feedback: Changes to Referee relating to interacting with components. Observing code walks
+ revealed gaps in our code where we didn't account for failures from player components sufficiently.
+- Approach: Added Future(s) to Referee enabling timeouts and catching exceptions within the player
+ components in order to prevent failing player components from interfering with the referee's
+  operations. 
+- Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/895dfffb7a4bfb645c6cc367de9a20ce0a6731d7
+
+Feedback: Changes to Referee to do with too much functionality being implemented in one place in
+ running phases of the game.
+- Approach: Moved the functionality involving the running of a single round of each phase into a
+ new method for each phase, so now running a phase is a very short method looping rounds and
+  checking for end conditions (phases run being penguin placement and penguin movement).
+- Commit:  
 
 Feedback: choosing turn action: purpose statement doesn't specify what happens when the current player does not have valid moves
 - Approach: Added to documentation in IStrategy.java for the purpose statement of the
  getMinMaxAction function, explaining that the Action returned is either a Move (when valid moves
   are present) or a Pass (when no valid moves are present).
 - Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/c6270277a97a9c3d1449fd71207f769f5703213d#diff-fe94b8b2dcabdee1fe6fef3473e370ccL19-R22
+
+Feedback: Renaming of GameTree to GameTreeNode and IPlayer to IPlayerComponent in order to
+ improve readability. 
+- Approach: GameTree as an object recursively represents the entire tree, but a single
+  instance of the object is a single node with children nodes, so this name better reflects it. 
+  IPlayer was confusing when seen next to Player (definitely noticed this during onboarding/observed
+   code walks), so it was renamed to IPlayerComponent. 
+- Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/7231bd1c1b359839ab9d4d8d3553124ec9a91388

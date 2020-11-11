@@ -1,13 +1,16 @@
 ## To-Do List
 Sorted by priority, highest to lowest being top to bottom. Generally, lower-level data
- definitions are prioritized because higher-level fixes may be dependent on changes at lower levels.
+ definitions changes are prioritized because higher-level fixes to unit or integration testing
+  may be dependent on changes at lower levels. Some changes were performed during previous
+   milestones, but the list is sorted as if all of this feedback was received together to be
+    addressed.
 
-[X] Refactor in Tile to separate out data that should not be part of its definition
-- Need to refactor (possibly entirely remove) TileStatus enum in Tile class.
+[X] Large changes in Tile to separate out data that should not be part of its definition
+- Need to change (possibly entirely remove) TileStatus enum in Tile class.
     - The tile cannot be a hole/none, a hole is a place on the board that is not a tile.
     - The tiles all have the same color, it is the penguin which goes on the tile has different colors.
 
-[X] Perform refactor of board for data definition and interpretation, then correct its methods
+[X] Perform correction of board for data definition and interpretation, then correct its methods
 - Need sufficient interpretation of the board, more elaboration on Hole and Tile within a board.
     - The interpretation need to include how `row` and `column` from the game board world are
  represented/interpreted.
@@ -26,20 +29,16 @@ Sorted by priority, highest to lowest being top to bottom. Generally, lower-leve
     - The function would get the starting position and add it to the validTiles ArrayList six time due to the for loop in helper methods.
     - The helper methods are not guarantee to stop when they reach the edge of the board.
 
-[X] Inspect failing integration tests for Milestone 3.
-- Our executable failed vs staff tests.
-
 [X] Add to the data interpretation of GameState(s) and add more testing to cover more turn-taking
  scenarios.
 - Need a signature for functionality to create game states.
 - Need a purpose statement for functionality to create game states.
 - Need more unit tests for turn-taking functionality.
 
-[X] Inspect failing integration tests for Milestone 4.
-- Investigate our exe failing against staff tests.
-- Investigate our tests against staff executable.
+[X] Inspect failing integration tests for Milestone 3.
+- Our executable failed vs staff tests.
 
-[X] Refactor definition and implementation of GameTree in order to better represent a recursive
+[X] Change definition and implementation of GameTree in order to better represent a recursive
  data structure.
 - Need to elaborate and correct the game tree definition, which did not have a recursive tree shape.
 - Need to be clear about how the generation of a tree is suspended.
@@ -48,9 +47,24 @@ Sorted by priority, highest to lowest being top to bottom. Generally, lower-leve
  obvious.
 - Need to explain first query functionality in signature/purpose statement clearly.
 
-[X] Inspect failing integration tests for Milestone 5.
-- Find out why tests failed against the staff executable.
+[X] Inspect failing integration tests for Milestone 4.
+- Investigate our exe failing against staff tests.
+- Investigate our tests against staff executable.
+
+[X] Changes to Referee relating to interacting with components and separating functionality into
+ smaller pieces.
+- Referee does not currently account for infinite loops/exceptions, etc. when calling methods on
+ the player components that may cause the referee to break
+- Break functionality of running phases (penguin placing or penguin moving) into smaller pieces; 
+run rounds in a loop, where a round is each player making one placement/movement each.
 
 [X] Add documentation to Strategy for an unmentioned case where a player lacks moves.
 - Need to specify what happens when the current player does not have valid moves in the purpose
  statement of choosing turn action.
+ 
+[X] Inspect failing integration tests for Milestone 5.
+- Find out why tests failed against the staff executable.
+
+[X] Rename GameTree to clarify that a given instance of the type is only a single node with
+ connections to child nodes. Rename IPlayer to clarify to readers that it is the interface
+  specifically for player components, to avoid confusion between it and internal players.
