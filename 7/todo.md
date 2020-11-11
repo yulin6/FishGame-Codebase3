@@ -35,7 +35,13 @@ Sorted by priority, highest to lowest being top to bottom. Generally, lower-leve
 - Need a purpose statement for functionality to create game states.
 - Need more unit tests for turn-taking functionality.
 
-[X] Inspect failing integration tests for Milestone 3.
+[] Inspect the correctness of how turns are currently handled in the GameState. The current
+ approach is that "the GameState exists and is manipulated by the Referee", where placing an
+  avatar and moving an avatar don't advance the current turn, and the referee is the one who
+adjusts the queue by calling setNextPlayer.  
+
+[X] Inspect failing integration tests for Milestone 3. Look into after relevant milestone code is
+fixed. 
 - Our executable failed vs staff tests.
 
 [X] Change definition and implementation of GameTree in order to better represent a recursive
@@ -47,7 +53,8 @@ Sorted by priority, highest to lowest being top to bottom. Generally, lower-leve
  obvious.
 - Need to explain first query functionality in signature/purpose statement clearly.
 
-[X] Inspect failing integration tests for Milestone 4.
+[X] Inspect failing integration tests for Milestone 4. Look into after relevant milestone code is
+fixed. 
 - Investigate our exe failing against staff tests.
 - Investigate our tests against staff executable.
 
@@ -58,13 +65,22 @@ Sorted by priority, highest to lowest being top to bottom. Generally, lower-leve
 - Break functionality of running phases (penguin placing or penguin moving) into smaller pieces; 
 run rounds in a loop, where a round is each player making one placement/movement each.
 
+[] Abstract functionality in Referee where similar behavior is present. Specifically, try to
+ abstract between the round-running functionality and the player-communication Future
+  functionality, now that it's implemented. Will likely require a new type of Action for placing
+   penguins.
+
 [X] Add documentation to Strategy for an unmentioned case where a player lacks moves.
 - Need to specify what happens when the current player does not have valid moves in the purpose
  statement of choosing turn action.
  
-[X] Inspect failing integration tests for Milestone 5.
+[X] Inspect failing integration tests for Milestone 5. Look into after relevant milestone code is
+ fixed. 
 - Find out why tests failed against the staff executable.
 
 [X] Rename GameTree to clarify that a given instance of the type is only a single node with
  connections to child nodes. Rename IPlayer to clarify to readers that it is the interface
   specifically for player components, to avoid confusion between it and internal players.
+  
+[] Review the use of class-based constants and file paths to resources (images for rendering, etc.)
+to make sure they're in logical locations.
