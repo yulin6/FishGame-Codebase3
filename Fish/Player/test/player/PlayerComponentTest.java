@@ -111,40 +111,40 @@ public class PlayerComponentTest {
     pc1.startPlaying(Penguin.PenguinColor.BLACK);
   }
 
-  @Test
-  public void placePenguin() {
-    BoardPosition placement = pc1.placePenguin(gt);
-    assertEquals(new BoardPosition(0,1),placement);
-    gt.getGameState().placeAvatar(placement, p1);
-
-    BoardPosition placement2 = pc2.placePenguin(gt);
-    assertEquals(new BoardPosition(0, 2), placement2);
-    gt.getGameState().placeAvatar(placement2, p2);
-
-    BoardPosition placement3 = pc3.placePenguin(gt);
-    assertEquals(new BoardPosition(1,0),placement3);
-    gt.getGameState().placeAvatar(placement3, p3);
-
-    BoardPosition placement4 = pc4.placePenguin(gt);
-    assertEquals(new BoardPosition(1, 1), placement4);
-    gt.getGameState().placeAvatar(placement4, p4);
-
-    BoardPosition placement5 = pc1.placePenguin(gt);
-    assertEquals(new BoardPosition(1,2),placement5);
-    gt.getGameState().placeAvatar(placement5, p1);
-
-    BoardPosition placement6 = pc2.placePenguin(gt);
-    assertEquals(new BoardPosition(2, 0), placement6);
-    gt.getGameState().placeAvatar(placement6, p2);
-
-    BoardPosition placement7 = pc3.placePenguin(gt);
-    assertEquals(new BoardPosition(2,1),placement7);
-    gt.getGameState().placeAvatar(placement7, p3);
-
-    BoardPosition placement8 = pc4.placePenguin(gt);
-    assertEquals(new BoardPosition(2, 2), placement8);
-    gt.getGameState().placeAvatar(placement8, p4);
-  }
+//  @Test
+//  public void placePenguin() {
+//    BoardPosition placement = pc1.placePenguin(gt);
+//    assertEquals(new BoardPosition(0,1),placement);
+//    gt.getGameState().placeAvatar(placement, p1);
+//
+//    BoardPosition placement2 = pc2.placePenguin(gt);
+//    assertEquals(new BoardPosition(0, 2), placement2);
+//    gt.getGameState().placeAvatar(placement2, p2);
+//
+//    BoardPosition placement3 = pc3.placePenguin(gt);
+//    assertEquals(new BoardPosition(1,0),placement3);
+//    gt.getGameState().placeAvatar(placement3, p3);
+//
+//    BoardPosition placement4 = pc4.placePenguin(gt);
+//    assertEquals(new BoardPosition(1, 1), placement4);
+//    gt.getGameState().placeAvatar(placement4, p4);
+//
+//    BoardPosition placement5 = pc1.placePenguin(gt);
+//    assertEquals(new BoardPosition(1,2),placement5);
+//    gt.getGameState().placeAvatar(placement5, p1);
+//
+//    BoardPosition placement6 = pc2.placePenguin(gt);
+//    assertEquals(new BoardPosition(2, 0), placement6);
+//    gt.getGameState().placeAvatar(placement6, p2);
+//
+//    BoardPosition placement7 = pc3.placePenguin(gt);
+//    assertEquals(new BoardPosition(2,1),placement7);
+//    gt.getGameState().placeAvatar(placement7, p3);
+//
+//    BoardPosition placement8 = pc4.placePenguin(gt);
+//    assertEquals(new BoardPosition(2, 2), placement8);
+//    gt.getGameState().placeAvatar(placement8, p4);
+//  }
 
   @Test
   public void takeTurnMove() {

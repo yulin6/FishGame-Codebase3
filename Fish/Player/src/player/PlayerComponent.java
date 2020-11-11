@@ -2,10 +2,7 @@ package player;
 
 import java.util.Random;
 
-import game.model.Action;
-import game.model.BoardPosition;
-import game.model.GameTreeNode;
-import game.model.Penguin;
+import game.model.*;
 
 /**
  * A PlayerComponent composes
@@ -48,15 +45,17 @@ public class PlayerComponent implements IPlayerComponent {
   @Override
   public void startPlaying(Penguin.PenguinColor color) {
     if (this.color != null) {
-     throw new IllegalArgumentException("Already playing a game - cannot start playing another.");
+      throw new IllegalArgumentException("Already playing a game - cannot start playing another.");
     } else {
       this.color = color;
     }
   }
 
   @Override
-  public BoardPosition placePenguin(GameTreeNode gt) {
-    return this.strategy.placePenguin(gt);
+  public Place placePenguin(GameTreeNode gt) {
+    BoardPosition position = this.strategy.placePenguin(gt);
+    Player currentPlayer= gt.getGameState().getCurrentPlayer();
+    return new Place(position, currentPlayer);
   }
 
   // In this implementation of taking a player's turn, the Strategy component requires a number

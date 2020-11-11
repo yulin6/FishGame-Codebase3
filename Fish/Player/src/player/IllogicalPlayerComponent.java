@@ -1,10 +1,6 @@
 package player;
 
-import game.model.Action;
-import game.model.BoardPosition;
-import game.model.GameTreeNode;
-import game.model.Pass;
-import game.model.Penguin;
+import game.model.*;
 
 /**
  * See IPlayer.java and PlayerComponent.java for documentation on what a player component must
@@ -28,8 +24,8 @@ public class IllogicalPlayerComponent implements IPlayerComponent {
   }
 
   @Override
-  public BoardPosition placePenguin(GameTreeNode gt) {
-    return new BoardPosition(0, 0);
+  public Place placePenguin(GameTreeNode gt) {
+    return new Place(new BoardPosition(0, 0), new Player(0, Penguin.PenguinColor.RED));
   }
 
   @Override

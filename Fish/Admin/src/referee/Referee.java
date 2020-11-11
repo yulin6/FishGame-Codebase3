@@ -209,55 +209,13 @@ public class Referee implements IReferee {
    */
   private void doPlacingPhase() {
     while (this.phase == GamePhase.PLACING) {
-      doPlacingPhaseRound();
+      runOneRound();
       if (gt.getGameState().getPenguins().size() == penguinsPerPlayer * numPlayers) {
         this.phase = GamePhase.PLAYING;
       }
     }
   }
 
-  /**
-   * Performs one round of the placing phase, where a round is defined as one penguin-placing
-   * from each of the players that are still valid. Communications are not made with disqualified
-   * players as the current player is obtained from the game state, which entirely removes
-   * players when they are disqualified.
-   */
-  private void doPlacingPhaseRound() {
-    GameState gs = this.gt.getGameState();
-    Player currPlayer = gs.getCurrentPlayer();
-    Penguin.PenguinColor currColor = currPlayer.getColor();
-    IPlayerComponent currPComponent = playerMap.get(currColor);
-    BoardPosition candidatePos;
-
-    final Callable<BoardPosition> getPlacingPos = () -> currPComponent.placePenguin(gt);
-    final ExecutorService es = Executors.newSingleThreadExecutor();
-    final Future<BoardPosition> future = es.submit(getPlacingPos);
-    try {
-       candidatePos = future.get(COMMS_TIMEOUT, TimeUnit.SECONDS);
-    } catch (TimeoutException | InterruptedException | ExecutionException e) {
-      // All exceptions here indicate a player has failed.
-      invalidPlayer(gs, currPlayer, currPComponent, failures);
-      gs.setNextPlayer();
-      this.gt = new GameTreeNode(gs);
-      return;
-    }
-
-    if (candidatePos == null) {
-      // player failed to provide a functional position
-      invalidPlayer(gs, currPlayer, currPComponent, failures);
-    }
-    else {
-      try {
-        gs.placeAvatar(candidatePos, currPlayer);
-      } catch (IllegalArgumentException iae) {
-        // player made an illegal placement
-        invalidPlayer(gs, currPlayer, currPComponent, cheaters);
-      }
-    }
-
-    gs.setNextPlayer();
-    this.gt = new GameTreeNode(gs);
-  }
 
   /**
    * Runs the penguin-movement phase of the game until it is determined that the game has reached
@@ -268,7 +226,7 @@ public class Referee implements IReferee {
    */
   private void doPlayingPhase() {
     while (this.phase == GamePhase.PLAYING) {
-      doPlayingPhaseRound();
+      runOneRound();
       if (!this.gt.getGameState().movesPossible()) {
         this.phase = GamePhase.END;
         setWinningPlayers();
@@ -276,46 +234,58 @@ public class Referee implements IReferee {
     }
   }
 
-  /**
-   * Performs one round of the playing phase, where a round is defined as one Action (Move/Pass)
-   * from each of the players that are still valid. Communications are not made with disqualified
-   * players as the current player is obtained from the game state, which entirely removes
-   * players when they are disqualified.
-   */
-  private void doPlayingPhaseRound() {
+
+  private void runOneRound() {
     GameState gs = this.gt.getGameState();
     Player currPlayer = gs.getCurrentPlayer();
     Penguin.PenguinColor currColor = currPlayer.getColor();
     IPlayerComponent currPComponent = playerMap.get(currColor);
-    Action currTurn;
-
-    final Callable<Action> getAction = () -> currPComponent.takeTurn(gt);
+    Action action;
+    Future<Action> future = null;
     final ExecutorService es = Executors.newSingleThreadExecutor();
-    final Future<Action> future = es.submit(getAction);
+
+    if (phase == GamePhase.PLACING) {
+      final Callable<Action> getAction = () -> currPComponent.placePenguin(gt);
+      future = es.submit(getAction);
+    } else if (phase == GamePhase.PLAYING) {
+      final Callable<Action> getAction = () -> currPComponent.takeTurn(gt);
+      future = es.submit(getAction);
+    } else {
+      throw new IllegalStateException("Wrong game phase.");
+    }
+
     try {
-      currTurn = future.get(COMMS_TIMEOUT, TimeUnit.SECONDS);
+      action = future.get(COMMS_TIMEOUT, TimeUnit.SECONDS);
     } catch (TimeoutException | InterruptedException | ExecutionException e) {
       // All exceptions here indicate a player has failed.
       invalidPlayer(gs, currPlayer, currPComponent, failures);
-      gs.setNextPlayer();
-      this.gt = new GameTreeNode(gs);
+      updateTreeToNextPlayer(gs);
       return;
     }
 
-    if (currTurn == null) {
-      // player failed to provide an appropriate action
+    if (action == null) {
       invalidPlayer(gs, currPlayer, currPComponent, failures);
-      gs.setNextPlayer();
-    }
-    else {
+      updateTreeToNextPlayer(gs);
+    } else {
       try {
-        this.gt = gt.lookAhead(currTurn);
-      } catch (IllegalStateException ise) {
-        // player made an illegal move
+        if (phase == GamePhase.PLACING) {
+          action.perform(gs);
+          this.gt = new GameTreeNode(gs);
+        } else if (phase == GamePhase.PLAYING) {
+          this.gt = gt.lookAhead(action);
+        }
+      } catch (IllegalArgumentException iae) {
+        // player made an illegal placement/movement
         invalidPlayer(gs, currPlayer, currPComponent, cheaters);
-        gs.setNextPlayer();
+        updateTreeToNextPlayer(gs);
       }
     }
+
+  }
+
+  private void updateTreeToNextPlayer(GameState gs){
+    gs.setNextPlayer();
+    this.gt = new GameTreeNode(gs);
   }
 
   /**

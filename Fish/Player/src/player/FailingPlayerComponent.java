@@ -1,9 +1,6 @@
 package player;
 
-import game.model.Action;
-import game.model.BoardPosition;
-import game.model.GameTreeNode;
-import game.model.Penguin;
+import game.model.*;
 
 /**
  * See IPlayer.java and PlayerComponent.java for documentation on what a player component must
@@ -27,7 +24,7 @@ public class FailingPlayerComponent implements IPlayerComponent {
   }
 
   @Override
-  public BoardPosition placePenguin(GameTreeNode gt) {
+  public Place placePenguin(GameTreeNode gt) {
     return null;
   }
 

@@ -1,9 +1,6 @@
 package player;
 
-import game.model.Action;
-import game.model.BoardPosition;
-import game.model.GameTreeNode;
-import game.model.Penguin;
+import game.model.*;
 
 /**
  * Interface for player components of the Fish game, each of which represents a single player. Used
@@ -31,9 +28,9 @@ public interface IPlayerComponent {
    * the penguin-placement phase, and only as many times as this player has penguins to assign.
    * @param gt The game tree with the current state of the game as its root node, for use in
    *           determining the position at which to place a penguin.
-   * @return The board position that is deemed appropriate by the player to place a penguin.
+   * @return The Place action that is deemed appropriate by the player to place a penguin.
    */
-  BoardPosition placePenguin(GameTreeNode gt);
+  Place placePenguin(GameTreeNode gt);
 
   /**
    * Returns the action that consists of this player's turn when called during the penguin-movement
