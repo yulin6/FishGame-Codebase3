@@ -2,7 +2,7 @@ package referee;
 
 import java.util.List;
 
-import player.IPlayer;
+import player.IPlayerComponent;
 
 /**
  * Interface for a referee component that supervises games of Fish for some given set of players.
@@ -42,7 +42,7 @@ public interface IReferee {
    * number of accumulated fish during the game's playing).
    * @return The list of winning players represented as player component objects (player.IPlayer objects).
    */
-  List<IPlayer> getWinningPlayers();
+  List<IPlayerComponent> getWinningPlayers();
 
   /**
    * Returns the list of "failed" players from the  game. "Failed" players are those who fail to
@@ -51,7 +51,7 @@ public interface IReferee {
    * runGame has completed.
    * @return The list of "failed" players, as represented by player component objects.
    */
-  List<IPlayer> getFailures();
+  List<IPlayerComponent> getFailures();
 
   /**
    * Returns the list of players who cheated during the game. Cheating players are those who
@@ -61,6 +61,6 @@ public interface IReferee {
    * components managing the referee (tournament manager, etc.) after runGame has completed.
    * @return The list of cheaters, as represented by player component objects.
    */
-  List<IPlayer> getCheaters();
+  List<IPlayerComponent> getCheaters();
 
 }

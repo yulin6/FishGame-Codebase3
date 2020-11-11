@@ -11,7 +11,7 @@ import game.model.Action;
 import game.model.Board;
 import game.model.BoardPosition;
 import game.model.GameState;
-import game.model.GameTree;
+import game.model.GameTreeNode;
 import game.model.Move;
 import game.model.Pass;
 import game.model.Penguin;
@@ -53,7 +53,7 @@ public class PlayerComponentTest {
   List<Integer> r6;
   List<List<Integer>> boardList;
 
-  GameTree gt;
+  GameTreeNode gt;
 
   @Before
   public void setUp() {
@@ -94,7 +94,7 @@ public class PlayerComponentTest {
 
     GameState gs = new GameState(players, b);
 
-    gt = new GameTree(gs);
+    gt = new GameTreeNode(gs);
   }
 
   @Test
@@ -193,7 +193,7 @@ public class PlayerComponentTest {
     gs2.placeAvatar(new BoardPosition(1, 2), p3);
     gs2.placeAvatar(new BoardPosition(0, 2), p3);
 
-    GameTree gt2 = new GameTree(gs2);
+    GameTreeNode gt2 = new GameTreeNode(gs2);
 
     PlayerComponent pred = new PlayerComponent(p1.getAge(), seed2);
     pred.startPlaying(Penguin.PenguinColor.RED);

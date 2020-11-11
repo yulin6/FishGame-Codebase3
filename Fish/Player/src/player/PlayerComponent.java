@@ -4,7 +4,7 @@ import java.util.Random;
 
 import game.model.Action;
 import game.model.BoardPosition;
-import game.model.GameTree;
+import game.model.GameTreeNode;
 import game.model.Penguin;
 
 /**
@@ -24,7 +24,7 @@ import game.model.Penguin;
  * actions requested of them from the referee, such as placing penguins in the placement phase and
  * moving penguins in the game playing phase.
  */
-public class PlayerComponent implements IPlayer {
+public class PlayerComponent implements IPlayerComponent {
   private final IStrategy strategy;
   private Penguin.PenguinColor color;
   private final int age;
@@ -55,7 +55,7 @@ public class PlayerComponent implements IPlayer {
   }
 
   @Override
-  public BoardPosition placePenguin(GameTree gt) {
+  public BoardPosition placePenguin(GameTreeNode gt) {
     return this.strategy.placePenguin(gt);
   }
 
@@ -63,7 +63,7 @@ public class PlayerComponent implements IPlayer {
   // of turns to look ahead for its getMinMaxAction method, so it is randomly generated between
   // constants of this class.
   @Override
-  public Action takeTurn(GameTree gt) {
+  public Action takeTurn(GameTreeNode gt) {
     int random = rng.nextInt(MAX_LOOKAHEAD) + MIN_LOOKAHEAD;
     return this.strategy.getMinMaxAction(gt, random);
   }

@@ -2,7 +2,7 @@ package player;
 
 import game.model.Action;
 import game.model.BoardPosition;
-import game.model.GameTree;
+import game.model.GameTreeNode;
 import game.model.Penguin;
 
 /**
@@ -12,7 +12,7 @@ import game.model.Penguin;
  * This is a player component that returns unusable feedback when called in order to
  * generate runtime errors in Fish gameplay ("failing" behavior).
  */
-public class FailingPlayerComponent implements IPlayer {
+public class FailingPlayerComponent implements IPlayerComponent {
 
   /**
    * Constructor for a failing player.
@@ -27,12 +27,12 @@ public class FailingPlayerComponent implements IPlayer {
   }
 
   @Override
-  public BoardPosition placePenguin(GameTree gt) {
+  public BoardPosition placePenguin(GameTreeNode gt) {
     return null;
   }
 
   @Override
-  public Action takeTurn(GameTree gt) {
+  public Action takeTurn(GameTreeNode gt) {
     return null;
   }
 

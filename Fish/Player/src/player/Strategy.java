@@ -9,7 +9,7 @@ import game.model.Move;
 import game.model.Pass;
 import game.model.BoardPosition;
 import game.model.GameState;
-import game.model.GameTree;
+import game.model.GameTreeNode;
 import game.model.IBoard;
 import game.model.Penguin;
 
@@ -28,7 +28,7 @@ import game.model.Penguin;
 public class Strategy implements IStrategy {
 
   @Override
-  public BoardPosition placePenguin(GameTree gt) {
+  public BoardPosition placePenguin(GameTreeNode gt) {
     GameState gs = gt.getGameState();
     IBoard b = gs.getBoard();
 
@@ -46,7 +46,7 @@ public class Strategy implements IStrategy {
   }
 
   @Override
-  public Action getMinMaxAction(GameTree gt, int numTurns) {
+  public Action getMinMaxAction(GameTreeNode gt, int numTurns) {
     if (numTurns <= 0) {
       throw new IllegalArgumentException("Need to look ahead at least 1 turn.");
     }
@@ -159,7 +159,7 @@ public class Strategy implements IStrategy {
    *          "enemy" color.
    * @return The best minimax gain achievable from the tree in the given amount of turns.
    */
-  private int getMinMaxValue(GameTree gt, int numTurns, Penguin.PenguinColor c) {
+  private int getMinMaxValue(GameTreeNode gt, int numTurns, Penguin.PenguinColor c) {
     GameState gs = gt.getGameState();
 
     if(c == gs.getCurrentPlayer().getColor()) {
@@ -195,7 +195,7 @@ public class Strategy implements IStrategy {
    * @return The highest or lowert value of minimax gain of the child nodes as determined by the
    * findMax parameter.
    */
-  private int findMinOrMax(GameTree gt, int numTurns, Penguin.PenguinColor c, boolean findMax) {
+  private int findMinOrMax(GameTreeNode gt, int numTurns, Penguin.PenguinColor c, boolean findMax) {
     int current = findMax ? Integer.MIN_VALUE : Integer.MAX_VALUE;
     GameState gs = gt.getGameState();
     ArrayList<Action> possibleMoves = gs.getPossibleActions();
@@ -228,7 +228,7 @@ public class Strategy implements IStrategy {
    * @param gt The GameTree object to look through to find the max number of fish from.
    * @return The maximum number of fish that can be obtained.
    */
-  private int getMaxFish(GameTree gt) {
+  private int getMaxFish(GameTreeNode gt) {
     int maxFish = 0;
     GameState gs = gt.getGameState();
     ArrayList<Action> possibleMoves = gs.getPossibleActions();

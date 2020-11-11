@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -19,10 +18,10 @@ import game.model.Action;
 import game.model.Board;
 import game.model.BoardPosition;
 import game.model.GameState;
-import game.model.GameTree;
+import game.model.GameTreeNode;
 import game.model.Penguin;
 import game.model.Player;
-import player.IPlayer;
+import player.IPlayerComponent;
 import player.PlayerComponent;
 
 /**
@@ -53,11 +52,11 @@ import player.PlayerComponent;
  * players)
  */
 public class Referee implements IReferee {
-  private final Map<Penguin.PenguinColor, IPlayer> playerMap;
-  private GameTree gt;
-  private final List<IPlayer> winners;
-  private final List<IPlayer> failures;
-  private final List<IPlayer> cheaters;
+  private final Map<Penguin.PenguinColor, IPlayerComponent> playerMap;
+  private GameTreeNode gt;
+  private final List<IPlayerComponent> winners;
+  private final List<IPlayerComponent> failures;
+  private final List<IPlayerComponent> cheaters;
   private GamePhase phase;
   private int numPlayers;
   private final int penguinsPerPlayer;
@@ -75,7 +74,7 @@ public class Referee implements IReferee {
    * @param rows the number of rows the referee is instructed to create the board with
    * @param cols the number of columns the referee is instructed to create the board with
    */
-  public Referee(List<IPlayer> players, int rows, int cols) {
+  public Referee(List<IPlayerComponent> players, int rows, int cols) {
     this.playerMap = new HashMap<>();
     this.numPlayers = players.size();
     this.penguinsPerPlayer = PENGUIN_MAX - this.numPlayers;
@@ -84,7 +83,7 @@ public class Referee implements IReferee {
               " number of players");
     }
     GameState gs = makeNewState(players, rows, cols);
-    this.gt = new GameTree(gs);
+    this.gt = new GameTreeNode(gs);
     this.winners = new ArrayList<>();
     this.failures = new ArrayList<>();
     this.cheaters = new ArrayList<>();
@@ -104,7 +103,7 @@ public class Referee implements IReferee {
     }
     this.numPlayers = gs.getPlayers().size();
     this.penguinsPerPlayer = PENGUIN_MAX - this.numPlayers;
-    this.gt = new GameTree(gs);
+    this.gt = new GameTreeNode(gs);
     this.winners = new ArrayList<>();
     this.failures = new ArrayList<>();
     this.cheaters = new ArrayList<>();
@@ -120,10 +119,10 @@ public class Referee implements IReferee {
    * @param cols the number of columns to create the board with
    * @return The GameState that was created.
    */
-  private GameState makeNewState(List<IPlayer> players, int rows, int cols) {
+  private GameState makeNewState(List<IPlayerComponent> players, int rows, int cols) {
     Board b = generateRandomBoard(rows, cols);
     HashSet<Player> playerSet = new HashSet<>();
-    for (IPlayer pcomponent : players) {
+    for (IPlayerComponent pcomponent : players) {
       Player p = assignColor(pcomponent);
       playerSet.add(p);
     }
@@ -135,7 +134,7 @@ public class Referee implements IReferee {
    * not already being used as a key in the color to player-component mapping to avoid duplicates.
    * @param p The player component to assign a color to.
    */
-  private Player assignColor(IPlayer p) {
+  private Player assignColor(IPlayerComponent p) {
     Penguin.PenguinColor color = Penguin.PenguinColor.getRandomColor();
     while (playerMap.containsKey(color)) {
       color = Penguin.PenguinColor.getRandomColor();
@@ -223,7 +222,7 @@ public class Referee implements IReferee {
     GameState gs = this.gt.getGameState();
     Player currPlayer = gs.getCurrentPlayer();
     Penguin.PenguinColor currColor = currPlayer.getColor();
-    IPlayer currPComponent = playerMap.get(currColor);
+    IPlayerComponent currPComponent = playerMap.get(currColor);
     BoardPosition candidatePos;
 
     final Callable<BoardPosition> getPlacingPos = () -> currPComponent.placePenguin(gt);
@@ -235,7 +234,7 @@ public class Referee implements IReferee {
       // All exceptions here indicate a player has failed.
       invalidPlayer(gs, currPlayer, currPComponent, failures);
       gs.setNextPlayer();
-      this.gt = new GameTree(gs);
+      this.gt = new GameTreeNode(gs);
       return;
     }
 
@@ -253,7 +252,7 @@ public class Referee implements IReferee {
     }
 
     gs.setNextPlayer();
-    this.gt = new GameTree(gs);
+    this.gt = new GameTreeNode(gs);
   }
 
   /**
@@ -283,7 +282,7 @@ public class Referee implements IReferee {
     GameState gs = this.gt.getGameState();
     Player currPlayer = gs.getCurrentPlayer();
     Penguin.PenguinColor currColor = currPlayer.getColor();
-    IPlayer currPComponent = playerMap.get(currColor);
+    IPlayerComponent currPComponent = playerMap.get(currColor);
     Action currTurn;
 
     final Callable<Action> getAction = () -> currPComponent.takeTurn(gt);
@@ -295,7 +294,7 @@ public class Referee implements IReferee {
       // All exceptions here indicate a player has failed.
       invalidPlayer(gs, currPlayer, currPComponent, failures);
       gs.setNextPlayer();
-      this.gt = new GameTree(gs);
+      this.gt = new GameTreeNode(gs);
       return;
     }
 
@@ -327,7 +326,7 @@ public class Referee implements IReferee {
    * @param list The list of player components (should be failures/cheaters) to add the component
    *            to.
    */
-  private void invalidPlayer(GameState gs, Player p, IPlayer pcomp, List<IPlayer> list) {
+  private void invalidPlayer(GameState gs, Player p, IPlayerComponent pcomp, List<IPlayerComponent> list) {
     gs.removePlayer(p);
     list.add(pcomp);
     numPlayers--;
@@ -343,7 +342,7 @@ public class Referee implements IReferee {
     // Can never get a player that has failured or cheated here because they are removed from the
     // game state as well
     for (Player p : this.gt.getGameState().getPlayers()) {
-      IPlayer pcomp = playerMap.get(p.getColor());
+      IPlayerComponent pcomp = playerMap.get(p.getColor());
       int numFish = p.getFish();
 
       if (numFish > maxFish) {
@@ -368,7 +367,7 @@ public class Referee implements IReferee {
   }
 
   @Override
-  public List<IPlayer> getWinningPlayers() {
+  public List<IPlayerComponent> getWinningPlayers() {
     if (this.phase == GamePhase.END) {
       return this.winners;
     }
@@ -379,7 +378,7 @@ public class Referee implements IReferee {
   }
 
   @Override
-  public List<IPlayer> getFailures() {
+  public List<IPlayerComponent> getFailures() {
     if (this.phase == GamePhase.END) {
       return this.failures;
     }
@@ -390,7 +389,7 @@ public class Referee implements IReferee {
   }
 
   @Override
-  public List<IPlayer> getCheaters() {
+  public List<IPlayerComponent> getCheaters() {
     if (this.phase == GamePhase.END) {
       return this.cheaters;
     }

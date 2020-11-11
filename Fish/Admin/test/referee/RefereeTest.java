@@ -14,7 +14,7 @@ import game.model.IBoard;
 import game.model.Penguin;
 import game.model.Player;
 import player.FailingPlayerComponent;
-import player.IPlayer;
+import player.IPlayerComponent;
 import player.IllogicalPlayerComponent;
 import player.PlayerComponent;
 
@@ -38,7 +38,7 @@ public class RefereeTest {
 
   int seed = 24;
 
-  List<IPlayer> pcomponents;
+  List<IPlayerComponent> pcomponents;
 
   @Before
   public void setUp() {
@@ -67,7 +67,7 @@ public class RefereeTest {
   public void notifyGameStart() {
     Referee randomRef = new Referee(pcomponents, 4, 4);
     randomRef.notifyGameStart();
-    for (IPlayer p : pcomponents) {
+    for (IPlayerComponent p : pcomponents) {
       assertNotNull(p.getColor());
     }
   }
@@ -105,7 +105,7 @@ public class RefereeTest {
 
   @Test
   public void runGameCheaterPresent() {
-    List<IPlayer> cheaterList = new ArrayList<>(Arrays.asList(pc1, pc2, pc3,
+    List<IPlayerComponent> cheaterList = new ArrayList<>(Arrays.asList(pc1, pc2, pc3,
             new IllogicalPlayerComponent()));
     Referee cheatRef = new Referee(cheaterList, 5, 5);
     cheatRef.notifyGameStart();
@@ -114,14 +114,14 @@ public class RefereeTest {
     assertEquals(1, cheatRef.getCheaters().size());
     assertEquals(0, cheatRef.getFailures().size());
     assertNotEquals(0, cheatRef.getWinningPlayers().size());
-    for (IPlayer p : cheatRef.getCheaters()) {
+    for (IPlayerComponent p : cheatRef.getCheaters()) {
       assertFalse(cheatRef.getWinningPlayers().contains(p));
     }
   }
 
   @Test
   public void runGameFailurePresent() {
-    List<IPlayer> failureList = new ArrayList<>(Arrays.asList(pc1, pc2, pc3,
+    List<IPlayerComponent> failureList = new ArrayList<>(Arrays.asList(pc1, pc2, pc3,
             new FailingPlayerComponent()));
     Referee failRef = new Referee(failureList, 5, 5);
     failRef.notifyGameStart();
@@ -130,14 +130,14 @@ public class RefereeTest {
     assertEquals(1, failRef.getFailures().size());
     assertEquals(0, failRef.getCheaters().size());
     assertNotEquals(0, failRef.getWinningPlayers().size());
-    for (IPlayer p : failRef.getFailures()) {
+    for (IPlayerComponent p : failRef.getFailures()) {
       assertFalse(failRef.getWinningPlayers().contains(p));
     }
   }
 
   @Test
   public void runGameCheaterAndFailurePresent() {
-    List<IPlayer> cfList = new ArrayList<>(Arrays.asList(pc1, pc2, new IllogicalPlayerComponent(),
+    List<IPlayerComponent> cfList = new ArrayList<>(Arrays.asList(pc1, pc2, new IllogicalPlayerComponent(),
             new FailingPlayerComponent()));
     Referee cfRef = new Referee(cfList, 5, 5);
     cfRef.notifyGameStart();
@@ -146,10 +146,10 @@ public class RefereeTest {
     assertEquals(1, cfRef.getFailures().size());
     assertEquals(1, cfRef.getCheaters().size());
     assertNotEquals(0, cfRef.getWinningPlayers().size());
-    for (IPlayer p : cfRef.getFailures()) {
+    for (IPlayerComponent p : cfRef.getFailures()) {
       assertFalse(cfRef.getWinningPlayers().contains(p));
     }
-    for (IPlayer p : cfRef.getCheaters()) {
+    for (IPlayerComponent p : cfRef.getCheaters()) {
       assertFalse(cfRef.getWinningPlayers().contains(p));
     }
   }
@@ -158,12 +158,12 @@ public class RefereeTest {
   public void notifyGameEnd() {
     Referee randomRef = new Referee(pcomponents, 4, 4);
     randomRef.notifyGameStart();
-    for (IPlayer p : pcomponents) {
+    for (IPlayerComponent p : pcomponents) {
       assertNotNull(p.getColor());
     }
     randomRef.runGame();
     randomRef.notifyGameEnd();
-    for (IPlayer p : pcomponents) {
+    for (IPlayerComponent p : pcomponents) {
       try {
         p.getColor();
         fail("Exception for null player component color not thrown");
@@ -215,7 +215,7 @@ public class RefereeTest {
 
   @Test
   public void soloPlayerFinishesGame() {
-    List<IPlayer> oneGoodPlayerList = new ArrayList<>(Arrays.asList(pc1,
+    List<IPlayerComponent> oneGoodPlayerList = new ArrayList<>(Arrays.asList(pc1,
             new IllogicalPlayerComponent()));
     Referee ref = new Referee(oneGoodPlayerList, 4, 4);
     ref.notifyGameStart();

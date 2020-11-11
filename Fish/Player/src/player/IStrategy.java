@@ -2,7 +2,7 @@ package player;
 
 import game.model.Action;
 import game.model.BoardPosition;
-import game.model.GameTree;
+import game.model.GameTreeNode;
 
 public interface IStrategy {
 
@@ -13,7 +13,7 @@ public interface IStrategy {
    *           GameState.
    * @return The board position to place the penguin at
    */
-  BoardPosition placePenguin(GameTree gt);
+  BoardPosition placePenguin(GameTreeNode gt);
 
   /**
    * Given a number n > 0, returns the Action (a Move, or Pass if no valid Move) for the performing
@@ -25,5 +25,5 @@ public interface IStrategy {
    * @return The action that will allow for the minimal-maximal gain after looking ahead numTurns
    *         turns
    */
-  Action getMinMaxAction(GameTree gt, int numTurns);
+  Action getMinMaxAction(GameTreeNode gt, int numTurns);
 }

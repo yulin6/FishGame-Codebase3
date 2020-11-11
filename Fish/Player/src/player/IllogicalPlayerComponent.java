@@ -2,7 +2,7 @@ package player;
 
 import game.model.Action;
 import game.model.BoardPosition;
-import game.model.GameTree;
+import game.model.GameTreeNode;
 import game.model.Pass;
 import game.model.Penguin;
 
@@ -13,7 +13,7 @@ import game.model.Penguin;
  * This is a player component that returns trivial (and wrong) feedback when called in order to
  * generate logical errors in Fish gameplay ("cheating" behavior).
  */
-public class IllogicalPlayerComponent implements IPlayer {
+public class IllogicalPlayerComponent implements IPlayerComponent {
 
   /**
    * Constructor for a cheating player.
@@ -28,12 +28,12 @@ public class IllogicalPlayerComponent implements IPlayer {
   }
 
   @Override
-  public BoardPosition placePenguin(GameTree gt) {
+  public BoardPosition placePenguin(GameTreeNode gt) {
     return new BoardPosition(0, 0);
   }
 
   @Override
-  public Action takeTurn(GameTree gt) {
+  public Action takeTurn(GameTreeNode gt) {
     return new Pass(gt.getGameState().getCurrentPlayer());
   }
 

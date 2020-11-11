@@ -11,7 +11,7 @@ import game.model.Action;
 import game.model.Board;
 import game.model.BoardPosition;
 import game.model.GameState;
-import game.model.GameTree;
+import game.model.GameTreeNode;
 import game.model.IBoard;
 import game.model.Move;
 import game.model.Pass;
@@ -21,9 +21,9 @@ import game.model.Player;
 import static org.junit.Assert.*;
 
 public class StrategyTest {
-  GameTree gt;
-  GameTree gtFull;
-  GameTree minMaxTestGt;
+  GameTreeNode gt;
+  GameTreeNode gtFull;
+  GameTreeNode minMaxTestGt;
 
   List<List<Integer>> minMaxTestTiles;
 
@@ -106,8 +106,8 @@ public class StrategyTest {
     state1.placeAvatar(placement3, player1);
     state1.placeAvatar(placement4, player4);
 
-    gt = new GameTree(state1);
-    gtFull = new GameTree(trivialGs);
+    gt = new GameTreeNode(state1);
+    gtFull = new GameTreeNode(trivialGs);
 
     minMaxTestTiles = new ArrayList<>();
 
@@ -154,7 +154,7 @@ public class StrategyTest {
     minMaxTestGs.placeAvatar(minMaxPlacement3, player1);
     minMaxTestGs.placeAvatar(minMaxPlacement4, player4);
 
-    minMaxTestGt = new GameTree(minMaxTestGs);
+    minMaxTestGt = new GameTreeNode(minMaxTestGs);
 
     strat = new Strategy();
   }
@@ -227,7 +227,7 @@ public class StrategyTest {
     uniPlayers.add(tp1);
     uniPlayers.add(tp2);
     GameState uniGs = new GameState(uniPlayers, uniform);
-    GameTree uniGt = new GameTree(uniGs);
+    GameTreeNode uniGt = new GameTreeNode(uniGs);
 
     BoardPosition pen1 = new BoardPosition(0, 0);
     BoardPosition pen2 = new BoardPosition(2, 0);

@@ -2,7 +2,7 @@ package player;
 
 import game.model.Action;
 import game.model.BoardPosition;
-import game.model.GameTree;
+import game.model.GameTreeNode;
 import game.model.Penguin;
 
 /**
@@ -11,7 +11,7 @@ import game.model.Penguin;
  * of penguins, actions (passing or moving), and so on. Uses a strategy component to perform the
  * decision-making logic for these game functions.
  */
-public interface IPlayer {
+public interface IPlayerComponent {
 
   /**
    * Sets up the player component with the game by storing its assigned color, which is given
@@ -33,7 +33,7 @@ public interface IPlayer {
    *           determining the position at which to place a penguin.
    * @return The board position that is deemed appropriate by the player to place a penguin.
    */
-  BoardPosition placePenguin(GameTree gt);
+  BoardPosition placePenguin(GameTreeNode gt);
 
   /**
    * Returns the action that consists of this player's turn when called during the penguin-movement
@@ -46,7 +46,7 @@ public interface IPlayer {
    *           determining the action for the player's turn.
    * @return The action that the player is taking during this turn.
    */
-  Action takeTurn(GameTree gt);
+  Action takeTurn(GameTreeNode gt);
 
   /**
    * Completes playing a game for this given player, being called after the game has ended. If the

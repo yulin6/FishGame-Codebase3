@@ -18,8 +18,8 @@ import static org.junit.Assert.*;
  * - legality checking of a move in a given state
  */
 public class GameTreeTest {
-  GameTree g1;
-  GameTree g2;
+  GameTreeNode g1;
+  GameTreeNode g2;
 
   int row = 8;
   int col = 8;
@@ -109,7 +109,7 @@ public class GameTreeTest {
     p2 = new Pass(player2);
     p3 = new Pass(player3);
 
-    g1 = new GameTree(state1);
+    g1 = new GameTreeNode(state1);
 
     ArrayList<BoardPosition> bps = new ArrayList<>();
     bps.add(new BoardPosition(0,0));
@@ -125,28 +125,28 @@ public class GameTreeTest {
     trivialGs.placeAvatar(new BoardPosition(1, 1), tp1);
     trivPass = new Pass(tp1);
 
-    g2 = new GameTree(trivialGs);
+    g2 = new GameTreeNode(trivialGs);
 
   }
 
   @Test
   public void lookAhead() {
-    GameTree result1 = g1.lookAhead(m1);
+    GameTreeNode result1 = g1.lookAhead(m1);
     GameState resultState1 = result1.getGameState();
     assertEquals(resultState1.getPenguinAtPosn(to1).getColor(),
             g1.getGameState().getPenguinAtPosn(from1).getColor());
 
-    GameTree result2 = result1.lookAhead(m2);
+    GameTreeNode result2 = result1.lookAhead(m2);
     GameState resultState2 = result2.getGameState();
     assertEquals(resultState2.getPenguinAtPosn(to2).getColor(),
             resultState1.getPenguinAtPosn(from2).getColor());
 
-    GameTree result3 = result2.lookAhead(m3);
+    GameTreeNode result3 = result2.lookAhead(m3);
     GameState resultState3 = result3.getGameState();
     assertEquals(resultState3.getPenguinAtPosn(to3).getColor(),
             resultState2.getPenguinAtPosn(from3).getColor());
 
-    GameTree result4 = result3.lookAhead(m4);
+    GameTreeNode result4 = result3.lookAhead(m4);
     GameState resultState4 = result4.getGameState();
     assertEquals(resultState4.getPenguinAtPosn(to4).getColor(),
             resultState3.getPenguinAtPosn(from4).getColor());
@@ -154,26 +154,26 @@ public class GameTreeTest {
 
   @Test (expected = IllegalStateException.class)
   public void lookAheadInvalidPass() {
-    GameTree result = g1.lookAhead(p3);
+    GameTreeNode result = g1.lookAhead(p3);
   }
 
   @Test (expected = IllegalStateException.class)
   public void lookAheadInvalidMove() {
-    GameTree result = g1.lookAhead(m2);
+    GameTreeNode result = g1.lookAhead(m2);
   }
 
   @Test
   public void applyAllChildren() {
-    Consumer<List<GameTree>> testConsumer = gameTrees -> {
+    Consumer<List<GameTreeNode>> testConsumer = gameTrees -> {
       System.out.println("Test \"applyAllChildren\" w/printing as func to apply");
-      for (GameTree g : gameTrees) {
+      for (GameTreeNode g : gameTrees) {
         System.out.println("Is m2 Legal: " + g.isLegal(g.getGameState(), m2));
         System.out.println("Is m3 Legal: " + g.isLegal(g.getGameState(), m3));
       }
     };
 
     int numChildren = g1.getGameState().getPossibleActions().size();
-    List<GameTree> testedChildren = g1.applyAllChildren(testConsumer);
+    List<GameTreeNode> testedChildren = g1.applyAllChildren(testConsumer);
     assertEquals(numChildren, testedChildren.size());
   }
 
