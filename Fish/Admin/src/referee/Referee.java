@@ -6,11 +6,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import game.model.Action;
 import game.model.Board;
@@ -124,7 +127,6 @@ public class Referee implements IReferee {
       Player p = assignColor(pcomponent);
       playerSet.add(p);
     }
-
     return new GameState(playerSet, b);
   }
 
@@ -224,25 +226,28 @@ public class Referee implements IReferee {
     IPlayer currPComponent = playerMap.get(currColor);
     BoardPosition candidatePos;
 
-    final Runnable getPlacingPos = new Thread(() -> {
-      candidatePos = currPComponent.placePenguin(gt);
-    });
-
+    final Callable<BoardPosition> getPlacingPos = () -> currPComponent.placePenguin(gt);
     final ExecutorService es = Executors.newSingleThreadExecutor();
-    final Future<BoardPosition> future = es.submit(getPlacingPos, candidatePos);
+    final Future<BoardPosition> future = es.submit(getPlacingPos);
     try {
-      future = es.submit(15, TimeUnit.SECONDS);
+       candidatePos = future.get(15, TimeUnit.SECONDS);
+    } catch (TimeoutException | InterruptedException | ExecutionException e) {
+      // All exceptions here indicate a player has failed.
+      invalidPlayer(gs, currPlayer, currPComponent, failures);
+      gs.setNextPlayer();
+      this.gt = new GameTree(gs);
+      return;
     }
 
     if (candidatePos == null) {
-      // player failed to provide an appropriate position
+      // player failed to provide a functional position
       invalidPlayer(gs, currPlayer, currPComponent, failures);
     }
     else {
       try {
         gs.placeAvatar(candidatePos, currPlayer);
       } catch (IllegalArgumentException iae) {
-        // player made an illegal move
+        // player made an illegal placement
         invalidPlayer(gs, currPlayer, currPComponent, cheaters);
       }
     }
@@ -279,9 +284,20 @@ public class Referee implements IReferee {
     Player currPlayer = gs.getCurrentPlayer();
     Penguin.PenguinColor currColor = currPlayer.getColor();
     IPlayer currPComponent = playerMap.get(currColor);
+    Action currTurn;
 
-    // TODO - add a future around this line
-    Action currTurn = currPComponent.takeTurn(gt);
+    final Callable<Action> getAction = () -> currPComponent.takeTurn(gt);
+    final ExecutorService es = Executors.newSingleThreadExecutor();
+    final Future<Action> future = es.submit(getAction);
+    try {
+      currTurn = future.get(15, TimeUnit.SECONDS);
+    } catch (TimeoutException | InterruptedException | ExecutionException e) {
+      // All exceptions here indicate a player has failed.
+      invalidPlayer(gs, currPlayer, currPComponent, failures);
+      gs.setNextPlayer();
+      this.gt = new GameTree(gs);
+      return;
+    }
 
     if (currTurn == null) {
       // player failed to provide an appropriate action
