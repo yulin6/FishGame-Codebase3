@@ -50,6 +50,9 @@ import player.PlayerComponent;
  * - a number of players associated with the game
  * - a number of penguins that should be assigned to each player (6-N, where N is the number of
  * players)
+ * - a constant for time (in seconds) to wait for a player component's response
+ * - a constant for the "max" number of penguins (initial # of penguins to subtract # of players
+ * from)
  */
 public class Referee implements IReferee {
   private final Map<Penguin.PenguinColor, IPlayerComponent> playerMap;
@@ -60,6 +63,7 @@ public class Referee implements IReferee {
   private GamePhase phase;
   private int numPlayers;
   private final int penguinsPerPlayer;
+  private static final int COMMS_TIMEOUT = 15;
   private static final int PENGUIN_MAX = 6;
 
   // Entirely arbitrary value to use in constructor of PlayerComponent for testing
@@ -229,7 +233,7 @@ public class Referee implements IReferee {
     final ExecutorService es = Executors.newSingleThreadExecutor();
     final Future<BoardPosition> future = es.submit(getPlacingPos);
     try {
-       candidatePos = future.get(15, TimeUnit.SECONDS);
+       candidatePos = future.get(COMMS_TIMEOUT, TimeUnit.SECONDS);
     } catch (TimeoutException | InterruptedException | ExecutionException e) {
       // All exceptions here indicate a player has failed.
       invalidPlayer(gs, currPlayer, currPComponent, failures);
@@ -289,7 +293,7 @@ public class Referee implements IReferee {
     final ExecutorService es = Executors.newSingleThreadExecutor();
     final Future<Action> future = es.submit(getAction);
     try {
-      currTurn = future.get(15, TimeUnit.SECONDS);
+      currTurn = future.get(COMMS_TIMEOUT, TimeUnit.SECONDS);
     } catch (TimeoutException | InterruptedException | ExecutionException e) {
       // All exceptions here indicate a player has failed.
       invalidPlayer(gs, currPlayer, currPComponent, failures);
