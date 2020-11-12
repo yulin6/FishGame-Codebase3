@@ -10,7 +10,7 @@ import java.util.Scanner;
 import game.model.Action;
 import game.model.BoardPosition;
 import game.model.GameState;
-import game.model.GameTree;
+import game.model.GameTreeNode;
 import game.model.Move;
 import game.model.Pass;
 import game.model.Player;
@@ -29,12 +29,12 @@ public class Xtree {
     BoardPosition to = mrq.getTo();
 
     GameState gs = mrq.getGameState();
-    GameTree gt = new GameTree(gs);
+    GameTreeNode gt = new GameTreeNode(gs);
 
     // Assume move is valid
     Move prevMove = new Move(to, from, gs.getCurrentPlayer());
 
-    GameTree oneAhead = gt.lookAhead(prevMove);
+    GameTreeNode oneAhead = gt.lookAhead(prevMove);
     GameState futureState = oneAhead.getGameState();
     Player secondPlayer = futureState.getCurrentPlayer();
 

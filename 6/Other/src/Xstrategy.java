@@ -14,7 +14,7 @@ import game.model.Action;
 import game.model.Board;
 import game.model.BoardPosition;
 import game.model.GameState;
-import game.model.GameTree;
+import game.model.GameTreeNode;
 import game.model.Move;
 import game.model.Pass;
 import game.model.Penguin;
@@ -59,7 +59,7 @@ public class Xstrategy {
         gs.placeAvatar(bp, colorPlayers.get(tp.getColor()));
       }
     }
-    GameTree gt = new GameTree(gs);
+    GameTreeNode gt = new GameTreeNode(gs);
 
     Strategy strategy = new Strategy();
     Action a = strategy.getMinMaxAction(gt, depth);
