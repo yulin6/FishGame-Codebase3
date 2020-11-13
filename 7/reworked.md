@@ -134,5 +134,6 @@ including doPlayingPhase(), doPlacingPhase() and GamePhase enum. Added tests for
 Feedback: unit tests only cover one abnormal condition
 - Approach: Added unit tests for player timing out when communicating with referee and
  player throwing exception when referee asks it for an action. Also added unit tests for player
-  having these problems when startPlaying, getAge, and finishPlaying are called on the player.
-- Commit: 
+  having these problems when the Referee constructor (which has helpers calling getAge), 
+  startPlaying, and finishPlaying are called on the player.
+- Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/e7e3b168e8d769db61a8687ab52383e6336270d8

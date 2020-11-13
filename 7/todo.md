@@ -92,9 +92,10 @@ run rounds in a loop, where a round is each player making one placement/movement
 [X] Add functionality for single-turn handling (further abstraction from single-round handling).
 Add unit tests for new functionality.
 
-[] After abstraction of functionality in Referee, add unit tests to cover missed cases. Need unit
- tests for placement only (without making moves phase), and tests for new abnormal conditions
-  (timeout and exceptions).
+[X] After abstraction of functionality in Referee, add unit tests to cover missed cases. Need unit
+tests for new abnormal conditions (timeout from an infinite loop and exceptions).
+
+[] Debug newly added, failing unit tests for abnormal conditions. 
  
 ## Other
 [] Review the use of class-based constants and file paths to resources (images for rendering, etc.)
