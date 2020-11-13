@@ -207,7 +207,7 @@ public class Referee implements IReferee {
    * players or cheating players in the event that there is cheating (logically invalid) or
    * failing (runtime-error creating) behavior.
    */
-  private void doPlacingPhase() {
+  public void doPlacingPhase() {
     while (this.phase == GamePhase.PLACING) {
       takeOneAction();
       if (gt.getGameState().getPenguins().size() == penguinsPerPlayer * numPlayers) {
@@ -223,7 +223,7 @@ public class Referee implements IReferee {
    * which consists of runtime-error creating behavior for failing and logically invalid
    * move/pass actions for cheating.
    */
-  private void doPlayingPhase() {
+  public void doPlayingPhase() {
     while (this.phase == GamePhase.PLAYING) {
       takeOneAction();
       if (!this.gt.getGameState().movesPossible()) {
@@ -240,7 +240,7 @@ public class Referee implements IReferee {
    * GameTreeNode in order to prevent the player from modifying the Referee's trusted data
    * structures.
    */
-  private void takeOneAction() {
+  public void takeOneAction() {
     GameTreeNode copyTree = new GameTreeNode(gt.getGameState());
     GameState currState = this.gt.getGameState();
     Player currPlayer = currState.getCurrentPlayer();
@@ -419,6 +419,14 @@ public class Referee implements IReferee {
   }
 
   /**
+   * set the game phase of the current game to the given game phase
+   * @param gamePhase a GamePhase enum
+   */
+  public void setGamePhase(GamePhase gamePhase){
+    this.phase = gamePhase;
+  }
+
+  /**
    * Enum to distinguish the states of the game the referee is managing.
    * - SETUP represents the setting-up phase of the game, which the contained game starts as, and
    * entails game setup - assigning players colors, board setup, etc.
@@ -429,7 +437,7 @@ public class Referee implements IReferee {
    * progress from.
    * - END represents a game which has ended, and some number of players has won.
    */
-  private enum GamePhase {
+  public enum GamePhase {
     SETUP,
     PLACING,
     PLAYING,

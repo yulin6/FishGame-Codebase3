@@ -25,7 +25,7 @@ public class IllogicalPlayerComponent implements IPlayerComponent {
 
   @Override
   public Place placePenguin(GameTreeNode gt) {
-    return new Place(new BoardPosition(0, 0), new Player(0, Penguin.PenguinColor.RED));
+    return new Place(new BoardPosition(-1, 0), new Player(0, Penguin.PenguinColor.RED));
   }
 
   @Override

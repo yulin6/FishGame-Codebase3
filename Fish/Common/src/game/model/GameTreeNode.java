@@ -58,7 +58,7 @@ public class GameTreeNode {
     GameState copy = new GameState(this.state);
     boolean isValid = isLegal(copy, a);
     if (isValid) {
-      doAction(copy, a);
+      a.perform(copy);
       return new GameTreeNode(copy);
     }
     else {

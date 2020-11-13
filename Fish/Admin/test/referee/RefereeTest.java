@@ -1,5 +1,6 @@
 package referee;
 
+import game.model.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -8,11 +9,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import game.model.Board;
-import game.model.GameState;
-import game.model.IBoard;
-import game.model.Penguin;
-import game.model.Player;
 import player.FailingPlayerComponent;
 import player.IPlayerComponent;
 import player.IllogicalPlayerComponent;
@@ -179,6 +175,88 @@ public class RefereeTest {
     randomRef.notifyGameStart();
     randomRef.notifyGameEnd();
   }
+
+
+  @Test
+  public void onePlaceTurn(){
+    Referee randomRef = new Referee(pcomponents, 5, 5);
+    randomRef.notifyGameStart();
+    randomRef.setGamePhase(Referee.GamePhase.PLACING);
+    randomRef.takeOneAction();
+    BoardPosition position = new BoardPosition(0, 0);
+    assertTrue(randomRef.getGameState().isPenguinAtPosn(position));
+
+    BoardPosition position1 = new BoardPosition(0, 1);
+    assertFalse(randomRef.getGameState().isPenguinAtPosn(position1));
+  }
+
+  @Test
+  public void twoPlaceTurns(){
+    Referee randomRef = new Referee(pcomponents, 5, 5);
+    randomRef.notifyGameStart();
+    randomRef.setGamePhase(Referee.GamePhase.PLACING);
+    randomRef.takeOneAction();
+    BoardPosition position = new BoardPosition(0, 0);
+    assertTrue(randomRef.getGameState().isPenguinAtPosn(position));
+
+    randomRef.takeOneAction();
+    BoardPosition position1 = new BoardPosition(0, 1);
+    assertTrue(randomRef.getGameState().isPenguinAtPosn(position1));
+  }
+
+  @Test
+  public void onePlayTurn(){
+    Referee randomRef = new Referee(pcomponents, 2, 5);
+    randomRef.notifyGameStart();
+    randomRef.setGamePhase(Referee.GamePhase.PLACING);
+    randomRef.doPlacingPhase();
+
+    BoardPosition position = new BoardPosition(0, 4);
+    assertFalse(randomRef.getGameState().getBoard().getSpace(position).isHole());
+    randomRef.takeOneAction();
+    assertTrue(randomRef.getGameState().getBoard().getSpace(position).isHole());
+  }
+
+  @Test
+  public void onePlaceTurnWithCheatingPlayer(){
+    List<IPlayerComponent> cheaterList = new ArrayList<>(Arrays.asList(new IllogicalPlayerComponent(), pc1, pc2, pc3));
+    Referee cheatRef = new Referee(cheaterList, 5, 5);
+    cheatRef.notifyGameStart();
+    cheatRef.setGamePhase(Referee.GamePhase.PLACING);
+
+    assertEquals(4, cheatRef.getGameState().getPlayers().size());
+    cheatRef.takeOneAction();
+    assertEquals(3, cheatRef.getGameState().getPlayers().size());
+  }
+
+  @Test
+  public void onePlaceTurnWithFailingPlayer(){
+    List<IPlayerComponent> cheaterList = new ArrayList<>(Arrays.asList(new FailingPlayerComponent(), pc1, pc2, pc3));
+    Referee cheatRef = new Referee(cheaterList, 5, 5);
+    cheatRef.notifyGameStart();
+    cheatRef.setGamePhase(Referee.GamePhase.PLACING);
+
+    assertEquals(4, cheatRef.getGameState().getPlayers().size());
+    cheatRef.takeOneAction();
+    assertEquals(3, cheatRef.getGameState().getPlayers().size());
+  }
+
+  @Test
+  public void twoPlaceTurnsWithFailingAndCheatingPlayers(){
+    List<IPlayerComponent> cheaterList = new ArrayList<>(Arrays.asList(new FailingPlayerComponent(),
+            new IllogicalPlayerComponent(), pc1, pc2));
+    Referee cheatRef = new Referee(cheaterList, 5, 5);
+    cheatRef.notifyGameStart();
+    cheatRef.setGamePhase(Referee.GamePhase.PLACING);
+
+    assertEquals(4, cheatRef.getGameState().getPlayers().size());
+    cheatRef.takeOneAction();
+    assertEquals(3, cheatRef.getGameState().getPlayers().size());
+    cheatRef.takeOneAction();
+    assertEquals(2, cheatRef.getGameState().getPlayers().size());
+  }
+
+
 
   @Test
   public void getWinningPlayers() {
