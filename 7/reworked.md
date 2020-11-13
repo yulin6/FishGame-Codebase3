@@ -86,7 +86,12 @@ Feedback: Changes to Referee to do with too much functionality being implemented
 - Approach: Moved the functionality involving the running of a single round of each phase into a
  new method for each phase, so now running a phase is a very short method looping rounds and
   checking for end conditions (phases run being penguin placement and penguin movement).
-- Commit:  
+- Commit:  https://github.ccs.neu.edu/CS4500-F20/fritch/commit/efbe45ee1f55161968d5a28328d6adab5a308f58
+
+Feedback: The functionality for single-turn handling is missing, as well as its tests.
+- Approach: Make the newly abstracted single-turn method to public, as well as other necessary classes
+including doPlayingPhase(), doPlacingPhase() and GamePhase enum. Added tests for the single-turn handling.
+- Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/ea23748cd297b91675760e9ce533b5dada0c76dd
 
 Feedback: choosing turn action: purpose statement doesn't specify what happens when the current player does not have valid moves
 - Approach: Added to documentation in IStrategy.java for the purpose statement of the

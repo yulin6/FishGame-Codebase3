@@ -89,7 +89,7 @@ run rounds in a loop, where a round is each player making one placement/movement
 [] Correct issue where player may mutate referee's trusted data component (GameTreeNode passed to
  the player).
 
-[] Add functionality for single-turn handling (further abstraction from single-round handling).
+[X] Add functionality for single-turn handling (further abstraction from single-round handling).
 Add unit tests for new functionality.
 
 [] After abstraction of functionality in Referee, add unit tests to cover missed cases. Need unit
