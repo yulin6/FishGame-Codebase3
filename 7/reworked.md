@@ -129,6 +129,7 @@ Feedback: The functionality for single-turn handling is missing, as well as its 
 - Approach: Make the newly abstracted single-turn method public, as well as other necessary classes
 including doPlayingPhase(), doPlacingPhase() and GamePhase enum. Added tests for the single-turn handling.
 - Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/ea23748cd297b91675760e9ce533b5dada0c76dd
+- Second Commit (Rewrote the two tests which potentially could fail): https://github.ccs.neu.edu/CS4500-F20/fritch/commit/b35b37c3238c0ab2d2911e3e63c09da0ead86da1
 
 Feedback: unit tests only cover one abnormal condition
 - Approach: Added unit tests for player timing out when communicating with referee and
