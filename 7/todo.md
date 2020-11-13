@@ -86,7 +86,7 @@ run rounds in a loop, where a round is each player making one placement/movement
   functionality, now that it's implemented. Will likely require a new type of Action for placing
    penguins.
 
-[] Correct issue where player may mutate referee's trusted data component (GameTreeNode passed to
+[X] Correct issue where player may mutate referee's trusted data component (GameTreeNode passed to
  the player).
 
 [X] Add functionality for single-turn handling (further abstraction from single-round handling).

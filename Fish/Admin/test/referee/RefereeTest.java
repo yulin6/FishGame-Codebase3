@@ -196,12 +196,29 @@ public class RefereeTest {
     randomRef.notifyGameStart();
     randomRef.setGamePhase(Referee.GamePhase.PLACING);
     randomRef.takeOneAction();
-    BoardPosition position = new BoardPosition(0, 0);
-    assertTrue(randomRef.getGameState().isPenguinAtPosn(position));
-
+    // Figure out the first valid position to place penguin at for state
+    Board b = (Board) randomRef.getGameState().getBoard();
+    BoardPosition firstPos = null;
+    BoardPosition secondPos = null;
+    for (int i = 0; i < b.getRows(); i++) {
+      for (int j = 0; j < b.getCols(); j++) {
+        BoardPosition p = new BoardPosition(i, j);
+        if (b.getSpace(p) instanceof Tile) {
+          if (firstPos == null) {
+            firstPos = p;
+          }
+          else if (secondPos == null) {
+            secondPos = p;
+          }
+          else {
+            break;
+          }
+        }
+      }
+    }
+    assertTrue(randomRef.getGameState().isPenguinAtPosn(firstPos));
     randomRef.takeOneAction();
-    BoardPosition position1 = new BoardPosition(0, 1);
-    assertTrue(randomRef.getGameState().isPenguinAtPosn(position1));
+    assertTrue(randomRef.getGameState().isPenguinAtPosn(secondPos));
   }
 
   @Test
@@ -255,8 +272,6 @@ public class RefereeTest {
     cheatRef.takeOneAction();
     assertEquals(2, cheatRef.getGameState().getPlayers().size());
   }
-
-
 
   @Test
   public void getWinningPlayers() {

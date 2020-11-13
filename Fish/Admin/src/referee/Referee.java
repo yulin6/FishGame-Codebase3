@@ -80,6 +80,9 @@ public class Referee implements IReferee {
    */
   public Referee(List<IPlayerComponent> players, int rows, int cols) {
     this.playerMap = new HashMap<>();
+    this.winners = new ArrayList<>();
+    this.failures = new ArrayList<>();
+    this.cheaters = new ArrayList<>();
     this.numPlayers = players.size();
     this.penguinsPerPlayer = PENGUIN_MAX - this.numPlayers;
     if (rows * cols < this.numPlayers * this.penguinsPerPlayer) {
@@ -88,9 +91,6 @@ public class Referee implements IReferee {
     }
     GameState gs = makeNewState(players, rows, cols);
     this.gt = new GameTreeNode(gs);
-    this.winners = new ArrayList<>();
-    this.failures = new ArrayList<>();
-    this.cheaters = new ArrayList<>();
     this.phase = GamePhase.SETUP;
   }
 
@@ -127,7 +127,13 @@ public class Referee implements IReferee {
     Board b = generateRandomBoard(rows, cols);
     HashSet<Player> playerSet = new HashSet<>();
     for (IPlayerComponent pcomponent : players) {
-      Player p = assignColor(pcomponent);
+      Player p;
+      try {
+        p = assignColor(pcomponent);
+      }
+      catch (IllegalArgumentException e) {
+        continue;
+      }
       playerSet.add(p);
     }
     return new GameState(playerSet, b);
@@ -136,15 +142,33 @@ public class Referee implements IReferee {
   /**
    * Assigns one of the four possible colors to the player component, checking that the color is
    * not already being used as a key in the color to player-component mapping to avoid duplicates.
-   * @param p The player component to assign a color to.
+   * Handles communication with player components by using a Future and timeouts to check for
+   * infinite loops/player communication timeouts, as well as exceptions with catching.
+   * @param pcomponent The player component to assign a color to.
    */
-  private Player assignColor(IPlayerComponent p) {
+  private Player assignColor(IPlayerComponent pcomponent) {
     Penguin.PenguinColor color = Penguin.PenguinColor.getRandomColor();
     while (playerMap.containsKey(color)) {
       color = Penguin.PenguinColor.getRandomColor();
     }
-    Player newPlayer = new Player(p.getAge(), color);
-    playerMap.put(color, p);
+
+    Integer age;
+    final ExecutorService es = Executors.newSingleThreadExecutor();
+    final Callable<Integer> getAction = () -> pcomponent.getAge();
+    Future<Integer> future = es.submit(getAction);
+
+    try {
+      age = future.get(COMMS_TIMEOUT, TimeUnit.SECONDS);
+    } catch (TimeoutException | InterruptedException | ExecutionException e) {
+      // All exceptions here indicate a player has failed.
+      // Don't put the player into the game in the first place; directly add to failures list.
+      failures.add(pcomponent);
+      throw new IllegalArgumentException("Player component did not appropriately respond.");
+    }
+
+    assert(age != null);
+    Player newPlayer = new Player(age, color);
+    playerMap.put(color, pcomponent);
     return newPlayer;
   }
 
@@ -183,9 +207,7 @@ public class Referee implements IReferee {
       throw new IllegalArgumentException("Cannot notify players that a game is starting outside " +
               "of the setup phase.");
     }
-    for (Penguin.PenguinColor color : playerMap.keySet()) {
-      playerMap.get(color).startPlaying(color);
-    }
+    sendNotifToPlayers(NotifType.START);
   }
 
   @Override
@@ -264,20 +286,20 @@ public class Referee implements IReferee {
    * Returns the Future used to get a player component's action, with the appropriate request
    * being passed to the player component depending on the current phase of the game (penguin
    * placing or penguin movement).
-   * @param node GameTreeNode (a copy, in order to avoid ) passed to the current player component
-   *            in order to get an Action they are attempting to perform.
-   * @param curr The current external player component of the game.
+   * @param node GameTreeNode (a copy, in order to avoid player components mutating our data) passed
+   *            to the current player component in order to get an Action they are attempting to perform.
+   * @param currComp The current external player component of the game.
    * @return The Future to get the player component's action from.
    */
-  private Future<Action> getFuture(GameTreeNode node, IPlayerComponent curr) {
+  private Future<Action> getFuture(GameTreeNode node, IPlayerComponent currComp) {
     Future<Action> future;
     final ExecutorService es = Executors.newSingleThreadExecutor();
 
     if (phase == GamePhase.PLACING) {
-      final Callable<Action> getAction = () -> curr.placePenguin(node);
+      final Callable<Action> getAction = () -> currComp.placePenguin(node);
       future = es.submit(getAction);
     } else if (phase == GamePhase.PLAYING) {
-      final Callable<Action> getAction = () -> curr.takeTurn(node);
+      final Callable<Action> getAction = () -> currComp.takeTurn(node);
       future = es.submit(getAction);
     } else {
       throw new IllegalStateException("Wrong game phase.");
@@ -372,8 +394,62 @@ public class Referee implements IReferee {
       throw new IllegalArgumentException("Can't notify players of a game's end unless it has " +
               "ended.");
     }
+    sendNotifToPlayers(NotifType.END);
+  }
+
+  /**
+   * Function to abstract the sending of notifications (start playing and finish playing) to the
+   * players of the game. Creates a type implementing Callable to use to call on the player
+   * components, which covers player timeouts in communication and player infinite loops with a
+   * timeout, and covers player exceptions with catching.
+   * @param type The type of notification (START/END) to send to the players.
+   */
+  private void sendNotifToPlayers(NotifType type) {
+    Future<Void> sendNotif;
+    final ExecutorService es = Executors.newSingleThreadExecutor();
+    Callable<Void> methodCall;
+
+    class NotifFunc implements Callable<Void> {
+      private final Penguin.PenguinColor color;
+
+      @Override
+      public Void call() {
+        if (type == NotifType.START) {
+          playerMap.get(color).startPlaying(color);
+        }
+        else if (type == NotifType.END) {
+          playerMap.get(color).finishPlaying();
+        }
+        else {
+          throw new IllegalArgumentException("Invalid notification type.");
+        }
+        return null;
+      }
+
+      NotifFunc(Penguin.PenguinColor color) {
+        this.color = color;
+      }
+    }
+
     for (Penguin.PenguinColor color : playerMap.keySet()) {
-      playerMap.get(color).finishPlaying();
+      try {
+        methodCall = new NotifFunc(color);
+        sendNotif = es.submit(methodCall);
+        sendNotif.get(COMMS_TIMEOUT, TimeUnit.SECONDS);
+      }
+      catch (TimeoutException | InterruptedException | ExecutionException e) {
+        // All exceptions here indicate a player has failed.
+        GameState state = this.gt.getGameState();
+        Player player = null;
+        for (Player p : state.getPlayers()) {
+          if (p.getColor() == color) {
+            player = p;
+          }
+        }
+        assert(player != null);
+        IPlayerComponent failedPlayer = playerMap.get(color);
+        invalidPlayer(state, player, failedPlayer, failures);
+      }
     }
   }
 
@@ -441,6 +517,17 @@ public class Referee implements IReferee {
     SETUP,
     PLACING,
     PLAYING,
+    END
+  }
+
+  /**
+   * Enum to distinguish kinds of notifications that can be sent from the Referee to the
+   * player components. Used in sendNotifToPlayers.
+   * - START indicates that the referee is calling startPlaying on the components.
+   * - END indicates that the referee is calling finishPlaying on the components.
+   */
+  private enum NotifType {
+    START,
     END
   }
 }

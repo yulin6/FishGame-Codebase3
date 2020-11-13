@@ -1,4 +1,6 @@
-## List of Reworked Sections
+# List of Reworked Sections
+
+## Tile
 Feedback: For the TileStatus enum in Tile class: The tiles all have the same color, it is the penguin which
  goes on the tile has different colors. The tile cannot be none, it is a place on the board that is none. The tile
   cannot be a hole. The hole is an attribute of the board, but not of the tile.
@@ -7,6 +9,7 @@ Feedback: For the TileStatus enum in Tile class: The tiles all have the same col
  Due to the size of the changes, specific lines are not highlighted in this commit link.
 - Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/bd771b0dde4b8a09a9d8b0c09c6088f3b35b53b8#diff-1efc0a0b264deae6b06270fb0d16cfd9
 
+## Board
 Feedback: for a data (or type) definition for a representation of boards/interpretation 
 the interpretation must include how `row` and `column` from the game board world are represented/interpreted
 for hexagon-based game board, what the origin is relative to. Or if it's 0-indexed
@@ -44,6 +47,7 @@ Feedback: The setOneFishTiles function in Board class should come with a warning
   randomly to be 1-fish tiles.
 - Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/22fb207c57e633642f84fe1fdced46bb657dd15e#diff-ac9d71ba0e24b5fae062c12740d1fde7L172-R175
 
+## GameState
 Feedback: no signature for functionality to create game states, no purpose statement for functionality to create game states
 - Approach: Added purpose statement and signature to the GameState constructor, explaining that
  the constructor takes a set of players (playerSet parameter) and a board (b parameter), and
@@ -57,6 +61,7 @@ Feedback: insufficient coverage of unit tests for turn-taking functionality
   appropriately updated.
 - Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/blob/master/Fish/Common/test/game/model/GameStateTest.java#L166-L212
 
+## GameTree
 Feedback: the game tree definition does not have a recursive tree shape, it is unclear that the
  generation of a tree is suspended, it is unclear if the game tree node can represent all three kinds of nodes:
  game-is-over, current-player-is-stuck, and current-player-can-move;  only current-player-can-move
@@ -74,12 +79,37 @@ Feedback: the game tree definition does not have a recursive tree shape, it is u
        is called on each of the children of the current node.
 - Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/f6835672e803c21ccc1b5c74cc23c587547b919b
 
-Feedback: Changes to Referee relating to interacting with components. Observing code walks
- revealed gaps in our code where we didn't account for failures from player components sufficiently.
+Feedback: Renaming of GameTree to GameTreeNode and IPlayer to IPlayerComponent in order to
+ improve readability. 
+- Approach: GameTree as an object recursively represents the entire tree, but a single
+  instance of the object is a single node with children nodes, so this name better reflects it. 
+  IPlayer was confusing when seen next to Player (definitely noticed this during onboarding/observed
+   code walks), so it was renamed to IPlayerComponent. 
+- Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/7231bd1c1b359839ab9d4d8d3553124ec9a91388
+
+## Strategy
+Feedback: Change Strategy to improve readability, pull functionality out of large methods into
+ smaller ones where possible to make things easier later if changes are necessary.
+- Approach: Moved the board position comparison into its own method, compareBoardPositions, and
+ moved the functionality for populating the mapping of moves to expected fish values to a new
+  method, fillActionToFish.
+- Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/417ad8d33a3ea2ada41a90f21e5c1b695fd8a550
+
+Feedback: choosing turn action: purpose statement doesn't specify what happens when the current player does not have valid moves
+- Approach: Added to documentation in IStrategy.java for the purpose statement of the
+ getMinMaxAction function, explaining that the Action returned is either a Move (when valid moves
+  are present) or a Pass (when no valid moves are present).
+- Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/c6270277a97a9c3d1449fd71207f769f5703213d#diff-fe94b8b2dcabdee1fe6fef3473e370ccL19-R22
+
+## Referee
+Feedback: Changes to Referee relating to interacting with components. Also, the Referee
+documentation only mentions one abnormal player condition that is addressed. It is missing
+calls to player methods that result in exceptions.
 - Approach: Added Future(s) to Referee enabling timeouts and catching exceptions within the player
  components in order to prevent failing player components from interfering with the referee's
   operations. 
 - Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/895dfffb7a4bfb645c6cc367de9a20ce0a6731d7
+- Second commit (missed some interactions in first commit): 
 
 Feedback: Changes to Referee to do with too much functionality being implemented in one place in
  running phases of the game.
@@ -88,21 +118,20 @@ Feedback: Changes to Referee to do with too much functionality being implemented
   checking for end conditions (phases run being penguin placement and penguin movement).
 - Commit:  https://github.ccs.neu.edu/CS4500-F20/fritch/commit/efbe45ee1f55161968d5a28328d6adab5a308f58
 
+Feedback: Referee does not document cases where the player mutates referee's trusted data 
+structures.
+- Approach: Give player components a copy of the GameTreeNode instead of the actual relied-upon
+ data. Added documentation explaining that the Action from the player component is checked
+  against the trusted data, which could not have been modified. 
+- Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/efbe45ee1f55161968d5a28328d6adab5a308f58
+
 Feedback: The functionality for single-turn handling is missing, as well as its tests.
-- Approach: Make the newly abstracted single-turn method to public, as well as other necessary classes
+- Approach: Make the newly abstracted single-turn method public, as well as other necessary classes
 including doPlayingPhase(), doPlacingPhase() and GamePhase enum. Added tests for the single-turn handling.
 - Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/ea23748cd297b91675760e9ce533b5dada0c76dd
 
-Feedback: choosing turn action: purpose statement doesn't specify what happens when the current player does not have valid moves
-- Approach: Added to documentation in IStrategy.java for the purpose statement of the
- getMinMaxAction function, explaining that the Action returned is either a Move (when valid moves
-  are present) or a Pass (when no valid moves are present).
-- Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/c6270277a97a9c3d1449fd71207f769f5703213d#diff-fe94b8b2dcabdee1fe6fef3473e370ccL19-R22
-
-Feedback: Renaming of GameTree to GameTreeNode and IPlayer to IPlayerComponent in order to
- improve readability. 
-- Approach: GameTree as an object recursively represents the entire tree, but a single
-  instance of the object is a single node with children nodes, so this name better reflects it. 
-  IPlayer was confusing when seen next to Player (definitely noticed this during onboarding/observed
-   code walks), so it was renamed to IPlayerComponent. 
-- Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/7231bd1c1b359839ab9d4d8d3553124ec9a91388
+Feedback: unit tests only cover one abnormal condition
+- Approach: Added unit tests for player timing out when communicating with referee and
+ player throwing exception when referee asks it for an action. Also added unit tests for player
+  having these problems when startPlaying, getAge, and finishPlaying are called on the player.
+- Commit: 
