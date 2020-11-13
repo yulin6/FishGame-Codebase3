@@ -209,13 +209,12 @@ public class Referee implements IReferee {
    */
   private void doPlacingPhase() {
     while (this.phase == GamePhase.PLACING) {
-      runOneRound();
+      takeOneAction();
       if (gt.getGameState().getPenguins().size() == penguinsPerPlayer * numPlayers) {
         this.phase = GamePhase.PLAYING;
       }
     }
   }
-
 
   /**
    * Runs the penguin-movement phase of the game until it is determined that the game has reached
@@ -226,7 +225,7 @@ public class Referee implements IReferee {
    */
   private void doPlayingPhase() {
     while (this.phase == GamePhase.PLAYING) {
-      runOneRound();
+      takeOneAction();
       if (!this.gt.getGameState().movesPossible()) {
         this.phase = GamePhase.END;
         setWinningPlayers();
@@ -234,37 +233,71 @@ public class Referee implements IReferee {
     }
   }
 
-
-  private void runOneRound() {
-    GameState gs = this.gt.getGameState();
-    Player currPlayer = gs.getCurrentPlayer();
+  /**
+   * Runs a round of the game, depending on the current phase of the game. If the game phase is
+   * penguin placement, then a round of penguin placement is performed. If the game phase is
+   * penguin movement, then a round of penguin movement is performed. Copies the current
+   * GameTreeNode in order to prevent the player from modifying the Referee's trusted data
+   * structures.
+   */
+  private void takeOneAction() {
+    GameTreeNode copyTree = new GameTreeNode(gt.getGameState());
+    GameState currState = this.gt.getGameState();
+    Player currPlayer = currState.getCurrentPlayer();
     Penguin.PenguinColor currColor = currPlayer.getColor();
     IPlayerComponent currPComponent = playerMap.get(currColor);
     Action action;
-    Future<Action> future = null;
-    final ExecutorService es = Executors.newSingleThreadExecutor();
-
-    if (phase == GamePhase.PLACING) {
-      final Callable<Action> getAction = () -> currPComponent.placePenguin(gt);
-      future = es.submit(getAction);
-    } else if (phase == GamePhase.PLAYING) {
-      final Callable<Action> getAction = () -> currPComponent.takeTurn(gt);
-      future = es.submit(getAction);
-    } else {
-      throw new IllegalStateException("Wrong game phase.");
-    }
+    Future<Action> future = getFuture(copyTree, currPComponent);
 
     try {
       action = future.get(COMMS_TIMEOUT, TimeUnit.SECONDS);
     } catch (TimeoutException | InterruptedException | ExecutionException e) {
       // All exceptions here indicate a player has failed.
-      invalidPlayer(gs, currPlayer, currPComponent, failures);
-      updateTreeToNextPlayer(gs);
+      invalidPlayer(currState, currPlayer, currPComponent, failures);
+      updateTreeToNextPlayer(currState);
       return;
     }
+    doPlayerAction(action, currState, currPlayer, currPComponent);
+  }
 
+  /**
+   * Returns the Future used to get a player component's action, with the appropriate request
+   * being passed to the player component depending on the current phase of the game (penguin
+   * placing or penguin movement).
+   * @param node GameTreeNode (a copy, in order to avoid ) passed to the current player component
+   *            in order to get an Action they are attempting to perform.
+   * @param curr The current external player component of the game.
+   * @return The Future to get the player component's action from.
+   */
+  private Future<Action> getFuture(GameTreeNode node, IPlayerComponent curr) {
+    Future<Action> future;
+    final ExecutorService es = Executors.newSingleThreadExecutor();
+
+    if (phase == GamePhase.PLACING) {
+      final Callable<Action> getAction = () -> curr.placePenguin(node);
+      future = es.submit(getAction);
+    } else if (phase == GamePhase.PLAYING) {
+      final Callable<Action> getAction = () -> curr.takeTurn(node);
+      future = es.submit(getAction);
+    } else {
+      throw new IllegalStateException("Wrong game phase.");
+    }
+    return future;
+  }
+
+  /**
+   * Performs a player component's returned action on the passed-in (current) GameState. Takes
+   * additional player and player component in the event that they need to be moved to invalid
+   * lists.
+   * @param action The Action from the player component to be performed. May be invalid.
+   * @param gs The gamestate to perform the player's action on.
+   * @param currPlayer Internal representation of the current player.
+   * @param currComponent External player component representing the current player.
+   */
+  private void doPlayerAction(Action action, GameState gs, Player currPlayer,
+                              IPlayerComponent currComponent) {
     if (action == null) {
-      invalidPlayer(gs, currPlayer, currPComponent, failures);
+      invalidPlayer(gs, currPlayer, currComponent, failures);
       updateTreeToNextPlayer(gs);
     } else {
       try {
@@ -276,13 +309,17 @@ public class Referee implements IReferee {
         }
       } catch (IllegalArgumentException iae) {
         // player made an illegal placement/movement
-        invalidPlayer(gs, currPlayer, currPComponent, cheaters);
+        invalidPlayer(gs, currPlayer, currComponent, cheaters);
         updateTreeToNextPlayer(gs);
       }
     }
-
   }
 
+  /**
+   * Helper method to update the GameTreeNode of this Referee to the next player with a given
+   * GameState to make the next GameTreeNode from.
+   * @param gs The GameState to use to update the tree.
+   */
   private void updateTreeToNextPlayer(GameState gs){
     gs.setNextPlayer();
     this.gt = new GameTreeNode(gs);
@@ -373,6 +410,10 @@ public class Referee implements IReferee {
     }
   }
 
+  /**
+   * Returns the GameState of this Referee.
+   * @return the GameState object from this Referee.
+   */
   public GameState getGameState() {
     return this.gt.getGameState();
   }
