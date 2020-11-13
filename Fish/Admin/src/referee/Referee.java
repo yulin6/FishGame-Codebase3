@@ -166,7 +166,6 @@ public class Referee implements IReferee {
       throw new IllegalArgumentException("Player component did not appropriately respond.");
     }
 
-    assert(age != null);
     Player newPlayer = new Player(age, color);
     playerMap.put(color, pcomponent);
     return newPlayer;
@@ -409,6 +408,11 @@ public class Referee implements IReferee {
     final ExecutorService es = Executors.newSingleThreadExecutor();
     Callable<Void> methodCall;
 
+    /**
+     * the Callable class will be a notifier to a player when a game starts or ends. Since call() in a Callable class
+     * doesn't take in a parameter, so we have a constructor that takes in a PenguinColor, which is used for identifying
+     * the player who has the matching color.
+     */
     class NotifFunc implements Callable<Void> {
       private final Penguin.PenguinColor color;
 
@@ -446,7 +450,7 @@ public class Referee implements IReferee {
             player = p;
           }
         }
-        assert(player != null);
+
         IPlayerComponent failedPlayer = playerMap.get(color);
         invalidPlayer(state, player, failedPlayer, failures);
       }

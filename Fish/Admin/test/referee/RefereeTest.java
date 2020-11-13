@@ -179,15 +179,24 @@ public class RefereeTest {
 
   @Test
   public void onePlaceTurn(){
-    Referee randomRef = new Referee(pcomponents, 5, 5);
-    randomRef.notifyGameStart();
-    randomRef.setGamePhase(Referee.GamePhase.PLACING);
-    randomRef.takeOneAction();
+    List<Integer> r1 = Arrays.asList(2, 3, 1, 2, 1);
+    List<Integer> r2 = Arrays.asList(2, 1, 2, 1, 3);
+    List<List<Integer>> rows = Arrays.asList(r1, r2);
+
+    IBoard b = new Board(2, 5, rows);
+    Player p1 = new Player(5, Penguin.PenguinColor.RED);
+    Player p2 = new Player(6, Penguin.PenguinColor.BLACK);
+    HashSet<Player> players = new HashSet<>(Arrays.asList(p1, p2));
+    GameState gs = new GameState(players, b);
+    Referee ref = new Referee(gs);
+
+    ref.setGamePhase(Referee.GamePhase.PLACING);
+    ref.takeOneAction();
     BoardPosition position = new BoardPosition(0, 0);
-    assertTrue(randomRef.getGameState().isPenguinAtPosn(position));
+    assertTrue(ref.getGameState().isPenguinAtPosn(position));
 
     BoardPosition position1 = new BoardPosition(0, 1);
-    assertFalse(randomRef.getGameState().isPenguinAtPosn(position1));
+    assertFalse(ref.getGameState().isPenguinAtPosn(position1));
   }
 
   @Test
@@ -223,15 +232,24 @@ public class RefereeTest {
 
   @Test
   public void onePlayTurn(){
-    Referee randomRef = new Referee(pcomponents, 2, 5);
-    randomRef.notifyGameStart();
-    randomRef.setGamePhase(Referee.GamePhase.PLACING);
-    randomRef.doPlacingPhase();
+    List<Integer> r1 = Arrays.asList(2, 3, 1, 2, 1);
+    List<Integer> r2 = Arrays.asList(2, 1, 2, 1, 3);
+    List<List<Integer>> rows = Arrays.asList(r1, r2);
+
+    IBoard b = new Board(2, 5, rows);
+    Player p1 = new Player(5, Penguin.PenguinColor.RED);
+    Player p2 = new Player(6, Penguin.PenguinColor.BLACK);
+    HashSet<Player> players = new HashSet<>(Arrays.asList(p1, p2));
+    GameState gs = new GameState(players, b);
+    Referee ref = new Referee(gs);
+
+    ref.setGamePhase(Referee.GamePhase.PLACING);
+    ref.doPlacingPhase();
 
     BoardPosition position = new BoardPosition(0, 4);
-    assertFalse(randomRef.getGameState().getBoard().getSpace(position).isHole());
-    randomRef.takeOneAction();
-    assertTrue(randomRef.getGameState().getBoard().getSpace(position).isHole());
+    assertFalse(ref.getGameState().getBoard().getSpace(position).isHole());
+    ref.takeOneAction();
+    assertTrue(ref.getGameState().getBoard().getSpace(position).isHole());
   }
 
   @Test
