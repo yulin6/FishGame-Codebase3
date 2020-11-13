@@ -109,7 +109,7 @@ calls to player methods that result in exceptions.
  components in order to prevent failing player components from interfering with the referee's
   operations. 
 - Commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/895dfffb7a4bfb645c6cc367de9a20ce0a6731d7
-- Second commit (missed some interactions in first commit): 
+- Second commit (missed some interactions in first commit): https://github.ccs.neu.edu/CS4500-F20/fritch/commit/3ffe709be5c21c4c20952683cba5fcf97ba89d91
 
 Feedback: Changes to Referee to do with too much functionality being implemented in one place in
  running phases of the game.
