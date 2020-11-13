@@ -63,7 +63,7 @@ public class Referee implements IReferee {
   private GamePhase phase;
   private int numPlayers;
   private final int penguinsPerPlayer;
-  private static final int COMMS_TIMEOUT = 15;
+  private static final int COMMS_TIMEOUT = 3;
   private static final int PENGUIN_MAX = 6;
 
   // Entirely arbitrary value to use in constructor of PlayerComponent for testing
@@ -408,10 +408,11 @@ public class Referee implements IReferee {
     final ExecutorService es = Executors.newSingleThreadExecutor();
     Callable<Void> methodCall;
 
-    /**
-     * the Callable class will be a notifier to a player when a game starts or ends. Since call() in a Callable class
-     * doesn't take in a parameter, so we have a constructor that takes in a PenguinColor, which is used for identifying
-     * the player who has the matching color.
+    /*
+      the Callable class will be a notifier to a player when a game starts or ends.
+      Since call() in a Callable class doesn't take in a parameter, so we have a
+      constructor that takes in a PenguinColor, which is used for identifying
+      the player who has the matching color.
      */
     class NotifFunc implements Callable<Void> {
       private final Penguin.PenguinColor color;
@@ -430,12 +431,19 @@ public class Referee implements IReferee {
         return null;
       }
 
+      /**
+       * Constructor for a NotifFunc. Takes the color to use in the call.
+       * @param color Color to call startPlaying or finishPlaying with.
+       */
       NotifFunc(Penguin.PenguinColor color) {
         this.color = color;
       }
     }
 
     for (Penguin.PenguinColor color : playerMap.keySet()) {
+      if (failures.contains(playerMap.get(color))) {
+        continue;
+      }
       try {
         methodCall = new NotifFunc(color);
         sendNotif = es.submit(methodCall);
@@ -450,7 +458,6 @@ public class Referee implements IReferee {
             player = p;
           }
         }
-
         IPlayerComponent failedPlayer = playerMap.get(color);
         invalidPlayer(state, player, failedPlayer, failures);
       }

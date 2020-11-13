@@ -12,7 +12,8 @@ import game.model.*;
 public class FailingPlayerComponent implements IPlayerComponent {
 
   /**
-   * Constructor for a failing player.
+   * Constructor for a failing player. Used to test player components that return null (an
+   * abnormal condition).
    */
   public FailingPlayerComponent() {
 
