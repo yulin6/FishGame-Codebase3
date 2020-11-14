@@ -42,6 +42,7 @@ critical elements of the project, though by no means all of them.
 
 - a purpose statement for the "take turn" functionality on states
     - We did not add this as a to-do list item as we never received feedback on the purpose statement indicating it was incorrect, and we felt it was sufficiently documented to continue using it as it was.
+    - Current state was added in this commit: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/dd4811373a1543885bccfb9db45051289dadcc96#diff-9aa58c21f344f36f92dd17cfbc8db7ddR18-R28
 
 
 - two unit tests for the "take turn" functionality 
