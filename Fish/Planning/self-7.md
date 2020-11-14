@@ -19,14 +19,14 @@ critical elements of the project, though by no means all of them.
 ### Board
 
 - a data definition and an interpretation for the game _board_
-    - To-do list item: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/130a67e55521918a45a38d684463be962d1a068b#diff-fffda276c12b3dbca7ad810a9a8364e5R11-R18
+    - To-do list item: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/81efe2d95f958b0c23a5a202caccfbd286f5047b#diff-fffda276c12b3dbca7ad810a9a8364e5R13-R18
     - Resolution links:
         - ASCII diagram for better interpretation of a Board: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/378bd53821f9d13a91cc8eba1cc8ba20ce10e0c7#diff-036ecebb80e1c70a2eef34e0122ff3e4L11-R35
-        - Argument checking in constructor for a Board: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/cacf65fb490494eb31c7ff107877ee9f4b76bdab
+        - Argument checking in constructor for a Board: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/cacf65fb490494eb31c7ff107877ee9f4b76bdab#diff-036ecebb80e1c70a2eef34e0122ff3e4R32-R73
         - Documentation about nontermination for setOneFishTiles, used in constructor: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/22fb207c57e633642f84fe1fdced46bb657dd15e#diff-ac9d71ba0e24b5fae062c12740d1fde7L172-R175
 
 - a purpose statement for the "reachable tiles" functionality on the board representation
-    - To-do list item: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/130a67e55521918a45a38d684463be962d1a068b#diff-fffda276c12b3dbca7ad810a9a8364e5R15-R16
+    - To-do list item: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/16b2baa63d4a3eb62959f07556d1cae6f6a86bcd#diff-fffda276c12b3dbca7ad810a9a8364e5R20-R21
     - Resolution link: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/79cff9ad116cca02af505ae2a70857f54d9743c8#diff-fedce09cfce4714634a2e92d5140ecd7L10-R20
 
 - two unit tests for the "reachable tiles" functionality
@@ -54,7 +54,7 @@ critical elements of the project, though by no means all of them.
 
 - a data definition including an interpretation for _tree_ that represent entire games
     - To-do list item: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/773e8d011b9426756f3ee53554863aeb3161ca12#diff-fffda276c12b3dbca7ad810a9a8364e5R36-R43
-    - Resolution link: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/f6835672e803c21ccc1b5c74cc23c587547b919b
+    - Resolution link: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/f6835672e803c21ccc1b5c74cc23c587547b919b#diff-103ef51fda7a73d4f8b181b6806d415dR13-R37
 
 - a purpose statement for the "maximin strategy" functionality on trees
     - To-do list item (needs addition to documentation): https://github.ccs.neu.edu/CS4500-F20/fritch/commit/773e8d011b9426756f3ee53554863aeb3161ca12#diff-fffda276c12b3dbca7ad810a9a8364e5R65-R67
