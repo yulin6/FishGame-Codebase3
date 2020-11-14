@@ -19,7 +19,7 @@ critical elements of the project, though by no means all of them.
 ### Board
 
 - a data definition and an interpretation for the game _board_
-    - To-do list item: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/81efe2d95f958b0c23a5a202caccfbd286f5047b#diff-fffda276c12b3dbca7ad810a9a8364e5R13-R18
+    - To-do list item: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/16b2baa63d4a3eb62959f07556d1cae6f6a86bcd#diff-fffda276c12b3dbca7ad810a9a8364e5R10-R15
     - Resolution links:
         - ASCII diagram for better interpretation of a Board: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/378bd53821f9d13a91cc8eba1cc8ba20ce10e0c7#diff-036ecebb80e1c70a2eef34e0122ff3e4L11-R35
         - Argument checking in constructor for a Board: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/cacf65fb490494eb31c7ff107877ee9f4b76bdab#diff-036ecebb80e1c70a2eef34e0122ff3e4R32-R73
