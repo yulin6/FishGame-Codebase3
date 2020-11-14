@@ -162,6 +162,10 @@ public class GameState implements IState {
       }
     }
     players.remove(p);
+    if(!players.contains(currentPlayer)) {
+//      currentPlayer = null;
+      setNextPlayer();
+    }
   }
 
   @Override
@@ -170,7 +174,9 @@ public class GameState implements IState {
       currentPlayer = getYoungestPlayer();
     }
     else {
-      movedPlayers.add(currentPlayer);
+      if(players.contains(currentPlayer)) {
+        movedPlayers.add(currentPlayer);
+      }
       currentPlayer = getNextPlayer();
     }
   }
@@ -235,9 +241,9 @@ public class GameState implements IState {
    * @return The next player that will make a move
    */
   private Player getNextPlayer() {
-    if(players.size() == 0) {
-      throw new IllegalArgumentException("Cannot find next youngest player without any players!");
-    }
+//    if(players.size() == 0) {
+//      throw new IllegalArgumentException("Cannot find next youngest player without any players!");
+//    }
     if (movedPlayers.containsAll(players)) {
       movedPlayers.clear();
       return getYoungestPlayer();
@@ -266,9 +272,9 @@ public class GameState implements IState {
    * @return The player in the game with the lowest age.
    */
   private Player getYoungestPlayer() {
-    if(players.size() == 0) {
-      throw new IllegalArgumentException("Cannot find next youngest player without any players!");
-    }
+//    if(players.size() == 0) {
+//      throw new IllegalArgumentException("Cannot find next youngest player without any players!");
+//    }
     Player youngest = null;
     for(Player p : players) {
         if (youngest == null) {

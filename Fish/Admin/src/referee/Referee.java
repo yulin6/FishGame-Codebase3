@@ -262,23 +262,25 @@ public class Referee implements IReferee {
    * structures.
    */
   public void takeOneAction() {
-    GameTreeNode copyTree = new GameTreeNode(gt.getGameState());
-    GameState currState = this.gt.getGameState();
-    Player currPlayer = currState.getCurrentPlayer();
-    Penguin.PenguinColor currColor = currPlayer.getColor();
-    IPlayerComponent currPComponent = playerMap.get(currColor);
-    Action action;
-    Future<Action> future = getFuture(copyTree, currPComponent);
+    if(!gt.getGameState().getPlayers().isEmpty()) {
+      GameTreeNode copyTree = new GameTreeNode(gt.getGameState());
+      GameState currState = this.gt.getGameState();
+      Player currPlayer = currState.getCurrentPlayer();
+      Penguin.PenguinColor currColor = currPlayer.getColor();
+      IPlayerComponent currPComponent = playerMap.get(currColor);
+      Action action;
+      Future<Action> future = getFuture(copyTree, currPComponent);
 
-    try {
-      action = future.get(COMMS_TIMEOUT, TimeUnit.SECONDS);
-    } catch (TimeoutException | InterruptedException | ExecutionException e) {
-      // All exceptions here indicate a player has failed.
-      invalidPlayer(currState, currPlayer, currPComponent, failures);
-      updateTreeToNextPlayer(currState);
-      return;
+      try {
+        action = future.get(COMMS_TIMEOUT, TimeUnit.SECONDS);
+      } catch (TimeoutException | InterruptedException | ExecutionException e) {
+        // All exceptions here indicate a player has failed.
+        invalidPlayer(currState, currPlayer, currPComponent, failures);
+        updateTreeToNextPlayer(currState);
+        return;
+      }
+      doPlayerAction(action, currState, currPlayer, currPComponent);
     }
-    doPlayerAction(action, currState, currPlayer, currPComponent);
   }
 
   /**
@@ -342,7 +344,7 @@ public class Referee implements IReferee {
    * @param gs The GameState to use to update the tree.
    */
   private void updateTreeToNextPlayer(GameState gs){
-    gs.setNextPlayer();
+//    gs.setNextPlayer();
     this.gt = new GameTreeNode(gs);
   }
 
@@ -456,16 +458,18 @@ public class Referee implements IReferee {
         for (Player p : state.getPlayers()) {
           if (p.getColor() == color) {
             player = p;
+            break;
           }
         }
         IPlayerComponent failedPlayer = playerMap.get(color);
         invalidPlayer(state, player, failedPlayer, failures);
+//        updateTreeToNextPlayer(state);
       }
     }
   }
 
   @Override
-  public List<IPlayerComponent> getWinningPlayers() {
+  public List<IPlayerComponent> getWinners() {
     if (this.phase == GamePhase.END) {
       return this.winners;
     }

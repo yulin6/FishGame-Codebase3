@@ -42,7 +42,7 @@ public interface IReferee {
    * number of accumulated fish during the game's playing).
    * @return The list of winning players represented as player component objects (player.IPlayer objects).
    */
-  List<IPlayerComponent> getWinningPlayers();
+  List<IPlayerComponent> getWinners();
 
   /**
    * Returns the list of "failed" players from the  game. "Failed" players are those who fail to

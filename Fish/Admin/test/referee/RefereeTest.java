@@ -86,7 +86,7 @@ public class RefereeTest {
     randomRef.notifyGameStart();
     randomRef.runGame();
     randomRef.notifyGameEnd();
-    assertEquals(4, randomRef.getWinningPlayers().size());
+    assertEquals(4, randomRef.getWinners().size());
   }
 
   @Test
@@ -97,8 +97,8 @@ public class RefereeTest {
     randomRef.notifyGameEnd();
     assertEquals(0, randomRef.getCheaters().size());
     assertEquals(0, randomRef.getFailures().size());
-    assertNotEquals(0, randomRef.getWinningPlayers().size());
-    assertTrue(randomRef.getWinningPlayers().size() <= pcomponents.size());
+    assertNotEquals(0, randomRef.getWinners().size());
+    assertTrue(randomRef.getWinners().size() <= pcomponents.size());
   }
 
   @Test
@@ -111,9 +111,9 @@ public class RefereeTest {
     cheatRef.notifyGameEnd();
     assertEquals(1, cheatRef.getCheaters().size());
     assertEquals(0, cheatRef.getFailures().size());
-    assertNotEquals(0, cheatRef.getWinningPlayers().size());
+    assertNotEquals(0, cheatRef.getWinners().size());
     for (IPlayerComponent p : cheatRef.getCheaters()) {
-      assertFalse(cheatRef.getWinningPlayers().contains(p));
+      assertFalse(cheatRef.getWinners().contains(p));
     }
   }
 
@@ -127,9 +127,9 @@ public class RefereeTest {
     failRef.notifyGameEnd();
     assertEquals(1, failRef.getFailures().size());
     assertEquals(0, failRef.getCheaters().size());
-    assertNotEquals(0, failRef.getWinningPlayers().size());
+    assertNotEquals(0, failRef.getWinners().size());
     for (IPlayerComponent p : failRef.getFailures()) {
-      assertFalse(failRef.getWinningPlayers().contains(p));
+      assertFalse(failRef.getWinners().contains(p));
     }
   }
 
@@ -143,12 +143,12 @@ public class RefereeTest {
     cfRef.notifyGameEnd();
     assertEquals(1, cfRef.getFailures().size());
     assertEquals(1, cfRef.getCheaters().size());
-    assertNotEquals(0, cfRef.getWinningPlayers().size());
+    assertNotEquals(0, cfRef.getWinners().size());
     for (IPlayerComponent p : cfRef.getFailures()) {
-      assertFalse(cfRef.getWinningPlayers().contains(p));
+      assertFalse(cfRef.getWinners().contains(p));
     }
     for (IPlayerComponent p : cfRef.getCheaters()) {
-      assertFalse(cfRef.getWinningPlayers().contains(p));
+      assertFalse(cfRef.getWinners().contains(p));
     }
   }
 
@@ -301,7 +301,7 @@ public class RefereeTest {
     randomRef.notifyGameStart();
     randomRef.runGame();
     randomRef.notifyGameEnd();
-    assertNotEquals(0, randomRef.getWinningPlayers().size());
+    assertNotEquals(0, randomRef.getWinners().size());
   }
 
   @Test
@@ -309,7 +309,7 @@ public class RefereeTest {
     Referee randomRef = new Referee(pcomponents, 2, 5);
     randomRef.notifyGameStart();
     randomRef.runGame();
-    randomRef.getWinningPlayers();
+    randomRef.getWinners();
   }
 
   @Test (expected = IllegalArgumentException.class)
@@ -334,7 +334,7 @@ public class RefereeTest {
     ref.notifyGameStart();
     ref.runGame();
     ref.notifyGameEnd();
-    assertEquals(1, ref.getWinningPlayers().size());
+    assertEquals(1, ref.getWinners().size());
   }
 
   @Test
@@ -355,7 +355,7 @@ public class RefereeTest {
     ref.runGame();
     ref.notifyGameEnd();
 
-    assertEquals(2, ref.getWinningPlayers().size());
+    assertEquals(2, ref.getWinners().size());
     assertEquals(0, ref.getCheaters().size());
     assertEquals(0, ref.getFailures().size());
   }
@@ -431,9 +431,9 @@ public class RefereeTest {
     eRef.notifyGameEnd();
     assertEquals(1, eRef.getFailures().size());
     assertEquals(0, eRef.getCheaters().size());
-    assertNotEquals(0, eRef.getWinningPlayers().size());
+    assertNotEquals(0, eRef.getWinners().size());
     for (IPlayerComponent p : eRef.getFailures()) {
-      assertFalse(eRef.getWinningPlayers().contains(p));
+      assertFalse(eRef.getWinners().contains(p));
     }
   }
 
@@ -486,6 +486,7 @@ public class RefereeTest {
     pc2.startPlaying(Penguin.PenguinColor.BLACK);
     pc3.startPlaying(Penguin.PenguinColor.WHITE);
     pc4.startPlaying(Penguin.PenguinColor.RED);
+//    infRef.notifyGameStart();
     infRef.setGamePhase(Referee.GamePhase.END);
     infRef.notifyGameEnd();
     assertEquals(1, infRef.getFailures().size());
@@ -505,9 +506,9 @@ public class RefereeTest {
     infAndExcRef.notifyGameEnd();
     assertEquals(3, infAndExcRef.getFailures().size());
     assertEquals(0, infAndExcRef.getCheaters().size());
-    assertEquals(1, infAndExcRef.getWinningPlayers().size());
+    assertEquals(1, infAndExcRef.getWinners().size());
     for (IPlayerComponent p : infAndExcRef.getFailures()) {
-      assertFalse(infAndExcRef.getWinningPlayers().contains(p));
+      assertFalse(infAndExcRef.getWinners().contains(p));
     }
   }
 }
