@@ -486,7 +486,7 @@ public class RefereeTest {
     pc2.startPlaying(Penguin.PenguinColor.BLACK);
     pc3.startPlaying(Penguin.PenguinColor.WHITE);
     pc4.startPlaying(Penguin.PenguinColor.RED);
-//    infRef.notifyGameStart();
+    infRef.notifyGameStart();
     infRef.setGamePhase(Referee.GamePhase.END);
     infRef.notifyGameEnd();
     assertEquals(1, infRef.getFailures().size());

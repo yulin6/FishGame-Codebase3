@@ -327,4 +327,13 @@ public class GameStateTest {
     assertEquals(p1, state2.getCurrentPlayer());
     assertNotEquals(p2, state2.getCurrentPlayer());
   }
+
+  @Test
+  public void removeCurrentPlayer() {
+    state2.removePlayer(p3);
+
+    assertEquals(p2, state2.getCurrentPlayer());
+    state2.setNextPlayer();
+    assertEquals(p1, state2.getCurrentPlayer());
+  }
 }
