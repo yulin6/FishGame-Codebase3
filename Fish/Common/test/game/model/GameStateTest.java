@@ -335,5 +335,10 @@ public class GameStateTest {
     assertEquals(p2, state2.getCurrentPlayer());
     state2.setNextPlayer();
     assertEquals(p1, state2.getCurrentPlayer());
+    state2.setNextPlayer();
+    assertEquals(p4, state2.getCurrentPlayer());
+    state2.setNextPlayer();
+    // loop around
+    assertEquals(p2, state2.getCurrentPlayer());
   }
 }

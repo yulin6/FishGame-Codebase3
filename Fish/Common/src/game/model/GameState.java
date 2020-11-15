@@ -255,7 +255,8 @@ public class GameState implements IState {
       }
       else if (p.getAge() < nextYoungest.getAge()) {
         nextYoungest = p;
-      } else if (p.getAge() == nextYoungest.getAge()) {
+      }
+      else if (p.getAge() == nextYoungest.getAge()) {
         if (p.getColor().tieCode < nextYoungest.getColor().tieCode) {
           nextYoungest = p;
         }

@@ -262,23 +262,25 @@ public class Referee implements IReferee {
    * structures.
    */
   public void takeOneAction() {
-    GameTreeNode copyTree = new GameTreeNode(gt.getGameState());
-    GameState currState = this.gt.getGameState();
-    Player currPlayer = currState.getCurrentPlayer();
-    Penguin.PenguinColor currColor = currPlayer.getColor();
-    IPlayerComponent currPComponent = playerMap.get(currColor);
-    Action action;
-    Future<Action> future = getFuture(copyTree, currPComponent);
+    if (numPlayers > 0) {
+      GameTreeNode copyTree = new GameTreeNode(gt.getGameState());
+      GameState currState = this.gt.getGameState();
+      Player currPlayer = currState.getCurrentPlayer();
+      Penguin.PenguinColor currColor = currPlayer.getColor();
+      IPlayerComponent currPComponent = playerMap.get(currColor);
+      Action action;
+      Future<Action> future = getFuture(copyTree, currPComponent);
 
-    try {
-      action = future.get(COMMS_TIMEOUT, TimeUnit.SECONDS);
-    } catch (TimeoutException | InterruptedException | ExecutionException e) {
-      // All exceptions here indicate a player has failed.
-      invalidPlayer(currState, currPlayer, currPComponent, failures);
-      updateTreeToNextPlayer(currState);
-      return;
+      try {
+        action = future.get(COMMS_TIMEOUT, TimeUnit.SECONDS);
+      } catch (TimeoutException | InterruptedException | ExecutionException e) {
+        // All exceptions here indicate a player has failed.
+        invalidPlayer(currState, currPlayer, currPComponent, failures);
+        this.gt = new GameTreeNode(currState);
+        return;
+      }
+      doPlayerAction(action, currState, currPlayer, currPComponent);
     }
-    doPlayerAction(action, currState, currPlayer, currPComponent);
   }
 
   /**
@@ -319,7 +321,7 @@ public class Referee implements IReferee {
                               IPlayerComponent currComponent) {
     if (action == null) {
       invalidPlayer(gs, currPlayer, currComponent, failures);
-      updateTreeToNextPlayer(gs);
+      this.gt = new GameTreeNode(gs);
     } else {
       try {
         if (phase == GamePhase.PLACING) {
@@ -331,19 +333,9 @@ public class Referee implements IReferee {
       } catch (IllegalArgumentException iae) {
         // player made an illegal placement/movement
         invalidPlayer(gs, currPlayer, currComponent, cheaters);
-        updateTreeToNextPlayer(gs);
+        this.gt = new GameTreeNode(gs);
       }
     }
-  }
-
-  /**
-   * Helper method to update the GameTreeNode of this Referee to the next player with a given
-   * GameState to make the next GameTreeNode from.
-   * @param gs The GameState to use to update the tree.
-   */
-  private void updateTreeToNextPlayer(GameState gs){
-    gs.setNextPlayer();
-    this.gt = new GameTreeNode(gs);
   }
 
   /**
@@ -354,7 +346,7 @@ public class Referee implements IReferee {
    * @param gs The GameState to remove the player (its penguins) from.
    * @param p The Player object to remove from the GameState.
    * @param pcomp The component (object implementing IPLayer interface) to mark as failing or
-   *              cheating in this referee.Referee.
+   *              cheating in this Referee.
    * @param list The list of player components (should be failures/cheaters) to add the component
    *            to.
    */
@@ -366,7 +358,7 @@ public class Referee implements IReferee {
 
   /**
    * Looks through the state of the game to identify the winning players and add them to the list
-   * of winning players in this referee.Referee.
+   * of winning players in this Referee.
    */
   private void setWinningPlayers() {
     int maxFish = 0;
@@ -405,7 +397,7 @@ public class Referee implements IReferee {
    */
   private void sendNotifToPlayers(NotifType type) {
     Future<Void> sendNotif;
-    final ExecutorService es = Executors.newSingleThreadExecutor();
+    ExecutorService es = null;
     Callable<Void> methodCall;
 
     /*
@@ -445,6 +437,7 @@ public class Referee implements IReferee {
         continue;
       }
       try {
+        es = Executors.newSingleThreadExecutor();
         methodCall = new NotifFunc(color);
         sendNotif = es.submit(methodCall);
         sendNotif.get(COMMS_TIMEOUT, TimeUnit.SECONDS);
@@ -459,9 +452,10 @@ public class Referee implements IReferee {
             break;
           }
         }
+        es.shutdown();
         IPlayerComponent failedPlayer = playerMap.get(color);
         invalidPlayer(state, player, failedPlayer, failures);
-        updateTreeToNextPlayer(state);
+        this.gt = new GameTreeNode(state);
       }
     }
   }

@@ -283,6 +283,7 @@ public class RefereeTest {
     List<IPlayerComponent> cheaterList = new ArrayList<>(Arrays.asList(new FailingPlayerComponent(),
             new IllogicalPlayerComponent(), pc1, pc2));
     Referee cheatRef = new Referee(cheaterList, 5, 5);
+
     cheatRef.notifyGameStart();
     cheatRef.setGamePhase(Referee.GamePhase.PLACING);
 
@@ -438,6 +439,24 @@ public class RefereeTest {
   }
 
   @Test
+  public void runGameWithAllBadPlayers() {
+    List<IPlayerComponent> eList =
+            new ArrayList<>(Arrays.asList(
+                    new ExceptionPlayerComponent(false),
+                    new ExceptionPlayerComponent(false)));
+    Referee eRef = new Referee(eList, 5, 5);
+    eRef.notifyGameStart();
+    eRef.runGame();
+    eRef.notifyGameEnd();
+    assertEquals(2, eRef.getFailures().size());
+    assertEquals(0, eRef.getCheaters().size());
+    assertEquals(0, eRef.getWinners().size());
+    for (IPlayerComponent p : eRef.getFailures()) {
+      assertFalse(eRef.getWinners().contains(p));
+    }
+  }
+
+  @Test
   public void infiniteLoopInGetAge() {
     System.out.println("Entering a timeout-based test, a pause will occur.");
     List<IPlayerComponent> infList =
@@ -483,10 +502,10 @@ public class RefereeTest {
             new ArrayList<>(Arrays.asList(new InfiniteLoopPlayerComponent(false),
             pc2, pc3, pc4));
     Referee infRef = new Referee(infList, 5, 5);
-    pc2.startPlaying(Penguin.PenguinColor.BLACK);
-    pc3.startPlaying(Penguin.PenguinColor.WHITE);
-    pc4.startPlaying(Penguin.PenguinColor.RED);
-    infRef.notifyGameStart();
+    pc2.startPlaying(Penguin.PenguinColor.BROWN);
+    pc3.startPlaying(Penguin.PenguinColor.BLACK);
+    pc4.startPlaying(Penguin.PenguinColor.WHITE);
+
     infRef.setGamePhase(Referee.GamePhase.END);
     infRef.notifyGameEnd();
     assertEquals(1, infRef.getFailures().size());
