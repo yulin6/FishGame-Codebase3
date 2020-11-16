@@ -97,13 +97,44 @@ public class Referee implements IReferee {
   /**
    * Alternative constructor for Referees used for testing. Accepts a fixed GameState instead of
    * various parameters with which to generate a new game.
-   * @param gs GameState to make a new GameTree out of to represent this referee.Referee's game.
+   * @param gs GameState to make a new GameTree out of to represent this Referee's game.
    */
   public Referee(GameState gs) {
     this.playerMap = new HashMap<>();
     for (Player p : gs.getPlayers()) {
       playerMap.put(p.getColor(), new PlayerComponent(p.getAge(), TEST_SEED));
       playerMap.get(p.getColor()).startPlaying(p.getColor());
+    }
+    this.numPlayers = gs.getPlayers().size();
+    this.penguinsPerPlayer = PENGUIN_MAX - this.numPlayers;
+    this.gt = new GameTreeNode(gs);
+    this.winners = new ArrayList<>();
+    this.failures = new ArrayList<>();
+    this.cheaters = new ArrayList<>();
+    this.phase = GamePhase.SETUP;
+  }
+
+  /**
+   * Another alternative constructor for Referees, used for integration testing. Accepts a fixed 
+   * GameState and a list of IPlayerComponents to map into the player map.
+   * Not safe on player components that don't respond, but this is for a specific integration
+   * test and does not target that issue.
+   * @param gs GameState to make a new GameTree out of to represent this Referee's game.
+   */
+  public Referee(GameState gs, List<IPlayerComponent> playerComponents) {
+    this.playerMap = new HashMap<>();
+    for (Player p : gs.getPlayers()) {
+      Penguin.PenguinColor playerColor = p.getColor();
+      IPlayerComponent associatedPlayerComponent = null;
+      for (IPlayerComponent pc : playerComponents) {
+        if (pc.getColor() == playerColor) {
+          associatedPlayerComponent = pc;
+        }
+      }
+      if (associatedPlayerComponent == null) {
+        throw new IllegalArgumentException("Broken interpretation of data for testing.");
+      }
+      playerMap.put(playerColor, associatedPlayerComponent);
     }
     this.numPlayers = gs.getPlayers().size();
     this.penguinsPerPlayer = PENGUIN_MAX - this.numPlayers;
@@ -429,6 +460,7 @@ public class Referee implements IReferee {
        */
       NotifFunc(Penguin.PenguinColor color) {
         this.color = color;
+
       }
     }
 
@@ -452,7 +484,7 @@ public class Referee implements IReferee {
             break;
           }
         }
-        es.shutdown();
+        es.shutdown(); // doesn't actually shut down the thread if it's infinite looping
         IPlayerComponent failedPlayer = playerMap.get(color);
         invalidPlayer(state, player, failedPlayer, failures);
         this.gt = new GameTreeNode(state);
