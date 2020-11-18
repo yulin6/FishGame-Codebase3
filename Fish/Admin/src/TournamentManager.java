@@ -6,7 +6,8 @@ import java.util.List;
 
 public class TournamentManager {
 
-    private List<IPlayerComponent> players;
+    private List<IPlayerComponent> activePlayers;
+    private List<IPlayerComponent> previousWinners;
     private List<Referee> referees;
     private TournamentPhase phase;
     private final int multiple;
@@ -19,7 +20,8 @@ public class TournamentManager {
         if (players.size() < MIN_PLAYERS) {
             throw new IllegalArgumentException("Not enough players to form a tournament.");
         }
-        this.players = players;
+        this.activePlayers = players;
+        this.previousWinners = new ArrayList<>();
         informPlayers(InformType.START);
         this.referees = generateGames();
         this.multiple = multiple;
@@ -36,10 +38,11 @@ public class TournamentManager {
 
         int playerNumPerGame = findPlayerNumPerGame();
 
-        for (IPlayerComponent pc : players) {
+        for (IPlayerComponent pc : activePlayers) {
             oneGamePlayers.add(pc);
             if (oneGamePlayers.size() == playerNumPerGame) {
-                Referee referee = new Referee(oneGamePlayers, oneGamePlayers.size() * multiple, oneGamePlayers.size() * multiple);
+                List<IPlayerComponent> playersCopy = new ArrayList<>(oneGamePlayers);
+                Referee referee = new Referee(playersCopy, oneGamePlayers.size() * multiple, oneGamePlayers.size() * multiple);
                 referees.add(referee);
                 oneGamePlayers.clear();
             }
@@ -47,7 +50,8 @@ public class TournamentManager {
 
         if (oneGamePlayers.size() >= MIN_PLAYERS) {
             int penguinsPerPlayer = oneGamePlayers.size() == 2 ? 4 : 3;
-            Referee referee = new Referee(oneGamePlayers, penguinsPerPlayer * multiple, penguinsPerPlayer * multiple);
+            List<IPlayerComponent> playersCopy = new ArrayList<>(oneGamePlayers);
+            Referee referee = new Referee(playersCopy, penguinsPerPlayer * multiple, penguinsPerPlayer * multiple);
             referees.add(referee);
         }
 
@@ -55,7 +59,7 @@ public class TournamentManager {
     }
 
     private int findPlayerNumPerGame() {
-        int playersSize = players.size();
+        int playersSize = activePlayers.size();
         int maxSize = MAX_PLAYERS;
         int remainder = playersSize % maxSize;
         while (maxSize >= MIN_PLAYERS && maxSize <= MAX_PLAYERS) {
@@ -84,7 +88,7 @@ public class TournamentManager {
         if (phase == TournamentPhase.RUNNING) {
             List<IPlayerComponent> winners = runGames();
             phase = isTournamentEnd(winners) ? TournamentPhase.END : TournamentPhase.RUNNING;
-            players = winners;
+            previousWinners = winners;
             if (phase == TournamentPhase.RUNNING) {
                 referees = generateGames();
             } else {
@@ -106,13 +110,13 @@ public class TournamentManager {
     }
 
     private boolean isTournamentEnd(List<IPlayerComponent> winners) {
-        return players.containsAll(winners) || winners.size() < MIN_PLAYERS;
+        return winners.containsAll(previousWinners) || winners.size() < MIN_PLAYERS;
     }
 
     public List<IPlayerComponent> getWinners() {
         if (phase == TournamentPhase.END) {
             informPlayers(InformType.END);
-            return players;
+            return activePlayers;
         } else {
             throw new IllegalArgumentException("Tournament has not end."); //should it throw?
         }
@@ -120,11 +124,11 @@ public class TournamentManager {
 
     private void informPlayers(InformType type) {
         if (type == InformType.START) {
-            for (IPlayerComponent player : players) {
+            for (IPlayerComponent player : activePlayers) {
                 //remove the players who failed to communicate
             }
         } else {
-            for (IPlayerComponent player : players) {
+            for (IPlayerComponent player : activePlayers) {
                 //remove the players who failed to communicate
             }
         }
