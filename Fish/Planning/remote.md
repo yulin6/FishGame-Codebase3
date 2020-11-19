@@ -1,7 +1,11 @@
 ## Remote Collaboration Protocol
-For the logical interaction diagram of the remote collaboration protocol, see 
- ../Other/interactiondiagram.jpg. Further diagrams providing greater detail of what each
-  interaction consists of can be found in ../Other/interactionmethods.jpg.
+For the logical interaction diagram of the remote collaboration protocol, see the diagram below. 
+ ![](../Other/interactiondiagram.jpg) 
+ 
+Further diagrams providing greater detail of what each interaction consists of can be found in
+ this diagram. ![](../Other/interactionmethods.jpg)
+ 
+## Explanation of Protocol in Prose
 
 In order to handle communications between the Fish.com game server and a remote client, a new
  component will be necessary. It will be called RemotePlayerComponent, and it will implement the
