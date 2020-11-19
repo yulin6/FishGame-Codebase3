@@ -74,17 +74,16 @@ public class TournamentManager {
         if (playersPerGame < MIN_PLAYERS) {
           throw new IllegalArgumentException("Reached below a valid amount of players.");
         }
+        continue;
       }
 
       List<IPlayerComponent> newGamePlayers = new ArrayList<>();
-      if (playersToAssign.size() < playersPerGame) {
-        continue;
-      }
+
       for (int i = 0; i < playersPerGame; i++) {
         newGamePlayers.add(playersToAssign.remove(0));
       }
 
-      if (MIN_PLAYERS > playersToAssign.size() && playersToAssign.size() > 0) {
+      if (playersToAssign.size() > 0 && playersToAssign.size() < MIN_PLAYERS ) {
         for (int j = newGamePlayers.size() - 1; j >= 0; j--) {
           playersToAssign.add(0, newGamePlayers.remove(j));
         }
@@ -256,6 +255,14 @@ public class TournamentManager {
    */
   public boolean isFirstRoundRun() {
     return firstRoundRun;
+  }
+
+  /**
+   * Get the list of referees in the current round of tournament.
+   * @return a list of referees represents the games in the tournament round.
+   */
+  public List<Referee> getReferees() {
+    return referees;
   }
 
   /**

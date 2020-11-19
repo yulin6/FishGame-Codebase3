@@ -16,6 +16,7 @@ import player.IllogicalPlayerComponent;
 import player.InfiniteLoopPlayerComponent;
 import player.NullReturnPlayerComponent;
 import player.PlayerComponent;
+import referee.Referee;
 
 import static org.junit.Assert.*;
 
@@ -24,7 +25,7 @@ import static org.junit.Assert.*;
  * tournaments given a list of external player components.
  */
 public class TournamentManagerTest {
-  PlayerComponent pc1, pc2, pc3, pc4, pc5, pc6, pc7, pc8;
+  PlayerComponent pc1, pc2, pc3, pc4, pc5, pc6, pc7, pc8, pc9, pc10;
   int seed = 83;
 
   IllogicalPlayerComponent illogical;
@@ -43,6 +44,8 @@ public class TournamentManagerTest {
     pc6 = new PlayerComponent(6, seed);
     pc7 = new PlayerComponent(7, seed);
     pc8 = new PlayerComponent(8, seed);
+    pc9 = new PlayerComponent(9, seed);
+    pc10 = new PlayerComponent(10, seed);
 
     badwinner1 = new BadWinnerPlayerComponent(1);
     badwinner2 = new BadWinnerPlayerComponent(2);
@@ -62,6 +65,86 @@ public class TournamentManagerTest {
     ArrayList<IPlayerComponent> badList = new ArrayList<>(Arrays.asList(pc1));
     TournamentManager notEnoughPlayersExceptionTm = new TournamentManager(badList);
     notEnoughPlayersExceptionTm.runTournament(); // should not be reached
+  }
+
+
+  @Test
+  public void generateOneGameTwoPlayers() {
+    ArrayList<IPlayerComponent> singleGameComponents = new ArrayList<>(Arrays.asList(pc1, pc2));
+    TournamentManager singleGameTm = new TournamentManager(singleGameComponents);
+    List<Referee> referees = singleGameTm.getReferees();
+    assertEquals(1, referees.size());
+  }
+
+
+  @Test
+  public void generateOneGameThreePlayers() {
+    ArrayList<IPlayerComponent> singleGameComponents = new ArrayList<>(Arrays.asList(pc1, pc2,
+            pc3));
+    TournamentManager singleGameTm = new TournamentManager(singleGameComponents);
+    List<Referee> referees = singleGameTm.getReferees();
+    assertEquals(1, referees.size());
+  }
+
+  @Test
+  public void generateOneGameFourPlayers() {
+    ArrayList<IPlayerComponent> singleGameComponents = new ArrayList<>(Arrays.asList(pc1, pc2,
+            pc3, pc4));
+    TournamentManager singleGameTm = new TournamentManager(singleGameComponents);
+    List<Referee> referees = singleGameTm.getReferees();
+    assertEquals(1, referees.size());
+  }
+
+  @Test
+  public void generateTwoGamesFivePlayers() {
+    ArrayList<IPlayerComponent> twoGamesComponents = new ArrayList<>(Arrays.asList(pc1, pc2, pc3, pc4, pc5));
+    TournamentManager twoGamesTm = new TournamentManager(twoGamesComponents);
+    List<Referee> referees = twoGamesTm.getReferees();
+    assertEquals(2, referees.size());
+    assertEquals(3, referees.get(0).getGameState().getPlayers().size());
+    assertEquals(2, referees.get(1).getGameState().getPlayers().size());
+  }
+
+  @Test
+  public void generateTwoGamesSixPlayers() {
+    ArrayList<IPlayerComponent> twoGamesComponents = new ArrayList<>(Arrays.asList(pc1, pc2, pc3, pc4, pc5, pc6));
+    TournamentManager twoGamesTm = new TournamentManager(twoGamesComponents);
+    List<Referee> referees = twoGamesTm.getReferees();
+    assertEquals(2, referees.size());
+    assertEquals(4, referees.get(0).getGameState().getPlayers().size());
+    assertEquals(2, referees.get(1).getGameState().getPlayers().size());
+  }
+
+  @Test
+  public void generateTwoGamesSevenPlayers() {
+    ArrayList<IPlayerComponent> twoGamesComponents = new ArrayList<>(Arrays.asList(pc1, pc2, pc3, pc4, pc5, pc6, pc7));
+    TournamentManager twoGamesTm = new TournamentManager(twoGamesComponents);
+    List<Referee> referees = twoGamesTm.getReferees();
+    assertEquals(2, referees.size());
+    assertEquals(4, referees.get(0).getGameState().getPlayers().size());
+    assertEquals(3, referees.get(1).getGameState().getPlayers().size());
+  }
+
+  @Test
+  public void generateThreeGamesNinePlayers() {
+    ArrayList<IPlayerComponent> threeGamesComponents = new ArrayList<>(Arrays.asList(pc1, pc2, pc3, pc4, pc5, pc6, pc7, pc8, pc9));
+    TournamentManager threeGamesTm = new TournamentManager(threeGamesComponents);
+    List<Referee> referees = threeGamesTm.getReferees();
+    assertEquals(3, referees.size());
+    assertEquals(4, referees.get(0).getGameState().getPlayers().size());
+    assertEquals(3, referees.get(1).getGameState().getPlayers().size());
+    assertEquals(2, referees.get(2).getGameState().getPlayers().size());
+  }
+
+  @Test
+  public void generateThreeGamesTenPlayers() {
+    ArrayList<IPlayerComponent> threeGamesComponents = new ArrayList<>(Arrays.asList(pc1, pc2, pc3, pc4, pc5, pc6, pc7, pc8, pc9, pc10));
+    TournamentManager threeGamesTm = new TournamentManager(threeGamesComponents);
+    List<Referee> referees = threeGamesTm.getReferees();
+    assertEquals(3, referees.size());
+    assertEquals(4, referees.get(0).getGameState().getPlayers().size());
+    assertEquals(4, referees.get(1).getGameState().getPlayers().size());
+    assertEquals(2, referees.get(2).getGameState().getPlayers().size());
   }
 
   @Test
@@ -123,13 +206,17 @@ public class TournamentManagerTest {
             pc4, pc5, pc6, pc7, pc8));
     TournamentManager cleanMultiRoundTm = new TournamentManager(allPlayersList);
     cleanMultiRoundTm.runTournamentRound();
-    try {
-      cleanMultiRoundTm.getWinners();
-      fail("Expected an exception for trying to get winners in the wrong state of the game.");
-    } catch (IllegalStateException e) {
-      // Do nothing - expected this exception in the test
-    }
+
     assertTrue(cleanMultiRoundTm.isFirstRoundRun());
+  }
+
+  @Test (expected = IllegalStateException.class)
+  public void runTournamentRoundWrongState() {
+    ArrayList<IPlayerComponent> allPlayersList = new ArrayList<>(Arrays.asList(pc1, pc2, pc3,
+            pc4, pc5, pc6, pc7, pc8));
+    TournamentManager cleanMultiRoundTm = new TournamentManager(allPlayersList);
+    cleanMultiRoundTm.runTournament();
+    cleanMultiRoundTm.runTournamentRound();
   }
 
   @Test
@@ -164,4 +251,14 @@ public class TournamentManagerTest {
     TournamentManager someTm = new TournamentManager(Arrays.asList(pc1, pc2));
     someTm.getWinners();
   }
+
+  @Test (expected = IllegalStateException.class)
+  public void getWinnersAfterOneRound() {
+    ArrayList<IPlayerComponent> allPlayersList = new ArrayList<>(Arrays.asList(pc1, pc2, pc3,
+            pc4, pc5, pc6, pc7, pc8));
+    TournamentManager cleanMultiRoundTm = new TournamentManager(allPlayersList);
+    cleanMultiRoundTm.runTournamentRound();
+    cleanMultiRoundTm.getWinners();
+  }
+
 }
