@@ -250,6 +250,15 @@ public class TournamentManager {
   }
 
   /**
+   * Checks if the first round of the game has been run.
+   * @return The boolean member variable that states whether or not the game's first round has
+   * been run.
+   */
+  public boolean isFirstRoundRun() {
+    return firstRoundRun;
+  }
+
+  /**
    * Enum to describe the phases of a game - running, or ended.
    */
   public enum TournamentPhase {

@@ -119,12 +119,44 @@ public class TournamentManagerTest {
 
   @Test
   public void runTournamentRound() {
-
+    ArrayList<IPlayerComponent> allPlayersList = new ArrayList<>(Arrays.asList(pc1, pc2, pc3,
+            pc4, pc5, pc6, pc7, pc8));
+    TournamentManager cleanMultiRoundTm = new TournamentManager(allPlayersList);
+    cleanMultiRoundTm.runTournamentRound();
+    try {
+      cleanMultiRoundTm.getWinners();
+      fail("Expected an exception for trying to get winners in the wrong state of the game.");
+    } catch (IllegalStateException e) {
+      // Do nothing - expected this exception in the test
+    }
+    assertTrue(cleanMultiRoundTm.isFirstRoundRun());
   }
 
   @Test
-  public void getWinners() {
+  public void getWinnersOneGame() {
+    ArrayList<IPlayerComponent> bunchOfPlayers = new ArrayList<>(Arrays.asList(pc1, pc3, pc5, pc7));
+    TournamentManager someTm = new TournamentManager(bunchOfPlayers);
+    someTm.runTournament();
+    List<IPlayerComponent> winners = someTm.getWinners();
+    assertTrue(winners.contains(pc1) ||
+            winners.contains(pc3) ||
+            winners.contains(pc5) ||
+            winners.contains(pc7));
+  }
 
+  @Test
+  public void getWinnersMultiGames() {
+    ArrayList<IPlayerComponent> bunchOfPlayers = new ArrayList<>(Arrays.asList(pc1, pc2, pc3, pc5,
+            pc7, pc8));
+    TournamentManager someTm = new TournamentManager(bunchOfPlayers);
+    someTm.runTournament();
+    List<IPlayerComponent> winners = someTm.getWinners();
+    assertTrue(winners.contains(pc1) ||
+            winners.contains(pc2) ||
+            winners.contains(pc3) ||
+            winners.contains(pc5) ||
+            winners.contains(pc7) ||
+            winners.contains(pc8));
   }
 
   @Test (expected = IllegalStateException.class)
