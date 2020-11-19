@@ -161,13 +161,16 @@ public class Referee implements IReferee {
       Player p;
       try {
         p = assignColor(pcomponent);
-      }
-      catch (IllegalArgumentException e) {
+      } catch (IllegalArgumentException e) {
         continue;
       }
       playerSet.add(p);
     }
+    if (playerSet.size() == 0) {
+      throw new IllegalArgumentException("Insufficient players to make a valid state.");
+    }
     return new GameState(playerSet, b);
+
   }
 
   /**

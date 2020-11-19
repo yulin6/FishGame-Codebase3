@@ -114,8 +114,13 @@ public class TournamentManager {
       cols = rng.nextInt(BOARD_DIMENSION_MAX) + 1;
     }
 
-    Referee newRef = new Referee(players, rows, cols);
-    referees.add(newRef);
+    try {
+      Referee newRef = new Referee(players, rows, cols);
+      referees.add(newRef);
+    } catch (IllegalArgumentException e) {
+      // This means that the referee has no valid game to oversee; we don't add anything to the
+      // list of referees.
+    }
   }
 
   /**
@@ -219,7 +224,7 @@ public class TournamentManager {
    */
   private void informPlayers(InformType type) {
     Future informFuture;
-    ExecutorService es;
+    ExecutorService es = null;
     Runnable informCall;
 
     List<IPlayerComponent> informedPlayers = new ArrayList<>(activePlayers);
@@ -238,6 +243,7 @@ public class TournamentManager {
         informFuture = es.submit(informCall);
         informFuture.get(Referee.COMMS_TIMEOUT, TimeUnit.SECONDS);
       } catch (InterruptedException | ExecutionException | TimeoutException e) {
+        es.shutdown();
         activePlayers.remove(player);
       }
     }

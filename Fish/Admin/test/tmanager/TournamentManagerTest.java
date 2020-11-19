@@ -33,9 +33,6 @@ public class TournamentManagerTest {
   ExceptionPlayerComponent throwerInGetAge, throwerInJoinTournament;
   BadWinnerPlayerComponent badwinner1, badwinner2, badwinner3, badwinner4;
 
-  TournamentManager notEnoughPlayersExceptionTm, singleGameTm, badWinnersTm,
-          cleanMultiRoundTm, badMultiRoundTm, noValidPlayersTm;
-
   @Before
   public void setUp() {
     pc1 = new PlayerComponent(1, seed);
@@ -46,17 +43,11 @@ public class TournamentManagerTest {
     pc6 = new PlayerComponent(6, seed);
     pc7 = new PlayerComponent(7, seed);
     pc8 = new PlayerComponent(8, seed);
-    ArrayList<IPlayerComponent> singleGameComponents = new ArrayList<>(Arrays.asList(pc1, pc2,
-            pc3, pc4));
-    ArrayList<IPlayerComponent> allPlayersList = new ArrayList<>(Arrays.asList(pc1, pc2, pc3,
-            pc4, pc5, pc6, pc7, pc8));
 
     badwinner1 = new BadWinnerPlayerComponent(1);
     badwinner2 = new BadWinnerPlayerComponent(2);
     badwinner3 = new BadWinnerPlayerComponent(3);
     badwinner4 = new BadWinnerPlayerComponent(4);
-    ArrayList<IPlayerComponent> badWinners = new ArrayList<>(Arrays.asList(badwinner1, badwinner2,
-            badwinner3, badwinner4));
 
     illogical = new IllogicalPlayerComponent();
     looperInGetAge = new InfiniteLoopPlayerComponent(true,false);
@@ -64,25 +55,20 @@ public class TournamentManagerTest {
     nuller = new NullReturnPlayerComponent();
     throwerInGetAge = new ExceptionPlayerComponent(true, false);
     throwerInJoinTournament = new ExceptionPlayerComponent(false, true);
-
-    singleGameTm = new TournamentManager(singleGameComponents);
-    badWinnersTm = new TournamentManager(badWinners);
-    cleanMultiRoundTm = new TournamentManager(allPlayersList);
-    badMultiRoundTm = new TournamentManager(Arrays.asList(pc1, pc2, pc3, pc4, badwinner1,
-            badwinner2, nuller, illogical, badwinner3));
-    noValidPlayersTm = new TournamentManager(Arrays.asList(badwinner1, badwinner2, nuller,
-            illogical, looperInGetAge, looperInJoinTournament, throwerInGetAge,
-            throwerInJoinTournament));
   }
 
   @Test (expected = IllegalArgumentException.class)
   public void notEnoughPlayersException() {
     ArrayList<IPlayerComponent> badList = new ArrayList<>(Arrays.asList(pc1));
-    notEnoughPlayersExceptionTm = new TournamentManager(badList);
+    TournamentManager notEnoughPlayersExceptionTm = new TournamentManager(badList);
+    notEnoughPlayersExceptionTm.runTournament(); // should not be reached
   }
 
   @Test
   public void runCleanSingleGameTournament() {
+    ArrayList<IPlayerComponent> singleGameComponents = new ArrayList<>(Arrays.asList(pc1, pc2,
+            pc3, pc4));
+    TournamentManager singleGameTm = new TournamentManager(singleGameComponents);
     singleGameTm.runTournament();
     List<IPlayerComponent> winners = singleGameTm.getWinners();
     assertTrue(winners.size() > 0);
@@ -90,6 +76,9 @@ public class TournamentManagerTest {
 
   @Test
   public void runCleanMultiRoundTournament() {
+    ArrayList<IPlayerComponent> allPlayersList = new ArrayList<>(Arrays.asList(pc1, pc2, pc3,
+            pc4, pc5, pc6, pc7, pc8));
+    TournamentManager cleanMultiRoundTm = new TournamentManager(allPlayersList);
     cleanMultiRoundTm.runTournament();
     List<IPlayerComponent> winners = cleanMultiRoundTm.getWinners();
     assertTrue(winners.size() > 0);
@@ -97,9 +86,12 @@ public class TournamentManagerTest {
 
   @Test
   public void runFailingCheatingMultiRoundTournament() {
+    TournamentManager badMultiRoundTm = new TournamentManager(Arrays.asList(pc1, pc2, pc3, pc4,
+            badwinner1, badwinner2, nuller, illogical, badwinner3));
     badMultiRoundTm.runTournament();
     List<IPlayerComponent> winners = badMultiRoundTm.getWinners();
-    // Winners may be size 0 if bad-winning players eliminate properly-functioning ones.
+    // Winners may be size 0 if bad-winning players eliminate properly-functioning ones, and
+    // checking if a list is size 0 or greater doesn't test anything, so no check of size.
     assertTrue(Collections.disjoint(winners, Arrays.asList(badwinner1, badwinner2, nuller,
             illogical, badwinner3)));
   }
@@ -107,8 +99,21 @@ public class TournamentManagerTest {
   @Test
   public void noGoodPlayersGame() {
     System.out.println("Entering a timeout-based test, a pause will occur.");
+    TournamentManager noValidPlayersTm = new TournamentManager(Arrays.asList(badwinner1,
+            badwinner2, nuller, illogical, looperInGetAge, looperInJoinTournament, throwerInGetAge,
+            throwerInJoinTournament));
     noValidPlayersTm.runTournament();
     List<IPlayerComponent> winners = noValidPlayersTm.getWinners();
+    assertTrue(winners.isEmpty());
+  }
+
+  @Test
+  public void allBadWinners() {
+    ArrayList<IPlayerComponent> badWinners = new ArrayList<>(Arrays.asList(badwinner1, badwinner2,
+            badwinner3, badwinner4));
+    TournamentManager badWinnersTm = new TournamentManager(badWinners);
+    badWinnersTm.runTournament();
+    List<IPlayerComponent> winners = badWinnersTm.getWinners();
     assertTrue(winners.isEmpty());
   }
 
@@ -120,5 +125,11 @@ public class TournamentManagerTest {
   @Test
   public void getWinners() {
 
+  }
+
+  @Test (expected = IllegalStateException.class)
+  public void getWinnersWrongState() {
+    TournamentManager someTm = new TournamentManager(Arrays.asList(pc1, pc2));
+    someTm.getWinners();
   }
 }
