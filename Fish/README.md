@@ -17,16 +17,22 @@ In this project:
             - Contains the files relevant to all administrative components of the Fish game.
             
             src/
-                - contains source code for all administrative components of the Fish game. For now, this only includes the referee.
+                - contains source code for all administrative components of the Fish game.
                 
                 referee/
                     - the package for all source code for the referee component of Fish games
+                    
+                tmanager/
+                    - the package for all source code for the tournament manager of Fish games
             
             test/
                 - contains unit tests for all administrative components of the Fish game.
                 
                 referee/
                      - the package for all unit tests for the referee component of Fish games.
+                     
+                tmanager/
+                    - the package for all unit tests for the tournament manager of Fish games
         
         Common/
             - Contains the files relevant to programming the common components of Fish, which includes 
@@ -71,13 +77,14 @@ In this project:
                 - contains all the source code for external player components
                 
                 player/
-                     - the package for all source code relevant to the representation of a house player
+                     - the package for all source code relevant to the representation of player
+                      components
             
             test/
                 - contains all unit tests for external player components
                 
                 player/
-                     - the package for all unit tests for the representation of a house player
+                     - the package for all unit tests for the representation of player components
 
 Testing:
 Assuming the current working directory is Fish/:
