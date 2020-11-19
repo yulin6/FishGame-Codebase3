@@ -6,17 +6,27 @@ import game.model.*;
  * See IPlayer.java and PlayerComponent.java for documentation on what a player component must
  * fulfill.
  *
- * This is a player component that returns unusable feedback when called in order to
- * generate runtime errors in Fish gameplay ("failing" behavior).
+ * This is a player component that returns unusable (null) values when called in order to
+ * generate runtime errors in Fish gameplay ("failing" in the format of its answer).
  */
-public class FailingPlayerComponent implements IPlayerComponent {
+public class NullReturnPlayerComponent implements IPlayerComponent {
 
   /**
    * Constructor for a failing player. Used to test player components that return null (an
    * abnormal condition).
    */
-  public FailingPlayerComponent() {
+  public NullReturnPlayerComponent() {
+    // Nothing to construct
+  }
 
+  @Override
+  public void joinTournament() {
+    // No behavior; fails by returning nulls
+  }
+
+  @Override
+  public void leaveTournament() {
+    // No behavior; fails by returning nulls
   }
 
   @Override

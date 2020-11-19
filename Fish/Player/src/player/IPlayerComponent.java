@@ -11,6 +11,20 @@ import game.model.*;
 public interface IPlayerComponent {
 
   /**
+   * Called to notify the player that it is entering a tournament. Behavior is
+   * implementation-specific (maybe a player component seeds its RNG at call time, etc). Required
+   * to not throw an exception/enter an infinite loop; failure is handled by the caller.
+   */
+  void joinTournament();
+
+  /**
+   * Called to notify the player that the tournament it is in has ended. Behavior of the player
+   * component in this method is implementation-specific, but it must not throw an exception or
+   * enter an infinite loop, or else it is counted as a failing player component.
+   */
+  void leaveTournament();
+
+  /**
    * Sets up the player component with the game by storing its assigned color, which is given
    * to it by the referee when beginning the game, prior to placing any penguins. Should only be
    * called if the player is not already in a game; if it is, should throw an exception.
@@ -19,7 +33,6 @@ public interface IPlayerComponent {
   void startPlaying(Penguin.PenguinColor color);
 
   /**
-   *
    * When this function is called during the penguin-placement phase of the game, the player
    * component should return the appropriate board position on which its penguin should be
    * placed, following the logic of the strategy component of the player if it is a computer

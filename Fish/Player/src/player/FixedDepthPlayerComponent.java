@@ -31,6 +31,16 @@ public class FixedDepthPlayerComponent implements IPlayerComponent {
   }
 
   @Override
+  public void joinTournament() {
+    // No behavior; integration-testing-use player
+  }
+
+  @Override
+  public void leaveTournament() {
+    // No behavior; integration-testing-use player
+  }
+
+  @Override
   public void startPlaying(Penguin.PenguinColor color) {
     // do nothing
   }

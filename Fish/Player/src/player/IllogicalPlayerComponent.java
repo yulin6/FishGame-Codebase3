@@ -19,6 +19,16 @@ public class IllogicalPlayerComponent implements IPlayerComponent {
   }
 
   @Override
+  public void joinTournament() {
+    // No behavior - illogical fails on the content it returns
+  }
+
+  @Override
+  public void leaveTournament() {
+    // No behavior - illogical fails on the content it returns
+  }
+
+  @Override
   public void startPlaying(Penguin.PenguinColor color) {
     // do nothing
   }

@@ -43,6 +43,17 @@ public class PlayerComponent implements IPlayerComponent {
   }
 
   @Override
+  public void joinTournament() {
+    // House player. No behavior to perform. Could seed it here instead if we wanted to get rid of
+    // the second constructor, though.
+  }
+
+  @Override
+  public void leaveTournament() {
+    // House player, no behavior to perform
+  }
+
+  @Override
   public void startPlaying(Penguin.PenguinColor color) {
     if (this.color != null) {
       throw new IllegalArgumentException("Already playing a game - cannot start playing another.");
@@ -54,7 +65,7 @@ public class PlayerComponent implements IPlayerComponent {
   @Override
   public Place placePenguin(GameTreeNode gt) {
     BoardPosition position = this.strategy.placePenguin(gt);
-    Player currentPlayer= gt.getGameState().getCurrentPlayer();
+    Player currentPlayer = gt.getGameState().getCurrentPlayer();
     return new Place(position, currentPlayer);
   }
 

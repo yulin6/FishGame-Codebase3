@@ -63,8 +63,8 @@ public class Referee implements IReferee {
   private GamePhase phase;
   private int numPlayers;
   private final int penguinsPerPlayer;
-  private static final int COMMS_TIMEOUT = 3;
-  private static final int PENGUIN_MAX = 6;
+  public static final int COMMS_TIMEOUT = 3;
+  public static final int PENGUIN_MAX = 6;
 
   // Entirely arbitrary value to use in constructor of PlayerComponent for testing
   private static final int TEST_SEED = 100;
@@ -194,6 +194,7 @@ public class Referee implements IReferee {
       // All exceptions here indicate a player has failed.
       // Don't put the player into the game in the first place; directly add to failures list.
       failures.add(pcomponent);
+      numPlayers--;
       throw new IllegalArgumentException("Player component did not appropriately respond.");
     }
 

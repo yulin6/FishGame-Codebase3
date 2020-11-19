@@ -12,6 +12,7 @@ import game.model.*;
  */
 public class ExceptionPlayerComponent implements IPlayerComponent {
   private final boolean throwInGetAge;
+  private final boolean throwInJoinTournament;
 
   /**
    * Constructor for an exception-throwing player.
@@ -19,8 +20,21 @@ public class ExceptionPlayerComponent implements IPlayerComponent {
    *                     constructor of a Referee; otherwise, makes it past construction,
    *                      allowing for manipulation of the Referee for testing.
    */
-  public ExceptionPlayerComponent(boolean throwInGetAge) {
+  public ExceptionPlayerComponent(boolean throwInGetAge, boolean throwInJoinTournament) {
     this.throwInGetAge = throwInGetAge;
+    this.throwInJoinTournament = throwInJoinTournament;
+  }
+
+  @Override
+  public void joinTournament() {
+    if (throwInJoinTournament) {
+      throw new IllegalArgumentException("Dummy exception for testing - joinTournament");
+    }
+  }
+
+  @Override
+  public void leaveTournament() {
+    throw new IllegalArgumentException("Dummy exception for testing - leaveTournament");
   }
 
   @Override

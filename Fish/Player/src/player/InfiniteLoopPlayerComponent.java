@@ -12,6 +12,7 @@ import game.model.*;
  */
 public class InfiniteLoopPlayerComponent implements IPlayerComponent {
   private final boolean loopInGetAge;
+  private final boolean loopInJoinTournament;
 
   /**
    * Constructor for a player with infinite-looping behavior implemented.
@@ -19,8 +20,23 @@ public class InfiniteLoopPlayerComponent implements IPlayerComponent {
    *                     constructor of a Referee; otherwise, makes it past construction,
    *                      allowing for manipulation of the Referee for testing.
    */
-  public InfiniteLoopPlayerComponent(boolean loopInGetAge) {
+  public InfiniteLoopPlayerComponent(boolean loopInGetAge, boolean loopInJoinTournament) {
     this.loopInGetAge = loopInGetAge;
+    this.loopInJoinTournament = loopInJoinTournament;
+  }
+
+  @Override
+  public void joinTournament() {
+    while (loopInJoinTournament) {
+
+    }
+  }
+
+  @Override
+  public void leaveTournament() {
+    while (true) {
+
+    }
   }
 
   @Override
