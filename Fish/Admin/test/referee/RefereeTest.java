@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import player.ExceptionPlayerComponent;
-import player.FailingPlayerComponent;
+import player.NullReturnPlayerComponent;
 import player.IPlayerComponent;
 import player.IllogicalPlayerComponent;
 import player.InfiniteLoopPlayerComponent;
@@ -120,7 +120,7 @@ public class RefereeTest {
   @Test
   public void runGameFailurePresent() {
     List<IPlayerComponent> failureList = new ArrayList<>(Arrays.asList(pc1, pc2, pc3,
-            new FailingPlayerComponent()));
+            new NullReturnPlayerComponent()));
     Referee failRef = new Referee(failureList, 5, 5);
     failRef.notifyGameStart();
     failRef.runGame();
@@ -136,7 +136,7 @@ public class RefereeTest {
   @Test
   public void runGameCheaterAndFailurePresent() {
     List<IPlayerComponent> cfList = new ArrayList<>(Arrays.asList(pc1, pc2, new IllogicalPlayerComponent(),
-            new FailingPlayerComponent()));
+            new NullReturnPlayerComponent()));
     Referee cfRef = new Referee(cfList, 5, 5);
     cfRef.notifyGameStart();
     cfRef.runGame();
@@ -268,7 +268,7 @@ public class RefereeTest {
 
   @Test
   public void onePlaceTurnWithFailingPlayer(){
-    List<IPlayerComponent> cheaterList = new ArrayList<>(Arrays.asList(new FailingPlayerComponent(), pc1, pc2, pc3));
+    List<IPlayerComponent> cheaterList = new ArrayList<>(Arrays.asList(new NullReturnPlayerComponent(), pc1, pc2, pc3));
     Referee cheatRef = new Referee(cheaterList, 5, 5);
     cheatRef.notifyGameStart();
     cheatRef.setGamePhase(Referee.GamePhase.PLACING);
@@ -280,7 +280,7 @@ public class RefereeTest {
 
   @Test
   public void twoPlaceTurnsWithFailingAndCheatingPlayers(){
-    List<IPlayerComponent> cheaterList = new ArrayList<>(Arrays.asList(new FailingPlayerComponent(),
+    List<IPlayerComponent> cheaterList = new ArrayList<>(Arrays.asList(new NullReturnPlayerComponent(),
             new IllogicalPlayerComponent(), pc1, pc2));
     Referee cheatRef = new Referee(cheaterList, 5, 5);
 
@@ -364,8 +364,8 @@ public class RefereeTest {
   @Test
   public void exceptionThrownInGetAge() {
     List<IPlayerComponent> eList =
-            new ArrayList<>(Arrays.asList(new ExceptionPlayerComponent(true),
-                    pc2, pc3, new ExceptionPlayerComponent(true)));
+            new ArrayList<>(Arrays.asList(new ExceptionPlayerComponent(true, false),
+                    pc2, pc3, new ExceptionPlayerComponent(true, false)));
     Referee eRef = new Referee(eList, 5, 5);
     eRef.setGamePhase(Referee.GamePhase.END);
     assertEquals(2, eRef.getFailures().size());
@@ -375,8 +375,8 @@ public class RefereeTest {
   @Test
   public void exceptionPlayersStartPlaying() {
     List<IPlayerComponent> eList =
-            new ArrayList<>(Arrays.asList(new ExceptionPlayerComponent(false),
-            pc2, pc3, new ExceptionPlayerComponent(false)));
+            new ArrayList<>(Arrays.asList(new ExceptionPlayerComponent(false, false),
+            pc2, pc3, new ExceptionPlayerComponent(false, false)));
     Referee eRef = new Referee(eList, 5, 5);
     eRef.notifyGameStart();
     eRef.setGamePhase(Referee.GamePhase.END);
@@ -387,7 +387,7 @@ public class RefereeTest {
   @Test
   public void placementsWithExceptionPlayers() {
     List<IPlayerComponent> eList = new ArrayList<>(Arrays.asList(pc1, pc2,
-            new ExceptionPlayerComponent(false), new ExceptionPlayerComponent(false)));
+            new ExceptionPlayerComponent(false, false), new ExceptionPlayerComponent(false, false)));
     Referee eRef = new Referee(eList, 5, 5);
     eRef.setGamePhase(Referee.GamePhase.PLACING);
     eRef.doPlacingPhase();
@@ -399,7 +399,7 @@ public class RefereeTest {
   @Test
   public void exceptionPlayersMakingMoves() {
     List<IPlayerComponent> eList = new ArrayList<>(Arrays.asList(pc1, pc2,
-            new ExceptionPlayerComponent(false), new ExceptionPlayerComponent(false)));
+            new ExceptionPlayerComponent(false, false), new ExceptionPlayerComponent(false, false)));
     Referee eRef = new Referee(eList, 5, 5);
     eRef.setGamePhase(Referee.GamePhase.PLACING);
     eRef.doPlacingPhase();
@@ -411,7 +411,7 @@ public class RefereeTest {
   @Test
   public void exceptionPlayersFinishPlaying() {
     List<IPlayerComponent> eList = new ArrayList<>(Arrays.asList(pc1, pc2,
-            new ExceptionPlayerComponent(false), pc4));
+            new ExceptionPlayerComponent(false, false), pc4));
     Referee eRef = new Referee(eList, 5, 5);
     pc1.startPlaying(Penguin.PenguinColor.RED);
     pc2.startPlaying(Penguin.PenguinColor.BROWN);
@@ -425,7 +425,7 @@ public class RefereeTest {
   @Test
   public void runGameWithExceptionPlayer() {
     List<IPlayerComponent> eList = new ArrayList<>(Arrays.asList(pc1, pc2,
-            new ExceptionPlayerComponent(false), pc4));
+            new ExceptionPlayerComponent(false, false), pc4));
     Referee eRef = new Referee(eList, 5, 5);
     eRef.notifyGameStart();
     eRef.runGame();
@@ -442,8 +442,8 @@ public class RefereeTest {
   public void runGameWithAllBadPlayers() {
     List<IPlayerComponent> eList =
             new ArrayList<>(Arrays.asList(
-                    new ExceptionPlayerComponent(false),
-                    new ExceptionPlayerComponent(false)));
+                    new ExceptionPlayerComponent(false, false),
+                    new ExceptionPlayerComponent(false, false)));
     Referee eRef = new Referee(eList, 5, 5);
     eRef.notifyGameStart();
     eRef.runGame();
@@ -460,8 +460,8 @@ public class RefereeTest {
   public void infiniteLoopInGetAge() {
     System.out.println("Entering a timeout-based test, a pause will occur.");
     List<IPlayerComponent> infList =
-            new ArrayList<>(Arrays.asList(new InfiniteLoopPlayerComponent(true),
-            new InfiniteLoopPlayerComponent(true), pc3, pc4));
+            new ArrayList<>(Arrays.asList(new InfiniteLoopPlayerComponent(true, false),
+            new InfiniteLoopPlayerComponent(true, false), pc3, pc4));
     Referee infRef = new Referee(infList, 5, 5);
     infRef.setGamePhase(Referee.GamePhase.END);
     assertEquals(2, infRef.getFailures().size());
@@ -472,7 +472,7 @@ public class RefereeTest {
   public void startPlayingInfiniteLoop() {
     System.out.println("Entering a timeout-based test, a pause will occur.");
     List<IPlayerComponent> infList =
-            new ArrayList<>(Arrays.asList(new InfiniteLoopPlayerComponent(false),
+            new ArrayList<>(Arrays.asList(new InfiniteLoopPlayerComponent(false, false),
             pc2, pc3, pc4));
     Referee infRef = new Referee(infList, 5, 5);
     infRef.notifyGameStart();
@@ -485,8 +485,10 @@ public class RefereeTest {
   public void placementsWithInfiniteLoopPlayers() {
     System.out.println("Entering a timeout-based test, a pause will occur.");
     List<IPlayerComponent> infList =
-            new ArrayList<>(Arrays.asList(new InfiniteLoopPlayerComponent(false),
-            new InfiniteLoopPlayerComponent(false), new InfiniteLoopPlayerComponent(false), pc4));
+            new ArrayList<>(Arrays.asList(new InfiniteLoopPlayerComponent(false, false),
+            new InfiniteLoopPlayerComponent(false, false),
+                    new InfiniteLoopPlayerComponent(false, false),
+                    pc4));
     Referee infRef = new Referee(infList, 5, 5);
     infRef.notifyGameStart();
     infRef.doPlacingPhase();
@@ -499,7 +501,7 @@ public class RefereeTest {
   public void finishPlayingInfiniteLoop() {
     System.out.println("Entering a timeout-based test, a pause will occur.");
     List<IPlayerComponent> infList =
-            new ArrayList<>(Arrays.asList(new InfiniteLoopPlayerComponent(false),
+            new ArrayList<>(Arrays.asList(new InfiniteLoopPlayerComponent(false, false),
             pc2, pc3, pc4));
     Referee infRef = new Referee(infList, 5, 5);
     pc2.startPlaying(Penguin.PenguinColor.BROWN);
@@ -516,9 +518,9 @@ public class RefereeTest {
   public void runGameWithInfiniteLoopAndExceptionPlayers() {
     System.out.println("Entering a timeout-based test, a pause will occur.");
     List<IPlayerComponent> infAndExcList = new ArrayList<>(Arrays.asList(pc1,
-            new InfiniteLoopPlayerComponent(false),
-            new ExceptionPlayerComponent(false),
-            new InfiniteLoopPlayerComponent(false)));
+            new InfiniteLoopPlayerComponent(false, false),
+            new ExceptionPlayerComponent(false, false),
+            new InfiniteLoopPlayerComponent(false, false)));
     Referee infAndExcRef = new Referee(infAndExcList, 5, 5);
     infAndExcRef.notifyGameStart();
     infAndExcRef.runGame();
