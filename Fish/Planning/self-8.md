@@ -6,7 +6,8 @@ Indicate below where your TAs can find the following elements in your strategy a
 the 3 parts of its specifications --- point to the main function
     - We did not integrate the tournament preparation part with the other two parts.
     - (Preparation) Inform players and assign them to games: <https://github.ccs.neu.edu/CS4500-F20/fritch/blob/01c1b4c3807aa2bb6cf00ca972d979d9a657a94d/Fish/Admin/src/tmanager/TournamentManager.java#L56-L57>
-    - (Running) Run the tournament until it's over: <https://github.ccs.neu.edu/CS4500-F20/fritch/blob/01c1b4c3807aa2bb6cf00ca972d979d9a657a94d/Fish/Admin/src/tmanager/TournamentManager.java#L125-L143>
+        - Game assignment method implementation: <https://github.ccs.neu.edu/CS4500-F20/fritch/blob/01c1b4c3807aa2bb6cf00ca972d979d9a657a94d/Fish/Admin/src/tmanager/TournamentManager.java#L61-L96
+    - (Running) Run the tournament until it's over - this is the primary method of the TournamentManager: <https://github.ccs.neu.edu/CS4500-F20/fritch/blob/01c1b4c3807aa2bb6cf00ca972d979d9a657a94d/Fish/Admin/src/tmanager/TournamentManager.java#L125-L143>
     - (Ending) Inform remaining active players: <https://github.ccs.neu.edu/CS4500-F20/fritch/blob/01c1b4c3807aa2bb6cf00ca972d979d9a657a94d/Fish/Admin/src/tmanager/TournamentManager.java#L142>
 
 2. did you factor out a function/method for informing players about
