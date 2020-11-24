@@ -1,8 +1,11 @@
 package game.controller;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.HashSet;
+
 
 import game.model.Board;
 import game.model.BoardPosition;
@@ -11,8 +14,12 @@ import game.model.IBoard;
 import game.model.IState;
 import game.model.Penguin;
 import game.model.Player;
+import game.observer.StateChangeListener;
 import game.view.FishFrame;
 import game.view.FishPanel;
+import referee.Referee;
+
+import javax.swing.*;
 
 /**
  * Controller for a single game of FishGame. Has access to the display frame and the game state
@@ -20,9 +27,13 @@ import game.view.FishPanel;
  * and a board layout. It is used for testing the rendering of game states. Previously, it was
  * used to test the rendering of just the game board.
  */
-public class FishController {
-  private final IState state;
+public class FishController implements StateChangeListener {
+  private GameState state;
   private final FishFrame frame;
+  private Referee referee;
+
+//  private int speed = 10;
+//  private Timer timer = new Timer(1000 / speed, this);
 
   /**
    * Constructor for a FishController for a board with random fish amounts and fixed holes.
@@ -40,6 +51,8 @@ public class FishController {
     this.frame.addPanel(new FishPanel());
 
     this.frame.setController(this);
+    this.referee = new Referee(this.state);
+    this.referee.addListener(this);
   }
 
   /**
@@ -56,6 +69,8 @@ public class FishController {
     this.frame.addPanel(new FishPanel());
 
     this.frame.setController(this);
+    this.referee = new Referee(this.state);
+    this.referee.addListener(this);
   }
 
   /**
@@ -69,7 +84,10 @@ public class FishController {
     this.frame.addPanel(new FishPanel());
 
     this.frame.setController(this);
+    this.referee = new Referee(this.state);
+    this.referee.addListener(this);
   }
+
 
   /**
    * Getter for the frame of this controller.
@@ -112,6 +130,20 @@ public class FishController {
   public IState getState() {
     return state;
   }
+
+  @Override
+  public void actionPerformed() {
+    this.state = referee.getGameState();
+    this.frame.repaint();
+  }
+
+  public void runGame() {
+//    this.referee.setGamePhase(Referee.GamePhase.PLACING);
+    frame.display();
+    this.referee.runGame();
+  }
+
+
 
   /**
    * Main for testing.
@@ -169,4 +201,6 @@ public class FishController {
     int range = max - min + 1;
     return (int) (Math.random() * range) + min;
   }
+
+
 }

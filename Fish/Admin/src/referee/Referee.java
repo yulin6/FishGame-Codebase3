@@ -14,6 +14,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import game.controller.FishController;
 import game.model.Action;
 import game.model.Board;
 import game.model.BoardPosition;
@@ -21,6 +22,7 @@ import game.model.GameState;
 import game.model.GameTreeNode;
 import game.model.Penguin;
 import game.model.Player;
+import game.observer.Observer;
 import player.IPlayerComponent;
 import player.PlayerComponent;
 
@@ -69,6 +71,8 @@ public class Referee implements IReferee {
   // Entirely arbitrary value to use in constructor of PlayerComponent for testing
   private static final int TEST_SEED = 100;
 
+  private Observer observer;
+
   /**
    * Constructor for a Referee that takes a list of players, a number of rows and a number of
    * columns for a game board, and sets up a game for which the players will play in, with the
@@ -92,6 +96,7 @@ public class Referee implements IReferee {
     GameState gs = makeNewState(players, rows, cols);
     this.gt = new GameTreeNode(gs);
     this.phase = GamePhase.SETUP;
+    this.observer = new Observer();
   }
 
   /**
@@ -112,10 +117,11 @@ public class Referee implements IReferee {
     this.failures = new ArrayList<>();
     this.cheaters = new ArrayList<>();
     this.phase = GamePhase.SETUP;
+    this.observer = new Observer();
   }
 
   /**
-   * Another alternative constructor for Referees, used for integration testing. Accepts a fixed 
+   * Another alternative constructor for Referees, used for integration testing. Accepts a fixed
    * GameState and a list of IPlayerComponents to map into the player map.
    * Not safe on player components that don't respond, but this is for a specific integration
    * test and does not target that issue.
@@ -143,6 +149,7 @@ public class Referee implements IReferee {
     this.failures = new ArrayList<>();
     this.cheaters = new ArrayList<>();
     this.phase = GamePhase.SETUP;
+    this.observer = new Observer();
   }
 
   /**
@@ -312,6 +319,7 @@ public class Referee implements IReferee {
         // All exceptions here indicate a player has failed.
         invalidPlayer(currState, currPlayer, currPComponent, failures);
         this.gt = new GameTreeNode(currState);
+        this.observer.notifyListener();
         return;
       }
       doPlayerAction(action, currState, currPlayer, currPComponent);
@@ -357,18 +365,22 @@ public class Referee implements IReferee {
     if (action == null) {
       invalidPlayer(gs, currPlayer, currComponent, failures);
       this.gt = new GameTreeNode(gs);
+      this.observer.notifyListener();
     } else {
       try {
         if (phase == GamePhase.PLACING) {
           action.perform(gs);
           this.gt = new GameTreeNode(gs);
+          this.observer.notifyListener();
         } else if (phase == GamePhase.PLAYING) {
           this.gt = gt.lookAhead(action);
+          this.observer.notifyListener();
         }
       } catch (IllegalArgumentException iae) {
         // player made an illegal placement/movement
         invalidPlayer(gs, currPlayer, currComponent, cheaters);
         this.gt = new GameTreeNode(gs);
+        this.observer.notifyListener();
       }
     }
   }
@@ -492,6 +504,7 @@ public class Referee implements IReferee {
         IPlayerComponent failedPlayer = playerMap.get(color);
         invalidPlayer(state, player, failedPlayer, failures);
         this.gt = new GameTreeNode(state);
+        this.observer.notifyListener();
       }
     }
   }
@@ -527,6 +540,10 @@ public class Referee implements IReferee {
       throw new IllegalArgumentException("Can't check the list of cheaters when the game hasn't " +
               "ended.");
     }
+  }
+
+  public void addListener(FishController controller){
+    this.observer.addListener(controller);
   }
 
   /**
