@@ -1,11 +1,8 @@
 package game.model;
 
 import java.awt.Graphics;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.HashSet;
-import java.util.HashSet;
-import java.util.Map;
 
 /**
  * Class to represent a game state for a game of Fish.
@@ -90,6 +87,7 @@ public class GameState implements IState {
 
     Penguin penguin = new Penguin(p.getColor());
     penguins.put(bp, penguin);
+
   }
 
   @Override
@@ -132,6 +130,15 @@ public class GameState implements IState {
       if (!board.getValidMoves(bp, penPositions).isEmpty()) {
         return true;
       }
+    }
+    for (Map.Entry<BoardPosition, Penguin> entry : penguins.entrySet()) {
+      Penguin.PenguinColor color = entry.getValue().getColor();
+      int lastTileFish = board.getSpace(entry.getKey()).getNumFish();
+      for (Player player : players) {
+        if (player.getColor() == color) {
+          player.addFish(lastTileFish);
+          }
+        }
     }
     return false;
   }
@@ -289,4 +296,4 @@ public class GameState implements IState {
       }
     return youngest;
   }
-}
+  }

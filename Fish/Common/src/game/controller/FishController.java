@@ -1,11 +1,6 @@
 package game.controller;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.*;
 
 import game.model.Board;
 import game.model.BoardPosition;
@@ -19,21 +14,17 @@ import game.view.FishFrame;
 import game.view.FishPanel;
 import referee.Referee;
 
-import javax.swing.*;
-
 /**
  * Controller for a single game of FishGame. Has access to the display frame and the game state
  * For now, the controller sorta acts like our referee, creating a game with a set of players
  * and a board layout. It is used for testing the rendering of game states. Previously, it was
  * used to test the rendering of just the game board.
  */
-public class FishController implements StateChangeListener {
-  private LinkedList<GameState> stateHistory;
+public class FishController implements StateChangeListener{
+  private GameState state;
   private final FishFrame frame;
   private Referee referee;
 
-//  private int speed = 10;
-//  private Timer timer = new Timer(1000 / speed, this);
 
   /**
    * Constructor for a FishController for a board with random fish amounts and fixed holes.
@@ -72,13 +63,17 @@ public class FishController implements StateChangeListener {
     this.setup(gs);
   }
 
+  /**
+   * a private helper method of constructors, which takes in GameState and initiate the local state, frame, referee
+   * accordingly.
+   * @param gs a GameState that's used for creating the FishController.
+   */
   private void setup(GameState gs) {
-    this.stateHistory = new LinkedList();
-    this.stateHistory.add(gs);
+    this.state = gs;
     this.frame.addPanel(new FishPanel());
     this.frame.setController(this);
-    this.referee = new Referee(this.stateHistory.get(0));
-    this.referee.addListener(this);
+    this.referee = new Referee(this.state);
+    this.referee.setListener(this);
   }
 
 
@@ -121,25 +116,50 @@ public class FishController implements StateChangeListener {
    * @return The game state of the controller
    */
   public IState getState() {
-    return this.stateHistory.get(0);
+    return this.state;
   }
 
   @Override
   public void actionPerformed() {
-    this.stateHistory.add(referee.getGameState());
-    // TODO remove when key listener works
-    this.advanceState();
+    try {
+      int sleepTime = 500;
+      Thread.sleep(sleepTime);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    this.state = referee.getGameState();
+    this.frame.repaint();
+    updatePlayerScore(referee.getGameState().getPlayers());
+    if (this.referee.getPhase().equals(Referee.GamePhase.END)) {
+      System.exit(0);
+    }
   }
 
+
+  /**
+   * Display the game board first, then shows players initial score before running the game.
+   */
   public void runGame() {
-//    this.referee.setGamePhase(Referee.GamePhase.PLACING);
     frame.display();
+    updatePlayerScore(referee.getGameState().getPlayers());
     this.referee.runGame();
   }
 
-  protected void advanceState() {
-    this.stateHistory.pop();
-    this.frame.repaint();
+
+  /**
+   * Takes in a set of players and generate a String which contains each players as well as their scores.
+   * @param players a set of Player who is in the game.
+   */
+  private void updatePlayerScore(HashSet<Player> players) {
+    List<Player> playerList = new ArrayList<>(players);
+    playerList.sort(Comparator.comparing(Player::getFish));
+    Collections.reverse(playerList);
+    StringBuilder playerScores = new StringBuilder("<html>");
+    for (Player player : playerList) {
+      playerScores.append("Player ").append(player.getColor()).append(" Score: ").append(player.getFish()).append("<br/>");
+    }
+    playerScores.append("</html>");
+    this.frame.updateScorePanel(playerScores.toString());
   }
 
   /**
@@ -198,5 +218,6 @@ public class FishController implements StateChangeListener {
     int range = max - min + 1;
     return (int) (Math.random() * range) + min;
   }
+
 
 }

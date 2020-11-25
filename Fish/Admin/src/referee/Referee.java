@@ -55,6 +55,7 @@ import player.PlayerComponent;
  * - a constant for time (in seconds) to wait for a player component's response
  * - a constant for the "max" number of penguins (initial # of penguins to subtract # of players
  * from)
+ * - an Observer which is used for visualizing the game process, notifying listeners when GameState has changed.
  */
 public class Referee implements IReferee {
   private final Map<Penguin.PenguinColor, IPlayerComponent> playerMap;
@@ -262,6 +263,7 @@ public class Referee implements IReferee {
       doPlacingPhase();
       doPlayingPhase();
     }
+    observer.notifyListener();
   }
 
   /**
@@ -542,7 +544,7 @@ public class Referee implements IReferee {
     }
   }
 
-  public void addListener(FishController controller){
+  public void setListener(FishController controller){
     this.observer.addListener(controller);
   }
 
@@ -561,6 +563,15 @@ public class Referee implements IReferee {
   public void setGamePhase(GamePhase gamePhase){
     this.phase = gamePhase;
   }
+
+  /**
+   * get the game phase of the current game
+   * @return gamePhase a GamePhase enum
+   */
+  public GamePhase getPhase() {
+    return phase;
+  }
+
 
   /**
    * Enum to distinguish the states of the game the referee is managing.

@@ -8,7 +8,6 @@ import javax.swing.SwingUtilities;
 
 /**
  * Class to represent the visual panel for a board of Fish.
- * TODO: rework into a GamePanel
  */
 public class FishPanel extends JPanel {
 
@@ -19,14 +18,9 @@ public class FishPanel extends JPanel {
 
   @Override
   protected void paintComponent(Graphics g) {
+    super.paintComponent(g);
     FishFrame frame = (FishFrame) SwingUtilities.windowForComponent(this);
     frame.getController().getState().render(g);
-
   }
 
-  @Override
-  public void addKeyListener(KeyListener kl) {
-    System.out.println("Adding key listener");
-    super.addKeyListener(kl);
-  }
 }
