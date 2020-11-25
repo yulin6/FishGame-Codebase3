@@ -70,7 +70,7 @@ public class FishController implements StateChangeListener{
    */
   private void setup(GameState gs) {
     this.state = gs;
-    this.frame.addPanel(new FishPanel());
+    this.frame.addGamePanel(new FishPanel());
     this.frame.setController(this);
     this.referee = new Referee(this.state);
     this.referee.setListener(this);

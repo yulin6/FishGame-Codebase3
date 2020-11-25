@@ -8,7 +8,8 @@ import game.controller.FishController;
 import game.model.Tile;
 
 /**
- * Class to wrap JFrame to represent the board's frame.
+ * Class to wrap JFrame to visualize a game, which includes what's happening on the game board as well as the scores
+ * of players.
  */
 public class FishFrame extends JFrame  {
   private FishController controller;
@@ -39,10 +40,10 @@ public class FishFrame extends JFrame  {
   }
 
   /**
-   * Adds a BoardPanel to the BoardFrame for display.
-   * @param bp BoardPanel to add that belongs to this BoardFrame
+   * Adds a FishPanel which displays the game to the FishFrame.
+   * @param bp a FishPanel which displays the game.
    */
-  public void addPanel(FishPanel bp) {
+  public void addGamePanel(FishPanel bp) {
     this.gamePanel = bp;
     this.add(this.gamePanel);
     this.gamePanel.requestFocusInWindow();
