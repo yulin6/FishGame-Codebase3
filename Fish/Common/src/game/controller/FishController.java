@@ -2,10 +2,10 @@ package game.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.HashSet;
-
+import java.util.LinkedList;
 
 import game.model.Board;
 import game.model.BoardPosition;
@@ -28,7 +28,7 @@ import javax.swing.*;
  * used to test the rendering of just the game board.
  */
 public class FishController implements StateChangeListener {
-  private GameState state;
+  private LinkedList<GameState> stateHistory;
   private final FishFrame frame;
   private Referee referee;
 
@@ -45,14 +45,9 @@ public class FishController implements StateChangeListener {
   public FishController(int rows, int cols, HashSet<Player> players,
                         ArrayList<BoardPosition> holes, int minTiles) {
     IBoard b = buildBoard(rows, cols, holes, minTiles);
-    state = new GameState(players, b);
 
     this.frame = new FishFrame(rows, cols);
-    this.frame.addPanel(new FishPanel());
-
-    this.frame.setController(this);
-    this.referee = new Referee(this.state);
-    this.referee.addListener(this);
+    this.setup(new GameState(players, b));
   }
 
   /**
@@ -63,14 +58,9 @@ public class FishController implements StateChangeListener {
    */
   public FishController(int rows, int cols, HashSet<Player> players, int numFish) {
     IBoard b = buildUniformBoard(rows, cols, numFish);
-    state = new GameState(players, b);
 
     this.frame = new FishFrame(rows, cols);
-    this.frame.addPanel(new FishPanel());
-
-    this.frame.setController(this);
-    this.referee = new Referee(this.state);
-    this.referee.addListener(this);
+    this.setup(new GameState(players, b));
   }
 
   /**
@@ -78,13 +68,16 @@ public class FishController implements StateChangeListener {
    * @param gs GameState to make controller with.
    */
   public FishController(GameState gs) {
-    state = gs;
-
     this.frame = new FishFrame(gs.getBoard().getRows(), gs.getBoard().getCols());
-    this.frame.addPanel(new FishPanel());
+    this.setup(gs);
+  }
 
+  private void setup(GameState gs) {
+    this.stateHistory = new LinkedList();
+    this.stateHistory.add(gs);
+    this.frame.addPanel(new FishPanel());
     this.frame.setController(this);
-    this.referee = new Referee(this.state);
+    this.referee = new Referee(this.stateHistory.get(0));
     this.referee.addListener(this);
   }
 
@@ -128,13 +121,14 @@ public class FishController implements StateChangeListener {
    * @return The game state of the controller
    */
   public IState getState() {
-    return state;
+    return this.stateHistory.get(0);
   }
 
   @Override
   public void actionPerformed() {
-    this.state = referee.getGameState();
-    this.frame.repaint();
+    this.stateHistory.add(referee.getGameState());
+    // TODO remove when key listener works
+    this.advanceState();
   }
 
   public void runGame() {
@@ -143,7 +137,10 @@ public class FishController implements StateChangeListener {
     this.referee.runGame();
   }
 
-
+  protected void advanceState() {
+    this.stateHistory.pop();
+    this.frame.repaint();
+  }
 
   /**
    * Main for testing.
@@ -182,10 +179,10 @@ public class FishController implements StateChangeListener {
     BoardPosition pen3Posn = new BoardPosition(1, 1);
     BoardPosition pen4Posn = new BoardPosition(3, 3);
 
-    fc.state.placeAvatar(pen1Posn, p1);
-    fc.state.placeAvatar(pen2Posn, p2);
-    fc.state.placeAvatar(pen3Posn, p3);
-    fc.state.placeAvatar(pen4Posn, p4);
+    fc.getState().placeAvatar(pen1Posn, p1);
+    fc.getState().placeAvatar(pen2Posn, p2);
+    fc.getState().placeAvatar(pen3Posn, p3);
+    fc.getState().placeAvatar(pen4Posn, p4);
 
     //FishController fc = new FishController(rAmt, cAmt, holes, randomInt(0, rAmt * cAmt - 4));
     fc.frame.display();
@@ -201,6 +198,5 @@ public class FishController implements StateChangeListener {
     int range = max - min + 1;
     return (int) (Math.random() * range) + min;
   }
-
 
 }

@@ -1,6 +1,8 @@
 package game.view;
 
 import java.awt.Dimension;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
 
@@ -10,7 +12,7 @@ import game.model.Tile;
 /**
  * Class to wrap JFrame to represent the board's frame.
  */
-public class FishFrame extends JFrame {
+public class FishFrame extends JFrame implements KeyListener {
   private FishController controller;
   private FishPanel panel;
   private final int windowWidth;
@@ -38,7 +40,9 @@ public class FishFrame extends JFrame {
    */
   public void addPanel(FishPanel bp) {
     this.panel = bp;
-    this.add(bp);
+    this.add(this.panel);
+    this.panel.addKeyListener(this);
+    this.panel.requestFocusInWindow();
   }
 
   /**
@@ -73,4 +77,9 @@ public class FishFrame extends JFrame {
     return controller;
   }
 
+  public void keyPressed(KeyEvent e) { System.out.println("keyPressed"); }
+
+  public void keyReleased(KeyEvent e) { System.out.println("keyReleased"); }
+
+  public void keyTyped(KeyEvent e) { System.out.println("keyTyped"); }
 }
