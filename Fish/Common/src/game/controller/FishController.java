@@ -129,7 +129,7 @@ public class FishController implements StateChangeListener{
     }
     this.state = referee.getGameState();
     this.frame.repaint();
-    updatePlayerScore(referee.getGameState().getPlayers());
+    updateScorePanel(referee.getGameState().getPlayers());
     if (this.referee.getPhase().equals(Referee.GamePhase.END)) {
       System.exit(0);
     }
@@ -141,16 +141,17 @@ public class FishController implements StateChangeListener{
    */
   public void runGame() {
     frame.display();
-    updatePlayerScore(referee.getGameState().getPlayers());
+    updateScorePanel(referee.getGameState().getPlayers());
     this.referee.runGame();
   }
 
 
   /**
-   * Takes in a set of players and generate a String which contains each players as well as their scores.
+   * Takes in a set of players and generate a String which contains each players as well as their scores, which is used
+   * for updating the scorePanel in the frame.
    * @param players a set of Player who is in the game.
    */
-  private void updatePlayerScore(HashSet<Player> players) {
+  private void updateScorePanel(HashSet<Player> players) {
     List<Player> playerList = new ArrayList<>(players);
     playerList.sort(Comparator.comparing(Player::getFish));
     Collections.reverse(playerList);
