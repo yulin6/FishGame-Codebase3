@@ -14,8 +14,18 @@ and/or player-interface modules:
 
 2. for game observers, point the TA to
    - the `game-observer` interface that observers implement 
+        - Observer class: <https://github.ccs.neu.edu/CS4500-F20/panhandle/blob/07d8df830425189d0fde56abf68c83b1631b2500/Fish/Common/src/game/observer/Observer.java#L6-L28>
+        - StateChangeListener interface: <https://github.ccs.neu.edu/CS4500-F20/panhandle/blob/07d8df830425189d0fde56abf68c83b1631b2500/Fish/Common/src/game/observer/StateChangeListener.java#L3-L12>
    - the point where the `referee` consumes observers 
+        - observer is a variable in Referee: <https://github.ccs.neu.edu/CS4500-F20/panhandle/blob/07d8df830425189d0fde56abf68c83b1631b2500/Fish/Admin/src/referee/Referee.java#L75>
+        - the setListener method will be called by FishController: <https://github.ccs.neu.edu/CS4500-F20/panhandle/blob/07d8df830425189d0fde56abf68c83b1631b2500/Fish/Admin/src/referee/Referee.java#L547-L549>
+        - FishController class: <https://github.ccs.neu.edu/CS4500-F20/panhandle/blob/07d8df830425189d0fde56abf68c83b1631b2500/Fish/Common/src/game/controller/FishController.java#L23>
    - the callback from `referee` to observers concerning turns
+        - In the Referee class, whenever there is a change in the GameState, observer.notifyListener() will be called.
+        - <https://github.ccs.neu.edu/CS4500-F20/panhandle/blob/07d8df830425189d0fde56abf68c83b1631b2500/Fish/Admin/src/referee/Referee.java#L266>
+        - <https://github.ccs.neu.edu/CS4500-F20/panhandle/blob/07d8df830425189d0fde56abf68c83b1631b2500/Fish/Admin/src/referee/Referee.java#L324>
+        - <https://github.ccs.neu.edu/CS4500-F20/panhandle/blob/07d8df830425189d0fde56abf68c83b1631b2500/Fish/Admin/src/referee/Referee.java#L370-L385>
+        - <https://github.ccs.neu.edu/CS4500-F20/panhandle/blob/07d8df830425189d0fde56abf68c83b1631b2500/Fish/Admin/src/referee/Referee.java#L509>
 
 3. for tournament observers, point the TA to
    - the `tournament-observer` interface that observers implement 
