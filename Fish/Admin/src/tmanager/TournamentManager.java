@@ -30,10 +30,10 @@ import referee.Referee;
  */
 public class TournamentManager {
 
-  private final List<IPlayerComponent> activePlayers;
+  private List<IPlayerComponent> activePlayers;
   private List<Referee> referees;
   private TournamentPhase phase;
-  private boolean firstRoundRun = false;
+  private boolean firstRoundRan = false;
 
   private static final int MAX_PLAYERS = 4;
   private static final int MIN_PLAYERS = 2;
@@ -124,20 +124,12 @@ public class TournamentManager {
 
   /**
    * Runs the entire tournament as a series of rounds, as long as the tournament remains in the
-   * running phase.
-   * Also, when the number of participants has become small enough to run a single game, runs it
-   * as the last game and the list of winners is determined from the results of the game.
+   * running phase. When the phase of tournament is not running, it informs all the remaining activePlayers
+   * that they are winners.
    */
   public void runTournament() {
     while (phase == TournamentPhase.RUNNING) {
-      if (activePlayers.size() <= MAX_PLAYERS) {
         runTournamentRound();
-        phase = TournamentPhase.END;
-        break;
-      }
-      else {
-        runTournamentRound();
-      }
     }
     informPlayers(InformType.END);
   }
@@ -145,17 +137,18 @@ public class TournamentManager {
   /**
    * Runs a round of the tournament by having all of the referees run their individual games.
    * Checks for the tourney-end conditions; if the tournament hasn't ended, generates a new set of
-   * games from the remaining players. Otherwise, notifies players of the tournament's end.
+   * games from the remaining players.
    */
   public void runTournamentRound() {
     if (phase == TournamentPhase.RUNNING) {
       List<IPlayerComponent> winners = runGames();
-      boolean sameWinnersAsLastRound = !activePlayers.retainAll(winners);
-      if (isTournamentOver(winners, sameWinnersAsLastRound)) {
+      if (isTournamentOver(winners)) {
+        activePlayers = winners;
         phase = TournamentPhase.END;
       }
       else {
-        firstRoundRun = true;
+        firstRoundRan = true;
+        activePlayers = winners;
         generateGames();
       }
     }
@@ -183,21 +176,22 @@ public class TournamentManager {
     return winners;
   }
 
+
   /**
-   * Checks two of three ending conditions for the tournament, as listed below.
-   * - two tournament rounds of games in a row produce the exact same winners
-   * - there are too few players for a single game
-   * @param winners The winners of a round of the tournament, used to check if the entire
-   *                tournament is over.
-   * @param repeatWinners Boolean indicating whether two rounds of the tournament generated the
-   *                      exact same set of winners.
-   * @return True if the tournament is now over, else false.
+   * helper method that will be called in runTournamentRound() for checking is the ending conditions of the
+   * tournament. First condition is "no game possible" meaning the winners size from this round is less than
+   * MIN_PLAYERS. Second condition is "only one game possible", which means the activePlayer size is less
+   * than MAX_PLAYERS. Third condition is "repeated outcomes", it is true when the winners from this round contains
+   * all the existing activePlayers and firstRoundRan is true (prevents comparing winners to original activePlayers).
+   * @param winners the winners from this round of games
+   * @return boolean determine whether the tournament has ended.
    */
-  private boolean isTournamentOver(List<IPlayerComponent> winners, boolean repeatWinners) {
-    if (repeatWinners && firstRoundRun) {
-      return true;
-    }
-    return winners.size() < MIN_PLAYERS;
+  private boolean isTournamentOver(List<IPlayerComponent> winners) {
+    boolean noGamePossible = winners.size() < MIN_PLAYERS;
+    boolean oneGamePossible = activePlayers.size() < MAX_PLAYERS;
+    boolean repeatedWinners = winners.containsAll(activePlayers) && firstRoundRan;
+
+    return noGamePossible || oneGamePossible || repeatedWinners;
   }
 
   /**
@@ -253,8 +247,8 @@ public class TournamentManager {
    * @return The boolean member variable that states whether or not the game's first round has
    * been run.
    */
-  public boolean isFirstRoundRun() {
-    return firstRoundRun;
+  public boolean isFirstRoundRan() {
+    return firstRoundRan;
   }
 
   /**

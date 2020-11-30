@@ -3,7 +3,6 @@ package tmanager;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -207,7 +206,7 @@ public class TournamentManagerTest {
     TournamentManager cleanMultiRoundTm = new TournamentManager(allPlayersList);
     cleanMultiRoundTm.runTournamentRound();
 
-    assertTrue(cleanMultiRoundTm.isFirstRoundRun());
+    assertTrue(cleanMultiRoundTm.isFirstRoundRan());
   }
 
   @Test (expected = IllegalStateException.class)
