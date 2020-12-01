@@ -7,6 +7,9 @@ import static utils.JsonUtils.isSetupMessage;
 import static utils.JsonUtils.isStartMessage;
 import static utils.JsonUtils.isTakeTurnMessage;
 import static utils.JsonUtils.parseColorFromPlayingAsMessage;
+import static utils.JsonUtils.sendMove;
+import static utils.JsonUtils.sendPlacement;
+import static utils.JsonUtils.sendSkip;
 
 
 import game.model.Action;
@@ -106,20 +109,22 @@ class FishClient {
    * Determines the player's next desired placement, then sends a message to the server with the
    * placement.
    *
-   * @param player the IPlayerComponent making the placement
+   * @param player the player making the placement
    * @param gameState the current state of the game
    */
-  private void placePenguin(ObjectOutputStream output, IPlayerComponent player, GameState gameState) {
+  private void placePenguin(ObjectOutputStream output, IPlayerComponent player, GameState gameState) throws IOException {
     BoardPosition position = player.placePenguin(new GameTreeNode(gameState)).getPosition();
     sendPlacement(output, position);
   }
 
   /**
+   * Determines the player's next desired move and sends it to the server, or sends false if the player
+   * has no moves and must skip.
    *
-   * @param player
-   * @param gameTree
+   * @param player the player currently making the move
+   * @param gameTree the current game being played
    */
-  private void takeTurn(ObjectOutputStream output, IPlayerComponent player, GameTreeNode gameTree) {
+  private void takeTurn(ObjectOutputStream output, IPlayerComponent player, GameTreeNode gameTree) throws IOException{
     Action action = player.takeTurn(gameTree);
     if (action instanceof Pass) {
       sendSkip(output);
