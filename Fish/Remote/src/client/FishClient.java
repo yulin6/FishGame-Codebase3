@@ -1,16 +1,12 @@
 package client;
 
-import static utils.JsonUtils.isEndMessage;
-import static utils.JsonUtils.isPlayingAsMessage;
-import static utils.JsonUtils.isPlayingWithMessage;
-import static utils.JsonUtils.isSetupMessage;
-import static utils.JsonUtils.isStartMessage;
-import static utils.JsonUtils.isTakeTurnMessage;
+import static utils.JsonUtils.getFishMessageType;
 import static utils.JsonUtils.parseColorFromPlayingAsMessage;
 import static utils.JsonUtils.parseStateFromMessage;
 import static utils.JsonUtils.sendMove;
 import static utils.JsonUtils.sendPlacement;
 import static utils.JsonUtils.sendSkip;
+import static utils.JsonUtils.sendVoid;
 
 
 import game.model.Action;
@@ -53,61 +49,58 @@ public class FishClient extends Thread{
     this.clientSocket.close();
   }
 
-  public FishClient(Socket socket) throws IOException {
-    this.clientSocket = socket;
-    this.joinTournament();
-    this.clientSocket.close();
-  }
-
   /**
-   *
+   * TODO
    * @throws IOException
    */
   private void joinTournament() throws IOException {
-    ObjectInputStream input = new ObjectInputStream(this.clientSocket.getInputStream());
-    ObjectOutputStream output = new ObjectOutputStream(this.clientSocket.getOutputStream());
+    ObjectInputStream readable = new ObjectInputStream(this.clientSocket.getInputStream());
+    ObjectOutputStream writable = new ObjectOutputStream(this.clientSocket.getOutputStream());
 
-    output.writeChars(this.makeName());
+    writable.writeChars(this.makeName());
 
     IPlayerComponent playerComponent = null;
     GameTreeNode gameTree = null;
-    while(true) {
-      String message = input.readUTF();
 
-      if (isStartMessage(message) || isPlayingWithMessage(message)) {
-        //TODO How do we return "void"?
-        continue;
-      }
-      else if (isPlayingAsMessage(message)) {
-        //TODO How do we return "void"?
-        PenguinColor color = parseColorFromPlayingAsMessage(message);
-        playerComponent = new FixedDepthPlayerComponent(this.age, SEARCH_DEPTH, color);
-      }
-      else if (isSetupMessage(message)) {
-        if (playerComponent == null) {
-          throw new RuntimeException("Cannot place a penguin before color is assigned");
-        }
-        GameState state = parseStateFromMessage(message);
-        this.placePenguin(output, playerComponent, state);
-      }
-      else if (isTakeTurnMessage(message)) {
-        if (playerComponent == null) {
-          throw new RuntimeException("Cannot take a turn before color is assigned");
-        }
-        // TODO: Get the current GameTreeNode without regenerating any children
-        GameState newState = parseStateFromMessage(message);
-        gameTree = new GameTreeNode(newState);
-        this.takeTurn(output, playerComponent, gameTree);
-      }
-      else if (isEndMessage(message)) {
-        //TODO How do we return "void"?
-        break;
+    while(true) {
+      String message = readable.readUTF();
+      String messageType = getFishMessageType(message);
+
+      switch(messageType) {
+        case "start":
+          sendVoid(writable);
+          break;
+        case "playing-as":
+          PenguinColor color = parseColorFromPlayingAsMessage(message);
+          playerComponent = this.buildPlayerWithColor(color);
+          break;
+        case "playing-with":
+          sendVoid(writable);
+          break;
+        case "setup":
+          GameState gameState = parseStateFromMessage(message);
+          this.determineAndSendPlacement(writable, playerComponent, gameState);
+          break;
+        case "take-turn":
+          GameState newState = parseStateFromMessage(message);
+          gameTree = new GameTreeNode(newState);
+          this.determineAndSendMove(writable, playerComponent, gameTree);
+          break;
+        case "end":
+          sendVoid(writable);
+          break;
+        default:
+          throw new RuntimeException("Invalid message type");
       }
     }
   }
 
+  private IPlayerComponent buildPlayerWithColor(PenguinColor color) {
+    return new FixedDepthPlayerComponent(this.age, SEARCH_DEPTH, color);
+  }
+
   /**
-   * @return a random name based on the current nanoTime
+   * @return a random numeric name based on the current nanoTime (not guaranteed unique)
    */
   private String makeName() {
     String time = String.valueOf(System.nanoTime());
@@ -122,19 +115,30 @@ public class FishClient extends Thread{
    * @param player the player making the placement
    * @param gameState the current state of the game
    */
-  private void placePenguin(ObjectOutputStream output, IPlayerComponent player, GameState gameState) throws IOException {
+  private void determineAndSendPlacement(
+      ObjectOutputStream output,
+      IPlayerComponent player,
+      GameState gameState
+  ) throws IOException {
+    if (player == null) throw new RuntimeException("Cannot place a penguin before color is assigned");
     BoardPosition position = player.placePenguin(new GameTreeNode(gameState)).getPosition();
     sendPlacement(output, position);
   }
 
   /**
-   * Determines the player's next desired move and sends it to the server, or sends false if the player
-   * has no moves and must skip.
+   * Determines the player's next desired move and sends it to the server, or sends false if the
+   * player has no moves and must skip.
    *
    * @param player the player currently making the move
    * @param gameTree the current game being played
    */
-  private void takeTurn(ObjectOutputStream output, IPlayerComponent player, GameTreeNode gameTree) throws IOException{
+  private void determineAndSendMove(
+      ObjectOutputStream output,
+      IPlayerComponent player,
+      GameTreeNode gameTree
+  ) throws IOException {
+    if (player == null) throw new RuntimeException("Cannot take a turn before color is assigned");
+
     Action action = player.takeTurn(gameTree);
     if (action instanceof Pass) {
       sendSkip(output);
