@@ -7,6 +7,7 @@ import static utils.JsonUtils.isSetupMessage;
 import static utils.JsonUtils.isStartMessage;
 import static utils.JsonUtils.isTakeTurnMessage;
 import static utils.JsonUtils.parseColorFromPlayingAsMessage;
+import static utils.JsonUtils.parseStateFromMessage;
 import static utils.JsonUtils.sendMove;
 import static utils.JsonUtils.sendPlacement;
 import static utils.JsonUtils.sendSkip;
@@ -29,11 +30,11 @@ import game.model.Penguin.PenguinColor;
 /**
  * Represents a client who can connect to a remote server running a game of Fish.
  */
-class FishClient {
+public class FishClient extends Thread{
   private final int NAME_LEN = 12;
   private final int SEARCH_DEPTH = 2;
 
-  private Socket servSocket;
+  private Socket clientSocket;
   // This will never be used, and only serves to adapt to the FixedDepthPlayerComponent spec.
   private int age = 0;
 
@@ -47,9 +48,15 @@ class FishClient {
    * @throws IOException if the server connection fails
    */
   public FishClient(String ip, int port) throws IOException {
-    this.servSocket = new Socket(ip, port);
+    this.clientSocket = new Socket(ip, port);
     this.joinTournament();
-    this.servSocket.close();
+    this.clientSocket.close();
+  }
+
+  public FishClient(Socket socket) throws IOException {
+    this.clientSocket = socket;
+    this.joinTournament();
+    this.clientSocket.close();
   }
 
   /**
@@ -57,8 +64,8 @@ class FishClient {
    * @throws IOException
    */
   private void joinTournament() throws IOException {
-    ObjectInputStream input = new ObjectInputStream(this.servSocket.getInputStream());
-    ObjectOutputStream output = new ObjectOutputStream(this.servSocket.getOutputStream());
+    ObjectInputStream input = new ObjectInputStream(this.clientSocket.getInputStream());
+    ObjectOutputStream output = new ObjectOutputStream(this.clientSocket.getOutputStream());
 
     output.writeChars(this.makeName());
 
@@ -68,9 +75,11 @@ class FishClient {
       String message = input.readUTF();
 
       if (isStartMessage(message) || isPlayingWithMessage(message)) {
+        //TODO How do we return "void"?
         continue;
       }
       else if (isPlayingAsMessage(message)) {
+        //TODO How do we return "void"?
         PenguinColor color = parseColorFromPlayingAsMessage(message);
         playerComponent = new FixedDepthPlayerComponent(this.age, SEARCH_DEPTH, color);
       }
@@ -78,7 +87,7 @@ class FishClient {
         if (playerComponent == null) {
           throw new RuntimeException("Cannot place a penguin before color is assigned");
         }
-        GameState state = parseStateFromSetupMessage(message);
+        GameState state = parseStateFromMessage(message);
         this.placePenguin(output, playerComponent, state);
       }
       else if (isTakeTurnMessage(message)) {
@@ -86,11 +95,12 @@ class FishClient {
           throw new RuntimeException("Cannot take a turn before color is assigned");
         }
         // TODO: Get the current GameTreeNode without regenerating any children
-        GameState newState = parseStateFromTakeTurnMessage(message);
+        GameState newState = parseStateFromMessage(message);
         gameTree = new GameTreeNode(newState);
         this.takeTurn(output, playerComponent, gameTree);
       }
       else if (isEndMessage(message)) {
+        //TODO How do we return "void"?
         break;
       }
     }

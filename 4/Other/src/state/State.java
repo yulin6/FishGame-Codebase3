@@ -1,3 +1,5 @@
+package state;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,10 +14,10 @@ import game.model.Penguin;
 import game.model.Player;
 
 /**
- * Class to represent the State type objects in Java after being deserialized
+ * Class to represent the state.State type objects in Java after being deserialized
  * from JSON.
- * State objects in JSON form are { "players" : Player*, "board" : Board}
- * where Players is a JSON array of "Player" as described in the documentation of TestPlayer,
+ * state.State objects in JSON form are { "players" : Player*, "board" : Board}
+ * where Players is a JSON array of "Player" as described in the documentation of state.TestPlayer,
  * and Board is a JSON array of numbers from 0 to 5.
  */
 public class State {
