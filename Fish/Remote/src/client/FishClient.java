@@ -68,14 +68,13 @@ public class FishClient extends Thread{
 
       switch(messageType) {
         case "start":
+        case "playing-with":
+        case "end":
           sendVoid(writable);
           break;
         case "playing-as":
           PenguinColor color = parseColorFromPlayingAsMessage(message);
           playerComponent = this.buildPlayerWithColor(color);
-          break;
-        case "playing-with":
-          sendVoid(writable);
           break;
         case "setup":
           GameState gameState = parseStateFromMessage(message);
@@ -85,9 +84,6 @@ public class FishClient extends Thread{
           GameState newState = parseStateFromMessage(message);
           gameTree = new GameTreeNode(newState);
           this.determineAndSendMove(writable, playerComponent, gameTree);
-          break;
-        case "end":
-          sendVoid(writable);
           break;
         default:
           throw new RuntimeException("Invalid message type");
