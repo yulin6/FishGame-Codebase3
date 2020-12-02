@@ -57,7 +57,6 @@ public class Xgui {
     private static int parsePlayerSize(String[] args){
         int size;
 
-        System.out.println(args);
         if(args.length != 1){
             throw new IllegalArgumentException("Invalid number of arguments.");
         }
