@@ -18,6 +18,9 @@ public class TournamentManagerAdapter implements ITournamentManager, StateChange
 
   public TournamentManagerAdapter(List<FishClientProxy> players) {
     this.players = players;
+    for (FishClientProxy proxy: players){
+      proxy.setTournamentManagerAdapter(this);
+    }
   }
 
   @Override

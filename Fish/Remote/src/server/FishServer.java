@@ -1,11 +1,13 @@
 package server;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import java.util.List;
+
 
 /**
  * Represents a signup server for a game of Fish. The server listens for connections, waiting for up
@@ -77,10 +79,17 @@ public class FishServer {
     return outputClients;
   }
 
-  private void runTournament(ArrayList<Socket> clients) {
+  private void runTournament(ArrayList<Socket> clients) throws IOException {
     // TODO: Build tournament manager adapter
     // TODO: Run tournament with adapted tournament manager
-    throw new NotImplementedException();
+//    throw new NotImplementedException();
+    List<FishClientProxy> proxies = new ArrayList<>();
+    for(int i = 0; i < clients.size(); ++i){
+      FishClientProxy proxy = new FishClientProxy(clients.get(i), i);
+      proxies.add(proxy);
+    }
+    TournamentManagerAdapter adapter = new TournamentManagerAdapter(proxies);
+    adapter.runTournament();
   }
 
 // Main: void -> void
