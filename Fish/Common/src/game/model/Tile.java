@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Polygon;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -40,8 +41,7 @@ public class Tile implements BoardSpace {
     BufferedImage image;
     if (FISH_ICON == null) {
       try {
-        URL fishImage = Tile.class.getClassLoader().getResource("fish33x20.png");
-        image = ImageIO.read(fishImage);
+        image = ImageIO.read(new File("/Other/dep/resources/fish33x20.png"));
         FISH_ICON = image;
       } catch (IOException e) {
         e.printStackTrace();

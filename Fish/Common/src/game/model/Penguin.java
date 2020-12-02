@@ -32,19 +32,15 @@ public class Penguin {
 
     if (PENGUIN_RED == null || PENGUIN_WHITE == null || PENGUIN_BLACK == null
             || PENGUIN_BROWN == null) {
-      URL pathRed = Penguin.class.getClassLoader().getResource("redpenguin.png");
-      URL pathWhite = Penguin.class.getClassLoader().getResource("whitepenguin.png");
-      URL pathBrown = Penguin.class.getClassLoader().getResource("brownpenguin.png");
-      URL pathBlack = Penguin.class.getClassLoader().getResource("blackpenguin.png");
 
       try {
-        image = ImageIO.read(pathRed);
+        image = ImageIO.read(new File("Other/dep/resources/redpenguin.png"));
         PENGUIN_RED = image;
-        image = ImageIO.read(pathWhite);
+        image = ImageIO.read(new File("Other/dep/resources/whitepenguin.png"));
         PENGUIN_WHITE = image;
-        image = ImageIO.read(pathBrown);
+        image = ImageIO.read(new File("Other/dep/resources/brownpenguin.png"));
         PENGUIN_BROWN = image;
-        image = ImageIO.read(pathBlack);
+        image = ImageIO.read(new File("Other/dep/resources/blackpenguin.png"));
         PENGUIN_BLACK = image;
       } catch (IOException e) {
         e.printStackTrace();
