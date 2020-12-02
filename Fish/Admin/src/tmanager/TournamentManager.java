@@ -55,6 +55,7 @@ public class TournamentManager implements ITournamentManager {
       throw new IllegalArgumentException("Not enough players to form a tournament.");
     }
     this.activePlayers = new ArrayList<>(players);
+    this.listeners = new ArrayList<>();
     informPlayers(InformType.START);
     generateGames();
     this.phase = TournamentPhase.RUNNING;
