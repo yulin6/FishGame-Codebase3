@@ -1,14 +1,11 @@
 package server;
 
-import client.FishClient;
-
-import java.io.*;
-import java.lang.reflect.Array;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
-import java.util.List;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Represents a signup server for a game of Fish. The server listens for connections, waiting for up
@@ -37,6 +34,9 @@ public class FishServer {
     }
     if (this.isSignupComplete(this.clients)) {
       this.runTournament(this.clients);
+    }
+    for (Socket s : this.clients) {
+      s.close();
     }
   }
 
@@ -68,13 +68,19 @@ public class FishServer {
       ssocket.setSoTimeout(remainingTime);
       try {
         outputClients.add(ssocket.accept());
+        remainingTime = remainingTime - (int)(System.currentTimeMillis() - startSignupTime);
       }
       catch(SocketTimeoutException ste) {
         break; // If a timeout has been reached, the full WAIT_MILLIS has passed
       }
-      remainingTime = remainingTime - (int)(System.currentTimeMillis() - startSignupTime);
     }
     return outputClients;
+  }
+
+  private void runTournament(ArrayList<Socket> clients) {
+    // TODO: Build tournament manager adapter
+    // TODO: Run tournament with adapted tournament manager
+    throw new NotImplementedException();
   }
 
 // Main: void -> void
@@ -96,3 +102,25 @@ public class FishServer {
   // - Return length of winners returned from tournament
 
 }
+
+
+
+/*
+FishServer accepts all FishClient connections and makes a socket for each
+FishServer creates FishClientProxy for each socket
+FishServer creates TournamentManagerAdapter with list of FishClientProxies
+
+
+TournamentManagerAdapter extends TournamentManager and is a listener to all games
+TournamentManagerAdapter stores up-to-date GameTree for current game
+
+When TournamentManagerAdapter observes GameStarted:
+- send playing-with message to all players
+- clear list of actions
+
+When TournamentManagerAdapter observes Action:
+- store action, list of actions sent to each player
+
+TournamentManagerAdapter will send all Actions not already sent to a player when takeTurn is called
+on that player
+ */

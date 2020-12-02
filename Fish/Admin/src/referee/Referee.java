@@ -1,5 +1,6 @@
 package referee;
 
+import game.observer.StateChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -249,6 +250,7 @@ public class Referee implements IReferee {
       throw new IllegalArgumentException("Cannot notify players that a game is starting outside " +
               "of the setup phase.");
     }
+    observer.notifyListenersGameStarted(this.gt.getGameState());
     sendNotifToPlayers(NotifType.START);
   }
 
@@ -263,7 +265,6 @@ public class Referee implements IReferee {
       doPlacingPhase();
       doPlayingPhase();
     }
-    observer.notifyListener();
   }
 
   /**
@@ -321,7 +322,7 @@ public class Referee implements IReferee {
         // All exceptions here indicate a player has failed.
         invalidPlayer(currState, currPlayer, currPComponent, failures);
         this.gt = new GameTreeNode(currState);
-        this.observer.notifyListener();
+        this.observer.notifyListenersNewGameState(this.gt.getGameState());
         return;
       }
       doPlayerAction(action, currState, currPlayer, currPComponent);
@@ -367,22 +368,23 @@ public class Referee implements IReferee {
     if (action == null) {
       invalidPlayer(gs, currPlayer, currComponent, failures);
       this.gt = new GameTreeNode(gs);
-      this.observer.notifyListener();
+      this.observer.notifyListenersNewGameState(gs);
     } else {
       try {
         if (phase == GamePhase.PLACING) {
           action.perform(gs);
           this.gt = new GameTreeNode(gs);
-          this.observer.notifyListener();
+          this.observer.notifyListenersNewGameState(gs);
         } else if (phase == GamePhase.PLAYING) {
           this.gt = gt.lookAhead(action);
-          this.observer.notifyListener();
+          this.observer.notifyListenersActionPerformed(action);
+          this.observer.notifyListenersNewGameState(gs);
         }
       } catch (IllegalArgumentException iae) {
         // player made an illegal placement/movement
         invalidPlayer(gs, currPlayer, currComponent, cheaters);
         this.gt = new GameTreeNode(gs);
-        this.observer.notifyListener();
+        this.observer.notifyListenersNewGameState(gs);
       }
     }
   }
@@ -435,6 +437,7 @@ public class Referee implements IReferee {
               "ended.");
     }
     sendNotifToPlayers(NotifType.END);
+
   }
 
   /**
@@ -506,7 +509,7 @@ public class Referee implements IReferee {
         IPlayerComponent failedPlayer = playerMap.get(color);
         invalidPlayer(state, player, failedPlayer, failures);
         this.gt = new GameTreeNode(state);
-        this.observer.notifyListener();
+        this.observer.notifyListenersNewGameState(state);
       }
     }
   }
@@ -544,8 +547,8 @@ public class Referee implements IReferee {
     }
   }
 
-  public void setListener(FishController controller){
-    this.observer.addListener(controller);
+  public void setListener(StateChangeListener listener){
+    this.observer.addListener(listener);
   }
 
   /**

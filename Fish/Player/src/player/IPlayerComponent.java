@@ -22,7 +22,7 @@ public interface IPlayerComponent {
    * component in this method is implementation-specific, but it must not throw an exception or
    * enter an infinite loop, or else it is counted as a failing player component.
    */
-  void leaveTournament();
+  void leaveTournament(Boolean winner);
 
   /**
    * Sets up the player component with the game by storing its assigned color, which is given

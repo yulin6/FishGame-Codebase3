@@ -49,7 +49,7 @@ public class PlayerComponent implements IPlayerComponent {
   }
 
   @Override
-  public void leaveTournament() {
+  public void leaveTournament(Boolean winner) {
     // House player, no behavior to perform
   }
 

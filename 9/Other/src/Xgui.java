@@ -3,9 +3,6 @@ import game.controller.FishController;
 import game.model.BoardPosition;
 import game.model.Penguin;
 import game.model.Player;
-import jdk.jshell.JShell;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;

@@ -28,7 +28,7 @@ public class BadWinnerPlayerComponent implements IPlayerComponent {
   }
 
   @Override
-  public void leaveTournament() {
+  public void leaveTournament(Boolean winner) {
     throw new IllegalArgumentException("I'm a player component who is a sore winner.");
   }
 

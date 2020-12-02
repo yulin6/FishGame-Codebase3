@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import game.model.*;
 import game.model.Penguin.PenguinColor;
+import java.util.List;
 import state.State;
 
 import java.io.IOException;
@@ -22,19 +23,18 @@ public class JsonUtils {
   public static PenguinColor parseColorFromPlayingAsMessage(String message) {
     JsonArray argList = parseArgsList(message);
     String color = argList.get(0).toString().toLowerCase();
-
-    if (color.equals("red")) {
-      return PenguinColor.RED;
-    } else if (color.equals("brown")) {
-      return PenguinColor.BROWN;
-    } else if (color.equals("black")) {
-      return PenguinColor.BLACK;
-    } else if (color.equals("white")) {
-      return PenguinColor.WHITE;
-    } else {
-      throw new IllegalArgumentException("Message does not contain a valid color: " + message);
+    switch(color) {
+      case "red":
+        return PenguinColor.RED;
+      case "brown":
+        return PenguinColor.BROWN;
+      case "black":
+        return PenguinColor.BLACK;
+      case "white":
+        return PenguinColor.WHITE;
+      default:
+        throw new IllegalArgumentException("Message does not contain a valid color: " + message);
     }
-
   }
 
   public static GameState parseStateFromMessage(String message) {
@@ -51,22 +51,87 @@ public class JsonUtils {
     return gs;
   }
 
-  public static void sendVoid(ObjectOutputStream writable) throws IOException {
+  public static void sendVoidReply(ObjectOutputStream writable) throws IOException {
     writable.writeUTF("void");
   }
 
-  public static void sendSkip(ObjectOutputStream writable) throws IOException {
+  public static void sendSkipReply(ObjectOutputStream writable) throws IOException {
     writable.writeUTF("false");
   }
 
-  public static void sendPlacement(ObjectOutputStream writable, BoardPosition position) throws IOException {
-    writable.writeUTF("[" + position.getRow() + "," + position.getCol() + "]");
+  public static void sendPlacementReply(ObjectOutputStream writable, BoardPosition position) throws IOException {
+    Gson gson = new Gson();
+    Integer[] placement = {position.getRow(), position.getCol()};
+    writable.writeUTF(gson.toJson(placement));
   }
 
-  public static void sendMove(ObjectOutputStream writable, BoardPosition start, BoardPosition end) throws IOException {
-    String startPosn = "[" + start.getRow() + "," + start.getCol() +  "]";
-    String endPosn = "[" + end.getRow() + "," + end.getCol() +  "]";
-    writable.writeUTF("[" + startPosn + "," + endPosn + "]");
+  public static void sendMoveReply(ObjectOutputStream writable, BoardPosition start, BoardPosition end) throws IOException {
+    Gson gson = new Gson();
+    Integer[][] moveArr = {{start.getRow(), start.getCol()}, {end.getRow(), end.getCol()}};
+    writable.writeChars(gson.toJson(moveArr));
+  }
+
+  public static void sendStartMessage(ObjectOutputStream writable) throws IOException {
+    JsonArray args = new JsonArray();
+    args.add(true);
+    sendServerMessage(writable, "start", args);
+  }
+  public static void sendPlayingAsMessage(ObjectOutputStream writable, PenguinColor color)
+      throws IOException  {
+    JsonArray args = new JsonArray();
+    args.add(color.toString());
+    sendServerMessage(writable, "playing-as", args);
+  }
+
+  public static void sendPlayingWithMessage(ObjectOutputStream writable, List<PenguinColor> colors)
+      throws IOException  {
+    JsonArray args = new JsonArray();
+    for (PenguinColor color : colors) {
+      args.add(color.toString());
+    }
+    sendServerMessage(writable, "playing-with", args);
+  }
+
+  public static void sendSetupMessage(ObjectOutputStream writable, GameState gameState)
+      throws IOException  {
+    Gson gson = new Gson();
+    JsonArray args = new JsonArray();
+    State state = new State(gameState, gameState.getPlayers(), gameState.getBoard());
+    args.add(gson.toJson(state, State.class));
+    sendServerMessage(writable, "setup", args);
+  }
+
+  public static void sendTakeTurnMessage(
+      ObjectOutputStream writable,
+      GameState gameState,
+      List<Action> actions
+  ) throws IOException {
+    Gson gson = new Gson();
+    JsonArray args = new JsonArray();
+    State state = new State(gameState, gameState.getPlayers(), gameState.getBoard());
+    args.add(gson.toJson(state, State.class));
+
+    JsonArray actionsSinceLastTurn = new JsonArray();
+    for (Action action : actions) {
+      if (action instanceof Pass) {
+        actionsSinceLastTurn.add(false);
+      } else if (action instanceof Move) {
+        Move move = (Move) action;
+        BoardPosition start = move.getStart();
+        BoardPosition end = move.getDestination();
+        Integer[][] moveArr = {{start.getRow(), start.getCol()}, {end.getRow(), end.getCol()}};
+        actionsSinceLastTurn.add(gson.toJson(moveArr));
+      }
+    }
+    args.add(actionsSinceLastTurn);
+
+    sendServerMessage(writable, "take-turn", args);
+  }
+
+  public static void sendEndMessage(ObjectOutputStream writable, boolean winner) throws IOException {
+    JsonArray args = new JsonArray();
+    args.add(winner);
+    sendServerMessage(writable, "end", args);
   }
 
   /**
@@ -84,5 +149,36 @@ public class JsonUtils {
     JsonArray jsonArray = gson.fromJson(message, JsonArray.class);
     JsonArray argList = (JsonArray) jsonArray.get(1);
     return argList;
+  }
+
+  private static void sendServerMessage(ObjectOutputStream writable, String messageType, JsonArray args)
+      throws IOException {
+    JsonArray message = new JsonArray();
+    message.add(messageType);
+    message.add(args);
+    writable.writeChars(message.getAsString());
+  }
+
+  public static BoardPosition parsePositionFromReply(String reply) {
+    Gson gson = new Gson();
+    JsonArray positionArr = gson.fromJson(reply, JsonArray.class);
+    return new BoardPosition(positionArr.get(0).getAsInt(), positionArr.get(1).getAsInt());
+  }
+
+  public static Action parseActionFromReply(String reply, Player player) {
+    if (reply.equals("false")) {
+      return new Pass(player);
+    }
+    else {
+      Gson gson = new Gson();
+      JsonArray positionArr = gson.fromJson(reply, JsonArray.class);
+      JsonArray start = positionArr.get(0).getAsJsonArray();
+      JsonArray end = positionArr.get(1).getAsJsonArray();
+      return new Move(
+          new BoardPosition(start.get(0).getAsInt(), start.get(1).getAsInt()),
+          new BoardPosition(end.get(0).getAsInt(), end.get(1).getAsInt()),
+          player
+      );
+    }
   }
 }

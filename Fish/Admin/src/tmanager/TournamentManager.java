@@ -1,5 +1,6 @@
 package tmanager;
 
+import game.observer.StateChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -28,10 +29,11 @@ import referee.Referee;
  * It also contains constants relating to max and min players in a game and a max bound on board
  * dimensions.
  */
-public class TournamentManager {
+public class TournamentManager implements ITournamentManager {
 
   private List<IPlayerComponent> activePlayers;
   private List<Referee> referees;
+  private List<StateChangeListener> listeners;
   private TournamentPhase phase;
   private boolean firstRoundRan = false;
 
@@ -56,6 +58,14 @@ public class TournamentManager {
     informPlayers(InformType.START);
     generateGames();
     this.phase = TournamentPhase.RUNNING;
+  }
+
+  /**
+   * Adds a listener to all games of Fish run in this tournament
+   * @param listener the listener to add
+   */
+  public void addGameListener(StateChangeListener listener) {
+    this.listeners.add(listener);
   }
 
   /**
@@ -115,6 +125,9 @@ public class TournamentManager {
 
     try {
       Referee newRef = new Referee(players, rows, cols);
+      for (StateChangeListener listener : this.listeners) {
+        newRef.setListener(listener);
+      }
       referees.add(newRef);
     } catch (IllegalArgumentException e) {
       // This means that the referee has no valid game to oversee; we don't add anything to the
@@ -122,11 +135,7 @@ public class TournamentManager {
     }
   }
 
-  /**
-   * Runs the entire tournament as a series of rounds, as long as the tournament remains in the
-   * running phase. When the phase of tournament is not running, it informs all the remaining activePlayers
-   * that they are winners.
-   */
+  @Override
   public void runTournament() {
     while (phase == TournamentPhase.RUNNING) {
         runTournamentRound();
@@ -194,12 +203,7 @@ public class TournamentManager {
     return noGamePossible || oneGamePossible || repeatedWinners;
   }
 
-  /**
-   * Returns the list of external player components that won the game, if the tournament is over. If
-   * the tournament is not over, throws an exception for requesting at the wrong time.
-   *
-   * @return The list of winning players, if the tournament is over. (May be empty.)
-   */
+  @Override
   public List<IPlayerComponent> getWinners() {
     if (phase == TournamentPhase.END) {
       return new ArrayList<>(activePlayers);
@@ -226,7 +230,7 @@ public class TournamentManager {
       if (type == InformType.START) {
         informCall = () -> player.joinTournament();
       } else if (type == InformType.END) {
-        informCall = () -> player.leaveTournament();
+        informCall = () -> player.leaveTournament(true);
       } else {
         throw new IllegalArgumentException("Invalid InformType received in informPlayers.");
       }

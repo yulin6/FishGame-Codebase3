@@ -1,5 +1,7 @@
 package game.observer;
 
+import game.model.Action;
+import game.model.GameState;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,11 +20,29 @@ public class Observer {
     }
 
     /**
+     * notify the Listeners and call their gameStarted method.
+     */
+    public void notifyListenersGameStarted(GameState gs) {
+        for(StateChangeListener sl: listeners){
+            sl.gameStarted(gs);
+        }
+    }
+
+    /**
      * notify the Listeners and call their actionPerformed method.
      */
-    public void notifyListener() {
+    public void notifyListenersActionPerformed(Action action) {
         for(StateChangeListener sl: listeners){
-            sl.actionPerformed();
+            sl.actionPerformed(action);
+        }
+    }
+
+    /**
+     * notify the Listeners and call their newGameState method.
+     */
+    public void notifyListenersNewGameState(GameState gs) {
+        for(StateChangeListener sl: listeners){
+            sl.newGameState(gs);
         }
     }
 }

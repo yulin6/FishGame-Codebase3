@@ -1,5 +1,6 @@
 package state;
 
+import game.model.IBoard;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,7 +25,7 @@ public class State {
   private List<TestPlayer> players;
   private List<List<Integer>> board;
 
-  public State(GameState gs, HashSet<Player> pset, Board b) {
+  public State(GameState gs, HashSet<Player> pset, IBoard b) {
     HashMap<BoardPosition, Penguin> map = gs.getPenguins();
     Set<BoardPosition> positions = map.keySet();
     this.players = new ArrayList<>();

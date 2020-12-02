@@ -3,10 +3,10 @@ package client;
 import static utils.JsonUtils.getFishMessageType;
 import static utils.JsonUtils.parseColorFromPlayingAsMessage;
 import static utils.JsonUtils.parseStateFromMessage;
-import static utils.JsonUtils.sendMove;
-import static utils.JsonUtils.sendPlacement;
-import static utils.JsonUtils.sendSkip;
-import static utils.JsonUtils.sendVoid;
+import static utils.JsonUtils.sendMoveReply;
+import static utils.JsonUtils.sendPlacementReply;
+import static utils.JsonUtils.sendSkipReply;
+import static utils.JsonUtils.sendVoidReply;
 
 
 import game.model.Action;
@@ -70,7 +70,7 @@ public class FishClient extends Thread{
         case "start":
         case "playing-with":
         case "end":
-          sendVoid(writable);
+          sendVoidReply(writable);
           break;
         case "playing-as":
           PenguinColor color = parseColorFromPlayingAsMessage(message);
@@ -118,7 +118,7 @@ public class FishClient extends Thread{
   ) throws IOException {
     if (player == null) throw new RuntimeException("Cannot place a penguin before color is assigned");
     BoardPosition position = player.placePenguin(new GameTreeNode(gameState)).getPosition();
-    sendPlacement(output, position);
+    sendPlacementReply(output, position);
   }
 
   /**
@@ -137,9 +137,9 @@ public class FishClient extends Thread{
 
     Action action = player.takeTurn(gameTree);
     if (action instanceof Pass) {
-      sendSkip(output);
+      sendSkipReply(output);
     } else if (action instanceof Move) {
-      sendMove(output, ((Move) action).getStart(), ((Move) action).getDestination());
+      sendMoveReply(output, ((Move) action).getStart(), ((Move) action).getDestination());
     }
   }
 }
