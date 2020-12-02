@@ -5,6 +5,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import game.model.*;
 import game.model.Penguin.PenguinColor;
+
+import java.io.DataOutputStream;
 import java.util.List;
 import state.State;
 
@@ -51,39 +53,39 @@ public class JsonUtils {
     return gs;
   }
 
-  public static void sendVoidReply(ObjectOutputStream writable) throws IOException {
+  public static void sendVoidReply(DataOutputStream writable) throws IOException {
     writable.writeUTF("void");
   }
 
-  public static void sendSkipReply(ObjectOutputStream writable) throws IOException {
+  public static void sendSkipReply(DataOutputStream writable) throws IOException {
     writable.writeUTF("false");
   }
 
-  public static void sendPlacementReply(ObjectOutputStream writable, BoardPosition position) throws IOException {
+  public static void sendPlacementReply(DataOutputStream writable, BoardPosition position) throws IOException {
     Gson gson = new Gson();
     Integer[] placement = {position.getRow(), position.getCol()};
     writable.writeUTF(gson.toJson(placement));
   }
 
-  public static void sendMoveReply(ObjectOutputStream writable, BoardPosition start, BoardPosition end) throws IOException {
+  public static void sendMoveReply(DataOutputStream writable, BoardPosition start, BoardPosition end) throws IOException {
     Gson gson = new Gson();
     Integer[][] moveArr = {{start.getRow(), start.getCol()}, {end.getRow(), end.getCol()}};
-    writable.writeChars(gson.toJson(moveArr));
+    writable.writeUTF(gson.toJson(moveArr));
   }
 
-  public static void sendStartMessage(ObjectOutputStream writable) throws IOException {
+  public static void sendStartMessage(DataOutputStream writable) throws IOException {
     JsonArray args = new JsonArray();
     args.add(true);
     sendServerMessage(writable, "start", args);
   }
-  public static void sendPlayingAsMessage(ObjectOutputStream writable, PenguinColor color)
+  public static void sendPlayingAsMessage(DataOutputStream writable, PenguinColor color)
       throws IOException  {
     JsonArray args = new JsonArray();
     args.add(color.toString());
     sendServerMessage(writable, "playing-as", args);
   }
 
-  public static void sendPlayingWithMessage(ObjectOutputStream writable, List<PenguinColor> colors)
+  public static void sendPlayingWithMessage(DataOutputStream writable, List<PenguinColor> colors)
       throws IOException  {
     JsonArray args = new JsonArray();
     for (PenguinColor color : colors) {
@@ -92,7 +94,7 @@ public class JsonUtils {
     sendServerMessage(writable, "playing-with", args);
   }
 
-  public static void sendSetupMessage(ObjectOutputStream writable, GameState gameState)
+  public static void sendSetupMessage(DataOutputStream writable, GameState gameState)
       throws IOException  {
     Gson gson = new Gson();
     JsonArray args = new JsonArray();
@@ -102,7 +104,7 @@ public class JsonUtils {
   }
 
   public static void sendTakeTurnMessage(
-      ObjectOutputStream writable,
+      DataOutputStream writable,
       GameState gameState,
       List<Action> actions
   ) throws IOException {
@@ -128,7 +130,7 @@ public class JsonUtils {
     sendServerMessage(writable, "take-turn", args);
   }
 
-  public static void sendEndMessage(ObjectOutputStream writable, boolean winner) throws IOException {
+  public static void sendEndMessage(DataOutputStream writable, boolean winner) throws IOException {
     JsonArray args = new JsonArray();
     args.add(winner);
     sendServerMessage(writable, "end", args);
@@ -151,7 +153,7 @@ public class JsonUtils {
     return argList;
   }
 
-  private static void sendServerMessage(ObjectOutputStream writable, String messageType, JsonArray args)
+  private static void sendServerMessage(DataOutputStream writable, String messageType, JsonArray args)
       throws IOException {
     JsonArray message = new JsonArray();
     message.add(messageType);

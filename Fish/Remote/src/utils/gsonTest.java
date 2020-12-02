@@ -1,5 +1,9 @@
 package utils;
 
+import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Scanner;
 
 import static utils.JsonUtils.parseStateFromMessage;
@@ -9,7 +13,7 @@ import static utils.JsonUtils.parseStateFromMessage;
 // can delete this class
 public class gsonTest {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
         StringBuilder builder = new StringBuilder();
         while (scanner.hasNextLine()) {
@@ -17,6 +21,7 @@ public class gsonTest {
         }
         String jsonString = builder.toString();
 
+        new DataOutputStream(new FileOutputStream("writable")).writeUTF("hello");
         System.out.println(parseStateFromMessage(jsonString).getBoard().getRows());
     }
 }

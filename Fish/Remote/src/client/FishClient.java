@@ -54,8 +54,8 @@ public class FishClient extends Thread{
    * @throws IOException
    */
   private void joinTournament() throws IOException {
-    ObjectInputStream readable = new ObjectInputStream(this.clientSocket.getInputStream());
-    ObjectOutputStream writable = new ObjectOutputStream(this.clientSocket.getOutputStream());
+    DataInputStream readable = new DataInputStream(this.clientSocket.getInputStream());
+    DataOutputStream writable = new DataOutputStream(this.clientSocket.getOutputStream());
 
     writable.writeChars(this.makeName());
 
@@ -112,7 +112,7 @@ public class FishClient extends Thread{
    * @param gameState the current state of the game
    */
   private void determineAndSendPlacement(
-      ObjectOutputStream output,
+          DataOutputStream output,
       IPlayerComponent player,
       GameState gameState
   ) throws IOException {
@@ -129,7 +129,7 @@ public class FishClient extends Thread{
    * @param gameTree the current game being played
    */
   private void determineAndSendMove(
-      ObjectOutputStream output,
+          DataOutputStream output,
       IPlayerComponent player,
       GameTreeNode gameTree
   ) throws IOException {

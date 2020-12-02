@@ -15,9 +15,8 @@ import game.model.GameState;
 import game.model.GameTreeNode;
 import game.model.Penguin.PenguinColor;
 import game.model.Place;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,15 +25,15 @@ import player.IPlayerComponent;
 public class FishClientProxy implements IPlayerComponent {
 
   private final int age;
-  private final ObjectInputStream readable;
-  private final ObjectOutputStream writable;
+  private final DataInputStream readable;
+  private final DataOutputStream writable;
   private TournamentManagerAdapter tma;
   private PenguinColor color;
 
   FishClientProxy(Socket socket, int age) throws IOException {
     this.age = age;
-    this.readable = new ObjectInputStream(socket.getInputStream());
-    this.writable = new ObjectOutputStream(socket.getOutputStream());
+    this.readable = new DataInputStream(socket.getInputStream());
+    this.writable = new DataOutputStream(socket.getOutputStream());
   }
 
   void setTournamentManagerAdapter(TournamentManagerAdapter tma) {
