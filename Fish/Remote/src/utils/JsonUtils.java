@@ -3,6 +3,7 @@ package utils;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import game.model.*;
 import game.model.Penguin.PenguinColor;
 
@@ -41,7 +42,6 @@ public class JsonUtils {
   }
 
   public static GameState parseStateFromMessage(String message) {
-
     Gson gson = new Gson();
     JsonArray argList = parseArgsList(message);
     JsonElement stateElement = argList.get(0);
@@ -100,7 +100,8 @@ public class JsonUtils {
     Gson gson = new Gson();
     JsonArray args = new JsonArray();
     State state = new State(gameState, gameState.getPlayers(), gameState.getBoard());
-    args.add(gson.toJson(state, State.class));
+    JsonObject stateJson = gson.fromJson(gson.toJson(state, State.class), JsonObject.class);
+    args.add(stateJson);
     sendServerMessage(writable, "setup", args);
   }
 
@@ -112,7 +113,7 @@ public class JsonUtils {
     Gson gson = new Gson();
     JsonArray args = new JsonArray();
     State state = new State(gameState, gameState.getPlayers(), gameState.getBoard());
-    args.add(gson.toJson(state, State.class));
+    args.add(gson.fromJson(gson.toJson(state, State.class), JsonObject.class));
 
     JsonArray actionsSinceLastTurn = new JsonArray();
     for (Action action : actions) {
@@ -123,7 +124,7 @@ public class JsonUtils {
         BoardPosition start = move.getStart();
         BoardPosition end = move.getDestination();
         Integer[][] moveArr = {{start.getRow(), start.getCol()}, {end.getRow(), end.getCol()}};
-        actionsSinceLastTurn.add(gson.toJson(moveArr));
+        actionsSinceLastTurn.add(gson.fromJson(gson.toJson(moveArr), JsonArray.class));
       }
     }
     args.add(actionsSinceLastTurn);

@@ -30,7 +30,9 @@ public class FishClient extends Thread{
   private final int NAME_LEN = 12;
   private final int SEARCH_DEPTH = 2;
 
-  private Socket clientSocket;
+
+  private final String ip;
+  private final int port;
   // This will never be used, and only serves to adapt to the FixedDepthPlayerComponent spec.
   private int age = 0;
 
@@ -44,18 +46,23 @@ public class FishClient extends Thread{
    * @throws IOException if the server connection fails
    */
   public FishClient(String ip, int port) throws IOException {
-    this.clientSocket = new Socket(ip, port);
-    this.joinTournament();
-    this.clientSocket.close();
+    this.ip = ip;
+    this.port = port;
+  }
+
+  public void playTournament(Socket clientSocket) throws IOException {
+    clientSocket = new Socket(this.ip, this.port);
+    this.joinTournament(clientSocket);
+    clientSocket.close();
   }
 
   /**
    * TODO
    * @throws IOException
    */
-  private void joinTournament() throws IOException {
-    DataInputStream readable = new DataInputStream(this.clientSocket.getInputStream());
-    DataOutputStream writable = new DataOutputStream(this.clientSocket.getOutputStream());
+  private void joinTournament(Socket clientSocket) throws IOException {
+    DataInputStream readable = new DataInputStream(clientSocket.getInputStream());
+    DataOutputStream writable = new DataOutputStream(clientSocket.getOutputStream());
 
     writable.writeUTF(this.makeName());
 
@@ -74,7 +81,7 @@ public class FishClient extends Thread{
           break;
         case "playing-as":
           PenguinColor color = parseColorFromPlayingAsMessage(message);
-          playerComponent = this.buildPlayerWithColor(color);
+          playerComponent = new FixedDepthPlayerComponent(this.age, SEARCH_DEPTH, color);
           break;
         case "setup":
           GameState gameState = parseStateFromMessage(message);
@@ -82,6 +89,7 @@ public class FishClient extends Thread{
           break;
         case "take-turn":
           GameState newState = parseStateFromMessage(message);
+          // TODO reuse gameTree for caching
           gameTree = new GameTreeNode(newState);
           this.determineAndSendMove(writable, playerComponent, gameTree);
           break;
@@ -91,14 +99,10 @@ public class FishClient extends Thread{
     }
   }
 
-  private IPlayerComponent buildPlayerWithColor(PenguinColor color) {
-    return new FixedDepthPlayerComponent(this.age, SEARCH_DEPTH, color);
-  }
-
   /**
    * @return a random numeric name based on the current nanoTime (not guaranteed unique)
    */
-  private String makeName() {
+  public String makeName() {
     String time = String.valueOf(System.nanoTime());
     int len = time.length();
     return time.substring(len - NAME_LEN, len);
@@ -111,12 +115,12 @@ public class FishClient extends Thread{
    * @param player the player making the placement
    * @param gameState the current state of the game
    */
-  private void determineAndSendPlacement(
+  public void determineAndSendPlacement(
           DataOutputStream output,
       IPlayerComponent player,
       GameState gameState
   ) throws IOException {
-    if (player == null) throw new RuntimeException("Cannot place a penguin before color is assigned");
+    if (player == null) throw new IllegalStateException("Cannot place a penguin before color is assigned");
     BoardPosition position = player.placePenguin(new GameTreeNode(gameState)).getPosition();
     sendPlacementReply(output, position);
   }
@@ -128,12 +132,12 @@ public class FishClient extends Thread{
    * @param player the player currently making the move
    * @param gameTree the current game being played
    */
-  private void determineAndSendMove(
+  public void determineAndSendMove(
           DataOutputStream output,
       IPlayerComponent player,
       GameTreeNode gameTree
   ) throws IOException {
-    if (player == null) throw new RuntimeException("Cannot take a turn before color is assigned");
+    if (player == null) throw new IllegalStateException("Cannot take a turn before color is assigned");
 
     Action action = player.takeTurn(gameTree);
     if (action instanceof Pass) {

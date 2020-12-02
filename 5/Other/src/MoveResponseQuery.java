@@ -7,6 +7,8 @@ import game.model.BoardPosition;
 import game.model.GameState;
 import game.model.Penguin;
 import game.model.Player;
+import state.State;
+import state.TestPlayer;
 
 /**
  * Class to represent the Move-Response-Query JSON input after being deserialized from JSON. A
