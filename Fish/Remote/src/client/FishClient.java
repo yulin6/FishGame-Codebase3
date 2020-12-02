@@ -3,6 +3,7 @@ package client;
 import static utils.JsonUtils.getFishMessageType;
 import static utils.JsonUtils.parseColorFromPlayingAsMessage;
 import static utils.JsonUtils.parseStateFromMessage;
+import static utils.JsonUtils.parseWonFromEndMessage;
 import static utils.JsonUtils.sendMoveReply;
 import static utils.JsonUtils.sendPlacementReply;
 import static utils.JsonUtils.sendSkipReply;
@@ -26,7 +27,8 @@ import game.model.Penguin.PenguinColor;
 /**
  * Represents a client who can connect to a remote server running a game of Fish.
  */
-public class FishClient extends Thread{
+public class FishClient extends Thread {
+
   private final int NAME_LEN = 12;
   private final int SEARCH_DEPTH = 2;
 
@@ -58,43 +60,61 @@ public class FishClient extends Thread{
 
   /**
    * TODO
-   * @throws IOException
    */
   private void joinTournament(Socket clientSocket) throws IOException {
     DataInputStream readable = new DataInputStream(clientSocket.getInputStream());
     DataOutputStream writable = new DataOutputStream(clientSocket.getOutputStream());
+    this.playTournament(readable, writable);
+  }
 
+  /**
+   *
+   * @param readable
+   * @param writable
+   * @throws IOException
+   */
+  public boolean playTournament(DataInputStream readable, DataOutputStream writable)
+      throws IOException {
     writable.writeUTF(this.makeName());
 
     IPlayerComponent playerComponent = null;
     GameTreeNode gameTree = null;
 
-    while(true) {
-      String message = readable.readUTF();
-      String messageType = getFishMessageType(message);
+    System.out.println("+-----------------------------------------------------------------------+");
 
-      switch(messageType) {
-        case "start":
-        case "playing-with":
-        case "end":
-          sendVoidReply(writable);
-          break;
-        case "playing-as":
-          PenguinColor color = parseColorFromPlayingAsMessage(message);
-          playerComponent = new FixedDepthPlayerComponent(this.age, SEARCH_DEPTH, color);
-          break;
-        case "setup":
-          GameState gameState = parseStateFromMessage(message);
-          this.determineAndSendPlacement(writable, playerComponent, gameState);
-          break;
-        case "take-turn":
-          GameState newState = parseStateFromMessage(message);
-          // TODO reuse gameTree for caching
-          gameTree = new GameTreeNode(newState);
-          this.determineAndSendMove(writable, playerComponent, gameTree);
-          break;
-        default:
-          throw new RuntimeException("Invalid message type");
+    while (true) {
+      if (readable.available() != 0) {
+        String message = readable.readUTF();
+        System.out.println(message);
+        String messageType = getFishMessageType(message);
+
+        switch (messageType) {
+          case "start":
+          case "playing-with":
+            sendVoidReply(writable);
+            break;
+          case "playing-as":
+            PenguinColor color = parseColorFromPlayingAsMessage(message);
+            playerComponent = new FixedDepthPlayerComponent(this.age, SEARCH_DEPTH, color);
+            sendVoidReply(writable);
+            break;
+          case "setup":
+            GameState gameState = parseStateFromMessage(message);
+            this.determineAndSendPlacement(writable, playerComponent, gameState);
+            break;
+          case "take-turn":
+            GameState newState = parseStateFromMessage(message);
+            // TODO reuse gameTree for caching
+            gameTree = new GameTreeNode(newState);
+            this.determineAndSendMove(writable, playerComponent, gameTree);
+            break;
+          case "end":
+            boolean won = parseWonFromEndMessage(message);
+            sendVoidReply(writable);
+            return won;
+          default:
+            throw new RuntimeException("Invalid message type");
+        }
       }
     }
   }
@@ -116,11 +136,13 @@ public class FishClient extends Thread{
    * @param gameState the current state of the game
    */
   public void determineAndSendPlacement(
-          DataOutputStream output,
+      DataOutputStream output,
       IPlayerComponent player,
       GameState gameState
   ) throws IOException {
-    if (player == null) throw new IllegalStateException("Cannot place a penguin before color is assigned");
+    if (player == null) {
+      throw new IllegalStateException("Cannot place a penguin before color is assigned");
+    }
     BoardPosition position = player.placePenguin(new GameTreeNode(gameState)).getPosition();
     sendPlacementReply(output, position);
   }
@@ -133,11 +155,13 @@ public class FishClient extends Thread{
    * @param gameTree the current game being played
    */
   public void determineAndSendMove(
-          DataOutputStream output,
+      DataOutputStream output,
       IPlayerComponent player,
       GameTreeNode gameTree
   ) throws IOException {
-    if (player == null) throw new IllegalStateException("Cannot take a turn before color is assigned");
+    if (player == null) {
+      throw new IllegalStateException("Cannot take a turn before color is assigned");
+    }
 
     Action action = player.takeTurn(gameTree);
     if (action instanceof Pass) {

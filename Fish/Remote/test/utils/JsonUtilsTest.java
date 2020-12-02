@@ -111,6 +111,11 @@ public class JsonUtilsTest {
   public void parseStateFromMsgTest() {
     assertEquals(2, JsonUtils.parseStateFromMessage(takeTurnMsg).getPlayers().size());
     assertEquals(4, JsonUtils.parseStateFromMessage(takeTurnMsg).getBoard().getCols());
+    String stateWith2Penguins = "[\"setup\",[{\"players\":[{\"color\":\"brown\",\"score\":0,"
+        + "\"places\":[[0,0]]},{\"color\":\"black\",\"score\":0,\"places\":[[0,1]]}],\"board\":"
+        + "[[4,4,4],[4,4,4],[4,4,4],[4,4,4]]}]]";
+    assertEquals(2,
+        JsonUtils.parseStateFromMessage(stateWith2Penguins).getPenguins().size());
   }
 
   @Test

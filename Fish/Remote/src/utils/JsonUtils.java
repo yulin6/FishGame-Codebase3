@@ -13,6 +13,7 @@ import state.State;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;
+import state.TestPlayer;
 
 
 public class JsonUtils {
@@ -50,7 +51,23 @@ public class JsonUtils {
     Board b = state.getBoard();
     GameState gs = new GameState(realPlayers, b);
 
+    List<TestPlayer> testPlayers = state.getTestPlayers();
+    for (TestPlayer testPlayer : testPlayers) {
+      for (Player player : realPlayers) {
+        if (player.getColor() == testPlayer.getColor()) {
+          for (BoardPosition pos : testPlayer.getPlaces()) {
+            gs.placeAvatar(pos, player);
+          }
+        }
+      }
+    }
+
     return gs;
+  }
+
+  public static boolean parseWonFromEndMessage(String message) {
+    JsonArray argList = parseArgsList(message);
+    return argList.get(0).getAsBoolean();
   }
 
   public static void sendVoidReply(DataOutputStream writable) throws IOException {
