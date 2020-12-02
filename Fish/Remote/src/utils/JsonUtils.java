@@ -24,7 +24,8 @@ public class JsonUtils {
 
   public static PenguinColor parseColorFromPlayingAsMessage(String message) {
     JsonArray argList = parseArgsList(message);
-    String color = argList.get(0).toString().toLowerCase();
+    String color = argList.get(0).getAsString().toLowerCase();
+
     switch(color) {
       case "red":
         return PenguinColor.RED;
@@ -158,7 +159,9 @@ public class JsonUtils {
     JsonArray message = new JsonArray();
     message.add(messageType);
     message.add(args);
-    writable.writeChars(message.getAsString());
+    String jsonString = new Gson().toJson(message);
+//    System.out.println(jsonString);
+    writable.writeUTF(jsonString);
   }
 
   public static BoardPosition parsePositionFromReply(String reply) {
@@ -176,9 +179,9 @@ public class JsonUtils {
       JsonArray positionArr = gson.fromJson(reply, JsonArray.class);
       JsonArray start = positionArr.get(0).getAsJsonArray();
       JsonArray end = positionArr.get(1).getAsJsonArray();
-      return new Move(
-          new BoardPosition(start.get(0).getAsInt(), start.get(1).getAsInt()),
+      return new Move( //to, from, player
           new BoardPosition(end.get(0).getAsInt(), end.get(1).getAsInt()),
+          new BoardPosition(start.get(0).getAsInt(), start.get(1).getAsInt()),
           player
       );
     }

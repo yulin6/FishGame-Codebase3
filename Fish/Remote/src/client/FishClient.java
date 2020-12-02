@@ -57,7 +57,7 @@ public class FishClient extends Thread{
     DataInputStream readable = new DataInputStream(this.clientSocket.getInputStream());
     DataOutputStream writable = new DataOutputStream(this.clientSocket.getOutputStream());
 
-    writable.writeChars(this.makeName());
+    writable.writeUTF(this.makeName());
 
     IPlayerComponent playerComponent = null;
     GameTreeNode gameTree = null;

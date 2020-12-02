@@ -21,7 +21,6 @@ public class gsonTest {
         }
         String jsonString = builder.toString();
 
-        new DataOutputStream(new FileOutputStream("writable")).writeUTF("hello");
         System.out.println(parseStateFromMessage(jsonString).getBoard().getRows());
     }
 }
