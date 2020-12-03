@@ -67,6 +67,9 @@ public class TournamentManager implements ITournamentManager {
    */
   public void addGameListener(StateChangeListener listener) {
     this.listeners.add(listener);
+    for(Referee referee: referees) {
+      referee.setListener(listener);
+    }
   }
 
   /**

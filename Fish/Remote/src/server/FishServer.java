@@ -19,12 +19,13 @@ import java.util.List;
 public class FishServer {
   private static final int MIN_PLAYERS = 5;
   private static final int MAX_PLAYERS = 10;
-  private final int WAIT_MILLIS = 30000;
+  private int WAIT_MILLIS;
 
-  private int port;
+
   private ServerSocket serverSocket;
   private ArrayList<Socket> clients;
-
+  private List<FishClientProxy> proxies;
+  private TournamentManagerAdapter adapter;
 
   /**
    * TODO
@@ -32,6 +33,22 @@ public class FishServer {
   public FishServer(int port) throws IOException {
     this.serverSocket = new ServerSocket(port);
     this.clients = new ArrayList<>();
+    this.proxies = new ArrayList<>();
+    this.WAIT_MILLIS = 30000;
+  }
+
+  public FishServer(int port, int WAIT_MILLIS) throws IOException {
+    this.serverSocket = new ServerSocket(port);
+    this.clients = new ArrayList<>();
+    this.proxies = new ArrayList<>();
+    this.WAIT_MILLIS = WAIT_MILLIS;
+  }
+
+  /**
+   * TODO
+   * @throws IOException
+   */
+  public void runServer() throws IOException {
     this.clients = this.startSignupPhase(this.serverSocket, this.clients);
     if (!this.isSignupComplete(this.clients)) {
       this.startSignupPhase(this.serverSocket, this.clients);
@@ -63,7 +80,7 @@ public class FishServer {
    * @return
    * @throws IOException
    */
-  private ArrayList<Socket> startSignupPhase(ServerSocket ssocket, ArrayList<Socket> clients)
+  public ArrayList<Socket> startSignupPhase(ServerSocket ssocket, ArrayList<Socket> clients)
       throws IOException {
     ArrayList<Socket> outputClients = new ArrayList<>(clients);
     long startSignupTime = System.currentTimeMillis();
@@ -75,6 +92,7 @@ public class FishServer {
         remainingTime = remainingTime - (int)(System.currentTimeMillis() - startSignupTime);
       }
       catch(SocketTimeoutException ste) {
+        ste.printStackTrace();
         break; // If a timeout has been reached, the full WAIT_MILLIS has passed
       }
     }
@@ -87,31 +105,46 @@ public class FishServer {
    * @throws IOException
    */
   private void runTournament(ArrayList<Socket> clients) throws IOException {
-    List<FishClientProxy> proxies = new ArrayList<>();
     for(int i = 0; i < clients.size(); ++i){
       FishClientProxy proxy = new FishClientProxy(clients.get(i), i);
-      proxies.add(proxy);
+      this.proxies.add(proxy);
     }
-    TournamentManagerAdapter adapter = new TournamentManagerAdapter(proxies);
-    adapter.runTournament();
+    this.adapter = new TournamentManagerAdapter(proxies);
+    this.adapter.runTournament();
   }
 
-// Main: void -> void
-  // - Create empty list of remote connections (FishClients?)
-  // - Call signup loop function
-  // - If signup loop function returns list with fewer than 5 players, call signup loop function
-  //   again with initial list
-  // - If connections list has 5-10 players, call run tournament helper function
-  // - End all connections then exit
+  /**
+   * TODO
+   * @return
+   */
+  public ServerSocket getServerSocket() {
+    return serverSocket;
+  }
 
-  // Signup loop: List<FishClient> -> List<FishClient>
-  // - Start a loop running for 30 seconds or until 10 players have signed up <-- maybe a separate helper?
-  //   - If a FishClient connects, create RemotePlayerComponent connected to it and add it to the input list
-  // - Return the final list
+  /**
+   * TODO
+   * @return
+   */
+  public ArrayList<Socket> getClients() {
+    return clients;
+  }
 
-  // Run tournament: List<FishClient> -> List<FishClient>
-  // - Construct tournament manager
-  // - Tell tournament manager to run tournament
-  // - Return length of winners returned from tournament
+
+  /**
+   * TODO
+   * @return
+   */
+  public List<FishClientProxy> getProxies() {
+    return proxies;
+  }
+
+  /**
+   * TODO
+   * @return
+   */
+  public TournamentManagerAdapter getAdapter() {
+
+    return adapter;
+  }
 
 }

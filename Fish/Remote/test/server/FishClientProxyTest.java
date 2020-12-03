@@ -115,7 +115,7 @@ public class FishClientProxyTest {
         + "{\"color\":\"brown\",\"score\":0,\"places\":[]},"
         + "{\"color\":\"black\",\"score\":0,\"places\":[]},"
         + "{\"color\":\"red\",\"score\":0,\"places\":[[0,0]]}],"
-        + "\"board\":[[4,4,4,4],[4,4,4,4],[4,4,4,4],[4,4,4,4]]},[]]]", takeTurnMessage);
+        + "\"board\":[[4,4,4,4],[4,4,4,4],[4,4,4,4],[4,4,4,4]]}]]", takeTurnMessage);
   }
 
   @Test
