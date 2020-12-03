@@ -34,6 +34,7 @@ public class TournamentManagerAdapter implements ITournamentManager, StateChange
   public void runTournament() {
     List<IPlayerComponent> playerComponents = new ArrayList<>(this.players);
     this.tm = new TournamentManager(playerComponents);
+    //todo does this mean referees in the first round of tournament have no listeners?
     this.tm.addGameListener(this);
     this.tm.runTournament();
   }
