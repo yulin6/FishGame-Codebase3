@@ -121,29 +121,12 @@ public class JsonUtils {
     sendServerMessage(writable, "setup", args);
   }
 
-  public static void sendTakeTurnMessage(
-      DataOutputStream writable,
-      GameState gameState,
-      List<Action> actions
-  ) throws IOException {
+  public static void sendTakeTurnMessage(DataOutputStream writable, GameState gameState)
+      throws IOException {
     Gson gson = new Gson();
     JsonArray args = new JsonArray();
     State state = new State(gameState, gameState.getPlayers(), gameState.getBoard());
     args.add(gson.fromJson(gson.toJson(state, State.class), JsonObject.class));
-
-    JsonArray actionsSinceLastTurn = new JsonArray();
-    for (Action action : actions) {
-      if (action instanceof Pass) {
-        actionsSinceLastTurn.add(false);
-      } else if (action instanceof Move) {
-        Move move = (Move) action;
-        BoardPosition start = move.getStart();
-        BoardPosition end = move.getDestination();
-        Integer[][] moveArr = {{start.getRow(), start.getCol()}, {end.getRow(), end.getCol()}};
-        actionsSinceLastTurn.add(gson.fromJson(gson.toJson(moveArr), JsonArray.class));
-      }
-    }
-    args.add(actionsSinceLastTurn);
 
     sendServerMessage(writable, "take-turn", args);
   }

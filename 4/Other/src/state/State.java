@@ -26,6 +26,17 @@ public class State {
   private List<List<Integer>> board;
 
   public State(GameState gs, HashSet<Player> pset, IBoard b) {
+    /**
+     * player1 is youngest, player4 is oldest
+     * [player1, player2, player3, player4]
+     *
+     * player1 takes a turn
+     * [player2, player3, player4, player1]
+     *
+     * player2 takes a turn
+     * [player3, player4, player1, player2]
+     */
+
     HashMap<BoardPosition, Penguin> map = gs.getPenguins();
     Set<BoardPosition> positions = map.keySet();
     this.players = new ArrayList<>();

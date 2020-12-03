@@ -52,14 +52,10 @@ public class TournamentManagerAdapter implements ITournamentManager, StateChange
   }
 
   @Override
-  public void actionPerformed(Action action) {
-
-  }
+  public void actionPerformed(Action action) { }
 
   @Override
-  public void newGameState(GameState gs) {
-
-  }
+  public void newGameState(GameState gs) { }
 
   List<PenguinColor> getColorsInCurrentGame() {
     return new ArrayList<>(this.currentGameColors);

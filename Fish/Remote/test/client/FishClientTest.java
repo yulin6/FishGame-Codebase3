@@ -170,8 +170,6 @@ public class FishClientTest {
   }
 
   private void playTestGameAsBlack() throws IOException {
-    JsonUtils.sendStartMessage(this.serverWritable);
-    waitForClientMsg(this.serverReadable);
     JsonUtils.sendPlayingAsMessage(this.serverWritable, PenguinColor.BLACK);
     waitForClientMsg(this.serverReadable);
 
@@ -200,9 +198,8 @@ public class FishClientTest {
     this.gameState.placeAvatar(new BoardPosition(2,0), this.p2);
     this.gameState.placeAvatar(new BoardPosition(2,1), this.p1);
 
-    ArrayList<Action> movesSinceLastTurn = new ArrayList<>();
 
-    JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState, movesSinceLastTurn);
+    JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState);
     assertEquals("[[0,2],[2,2]]", waitForClientMsg(this.serverReadable));
     this.gameState.moveAvatar(new BoardPosition(2,2), new BoardPosition(0,2), this.p2);
     this.gameState.setNextPlayer();
@@ -211,10 +208,8 @@ public class FishClientTest {
     BoardPosition to = new BoardPosition(3,2);
     this.gameState.moveAvatar(to, from, this.p1);
     this.gameState.setNextPlayer();
-    movesSinceLastTurn.clear();
-    movesSinceLastTurn.add(new Move(to, from, this.p1));
 
-    JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState, movesSinceLastTurn);
+    JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState);
     assertEquals("[[1,1],[3,1]]", waitForClientMsg(this.serverReadable));
     this.gameState.moveAvatar(new BoardPosition(3,1), new BoardPosition(1,1), this.p2);
     this.gameState.setNextPlayer();
@@ -223,16 +218,12 @@ public class FishClientTest {
     to = new BoardPosition(3,0);
     this.gameState.moveAvatar(to, from, this.p1);
     this.gameState.setNextPlayer();
-    movesSinceLastTurn.clear();
-    movesSinceLastTurn.add(new Move(to, from, this.p1));
 
-    JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState, movesSinceLastTurn);
+    JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState);
     assertEquals("false", waitForClientMsg(this.serverReadable));
   }
 
   private void playTestGameAsBrown() throws IOException {
-    JsonUtils.sendStartMessage(this.serverWritable);
-    waitForClientMsg(this.serverReadable);
     JsonUtils.sendPlayingAsMessage(this.serverWritable, PenguinColor.BROWN);
     waitForClientMsg(this.serverReadable);
 
@@ -261,9 +252,7 @@ public class FishClientTest {
     assertEquals("[2,1]", waitForClientMsg(this.serverReadable));
     this.gameState.placeAvatar(new BoardPosition(2,1), this.p1);
 
-    ArrayList<Action> movesSinceLastTurn = new ArrayList<>();
-
-    JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState, movesSinceLastTurn);
+    JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState);
     assertEquals("[[1,0],[3,0]]", waitForClientMsg(this.serverReadable));
     this.gameState.moveAvatar(new BoardPosition(3,0), new BoardPosition(1,0), this.p1);
     this.gameState.setNextPlayer();
@@ -272,23 +261,17 @@ public class FishClientTest {
     BoardPosition to = new BoardPosition(3,1);
     this.gameState.moveAvatar(to, from, this.p2);
     this.gameState.setNextPlayer();
-    movesSinceLastTurn.clear();
-    movesSinceLastTurn.add(new Move(to, from, this.p2));
 
-    JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState, movesSinceLastTurn);
+    JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState);
     assertEquals("[[1,2],[2,2]]", waitForClientMsg(this.serverReadable));
     this.gameState.moveAvatar(new BoardPosition(2,2), new BoardPosition(1,2), this.p1);
     this.gameState.setNextPlayer();
 
-    this.gameState.setNextPlayer();
-    movesSinceLastTurn.clear();
-    movesSinceLastTurn.add(new Pass(this.p2));
-
-    JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState, movesSinceLastTurn);
+    JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState);
     assertEquals("[[2,2],[3,2]]", waitForClientMsg(this.serverReadable));
     this.gameState.moveAvatar(new BoardPosition(3,2), new BoardPosition(2,2), this.p1);
 
-    JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState, movesSinceLastTurn);
+    JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState);
     assertEquals("false", waitForClientMsg(this.serverReadable));
   }
 
@@ -328,7 +311,7 @@ public class FishClientTest {
     this.gameState = new GameState(this.players, this.board);
     playTestGameAsBlack();
 
-    this.serverWritable.writeUTF("[end,[true]]");
+    JsonUtils.sendEndMessage(this.serverWritable, false);
     clientThread.join();
   }
 }

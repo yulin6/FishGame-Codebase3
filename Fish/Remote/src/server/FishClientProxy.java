@@ -24,6 +24,7 @@ import java.util.concurrent.Callable;
 import player.IPlayerComponent;
 
 public class FishClientProxy implements IPlayerComponent {
+  private final Long TIMEOUT_MILLIS = 1000L;
 
   private final int age;
   private final DataInputStream readable;
@@ -50,7 +51,7 @@ public class FishClientProxy implements IPlayerComponent {
    * @param age
    * @throws IOException
    */
-  FishClientProxy(DataInputStream readable, DataOutputStream writable, int age) throws IOException {
+  FishClientProxy(DataInputStream readable, DataOutputStream writable, int age) {
     this.age = age;
     this.readable = readable;
     this.writable = writable;
@@ -64,9 +65,9 @@ public class FishClientProxy implements IPlayerComponent {
   public void joinTournament() {
     try {
       sendStartMessage(this.writable);
-      expectVoidReply();
+      expectVoidReply(TIMEOUT_MILLIS);
     } catch (IOException ioe) {
-      throw new RuntimeException("IOException: " + ioe.getMessage());
+      throw new RuntimeException("IOException");
     }
   }
 
@@ -74,9 +75,9 @@ public class FishClientProxy implements IPlayerComponent {
   public void leaveTournament(Boolean winner) {
     try {
       sendEndMessage(this.writable, winner);
-      this.expectVoidReply();
+      this.expectVoidReply(TIMEOUT_MILLIS);
     } catch (IOException ioe) {
-      throw new RuntimeException("IOException: " + ioe.getMessage());
+      throw new RuntimeException("IOException");
     }
   }
 
@@ -85,13 +86,13 @@ public class FishClientProxy implements IPlayerComponent {
     this.color = color;
     try {
       sendPlayingAsMessage(this.writable, color);
-      expectVoidReply();
+      expectVoidReply(TIMEOUT_MILLIS);
       List<PenguinColor> opponents = this.tma.getColorsInCurrentGame();
       opponents.remove(color);
       sendPlayingWithMessage(this.writable, opponents);
-      expectVoidReply();
+      expectVoidReply(TIMEOUT_MILLIS);
     } catch(IOException ioe) {
-      throw new RuntimeException("IOException: " + ioe.getMessage());
+      throw new RuntimeException("IOException");
     }
   }
 
@@ -104,7 +105,7 @@ public class FishClientProxy implements IPlayerComponent {
       BoardPosition boardPosn = parsePositionFromReply(reply);
       return new Place(boardPosn, gs.getCurrentPlayer());
     } catch(IOException ioe) {
-      throw new RuntimeException("IOException: " + ioe.getMessage());
+      throw new RuntimeException("IOException");
     }
   }
 
@@ -112,13 +113,11 @@ public class FishClientProxy implements IPlayerComponent {
   public Action takeTurn(GameTreeNode gt) {
     try {
       GameState gs = gt.getGameState();
-      // TODO get list of actions since last time takeTurn was called on this player
-      List<Action> actionsSinceLastTurn = new ArrayList<>();
-      sendTakeTurnMessage(writable, gs, actionsSinceLastTurn);
+      sendTakeTurnMessage(writable, gs);
       String reply = this.readable.readUTF();
       return parseActionFromReply(reply, gs.getCurrentPlayer());
     } catch(IOException ioe) {
-      throw new RuntimeException("IOException: " + ioe.getMessage());
+      throw new RuntimeException("IOException");
     }
   }
 
@@ -142,9 +141,8 @@ public class FishClientProxy implements IPlayerComponent {
    * TODO
    * @throws IOException
    */
-  public void expectVoidReply() throws IOException {
+  public void expectVoidReply(Long timeout) throws IOException {
     Long startTime = System.currentTimeMillis();
-    Long timeout = 500L;
     while (true) {
       if (readable.available() > 0) {
         break;

@@ -194,16 +194,13 @@ public class JsonUtilsTest {
     gameState.moveAvatar(blackMove.getDestination(), blackMove.getStart(), p1);
     gameState.setNextPlayer();
 
-    List<Action> actions = new ArrayList<>();
-    actions.add(blackMove);
-
-    JsonUtils.sendTakeTurnMessage(writable, gameState, actions);
+    JsonUtils.sendTakeTurnMessage(writable, gameState);
     assertEquals("[\"take-turn\",[{\"players\":" +
         "[{\"color\":\"brown\",\"score\":0,\"places\":[[1,0]]}," +
         "{\"color\":\"black\",\"score\":4,\"places\":[[1,1]]}]," +
         "\"board\":[[0,4,4,4],[4,4,4,4],[4,4,4,4],[4,4,4,4]]},[[[0,0],[1,1]]]]]", readable.readUTF());
 
-    JsonUtils.sendTakeTurnMessage(writable, gameState, new ArrayList<>());
+    JsonUtils.sendTakeTurnMessage(writable, gameState);
     GameState parsedGameState = JsonUtils.parseStateFromMessage(readable.readUTF());
 
     assertEquals(parsedGameState.getCurrentPlayer().getColor(), gameState.getCurrentPlayer().getColor());

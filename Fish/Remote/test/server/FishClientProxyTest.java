@@ -2,12 +2,19 @@ package server;
 
 import static org.junit.Assert.assertEquals;
 
+import game.model.Board;
+import game.model.BoardPosition;
+import game.model.GameState;
+import game.model.GameTreeNode;
+import game.model.Penguin.PenguinColor;
+import game.model.Player;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +27,7 @@ public class FishClientProxyTest {
   private DataInputStream clientReadable;
 
   @Before
-  public void init() throws FileNotFoundException, IOException {
+  public void init() throws IOException {
     this.serverWritable = new DataOutputStream(
       new FileOutputStream("Fish/Remote/test/writable/serverWritable.txt"));
     this.serverReadable = new DataInputStream(
@@ -39,17 +46,6 @@ public class FishClientProxyTest {
     assertEquals("[\"start\",[true]]", this.clientReadable.readUTF());
   }
 
-  @Test (expected = RuntimeException.class)
-  public void testJoinTournamentErrorsOnNonVoidReply() throws IOException {
-    this.clientWritable.writeUTF("false");
-    this.proxy.joinTournament();
-  }
-
-  @Test (expected = RuntimeException.class)
-  public void testJoinTournamentErrorsOnNoReply() {
-    this.proxy.joinTournament();
-  }
-
   @Test
   public void testLeaveTournament() throws IOException {
     this.clientWritable.writeUTF("void");
@@ -62,30 +58,64 @@ public class FishClientProxyTest {
 
   }
 
-  @Test (expected = RuntimeException.class)
-  public void testLeaveTournamentErrorsOnNonVoidReply() throws IOException {
-    this.clientWritable.writeUTF("false");
-    this.proxy.leaveTournament(false);
-  }
-
-  @Test (expected = RuntimeException.class)
-  public void testLeaveTournamentErrorsOnNoReply() throws IOException {
-    this.proxy.leaveTournament(false);
-  }
-
-  @Test
-  public void testStartPlaying() {
-    // TODO
-  }
-
-  @Test
-  public void testPlacePenguin() {
-    // TODO
+  public GameState setupTournamentGame() throws IOException {
+    ArrayList<FishClientProxy> proxies = new ArrayList<>();
+    proxies.add(this.proxy);
+    TournamentManagerAdapter tma = new TournamentManagerAdapter(proxies);
+    HashSet<Player> players = new HashSet<>();
+    players.add(new Player(0, PenguinColor.RED));
+    players.add(new Player(1, PenguinColor.BLACK));
+    players.add(new Player(2, PenguinColor.BROWN));
+    GameState gameState = new GameState(players, new Board(4, 4, 4));
+    tma.gameStarted(gameState);
+    this.clientWritable.writeUTF("void");
+    this.clientWritable.writeUTF("void");
+    this.proxy.startPlaying(PenguinColor.RED);
+    return gameState;
   }
 
   @Test
-  public void testTakeTurn() {
-    // TODO
+  public void testStartPlayingAndGetColor() throws IOException {
+    setupTournamentGame();
+    String playingAsMsg = this.clientReadable.readUTF();
+    assertEquals("[\"playing-as\",[\"red\"]]", playingAsMsg);
+    String playingWithMsg = this.clientReadable.readUTF();
+    assertEquals("[\"playing-with\",[\"brown\",\"black\"]]", playingWithMsg);
+
+    assertEquals(PenguinColor.RED, this.proxy.getColor());
+  }
+
+  @Test
+  public void testPlacePenguin() throws IOException {
+    GameState gameState = setupTournamentGame();
+    String clear = this.clientReadable.readUTF();
+    clear = this.clientReadable.readUTF();
+
+    this.clientWritable.writeUTF("[1,1]");
+    this.proxy.placePenguin(new GameTreeNode(gameState));
+    String setupMessage = this.clientReadable.readUTF();
+    assertEquals("[\"setup\",[{\"players\":["
+        + "{\"color\":\"brown\",\"score\":0,\"places\":[]},"
+        + "{\"color\":\"black\",\"score\":0,\"places\":[]},"
+        + "{\"color\":\"red\",\"score\":0,\"places\":[]}],"
+        + "\"board\":[[4,4,4,4],[4,4,4,4],[4,4,4,4],[4,4,4,4]]}]]", setupMessage);
+  }
+
+  @Test
+  public void testTakeTurn() throws IOException {
+    GameState gameState = setupTournamentGame();
+    String clear = this.clientReadable.readUTF();
+    clear = this.clientReadable.readUTF();
+    gameState.placeAvatar(new BoardPosition(0,0), gameState.getCurrentPlayer());
+
+    this.clientWritable.writeUTF("[[0,0],[1,1]]");
+    this.proxy.takeTurn(new GameTreeNode(gameState));
+    String takeTurnMessage = this.clientReadable.readUTF();
+    assertEquals("[\"take-turn\",[{\"players\":["
+        + "{\"color\":\"brown\",\"score\":0,\"places\":[]},"
+        + "{\"color\":\"black\",\"score\":0,\"places\":[]},"
+        + "{\"color\":\"red\",\"score\":0,\"places\":[[0,0]]}],"
+        + "\"board\":[[4,4,4,4],[4,4,4,4],[4,4,4,4],[4,4,4,4]]},[]]]", takeTurnMessage);
   }
 
   @Test
@@ -95,18 +125,20 @@ public class FishClientProxyTest {
     assertEquals(10, oldProxy.getAge());
   }
 
-  @Test
-  public void testGetColor() {
-    // TODO
-  }
-
   @Test (expected = IllegalStateException.class)
   public void testGetColorErrorsBeforeColorAssigned() {
     this.proxy.getColor();
   }
 
-  @Test
-  public void testExpectVoidReply() {
-    // TODO
+
+  @Test (expected = RuntimeException.class)
+  public void testExpectVoidRsultErrorsOnNonVoidReply() throws IOException {
+    this.clientWritable.writeUTF("false");
+    this.proxy.expectVoidReply(100L);
+  }
+
+  @Test (expected = RuntimeException.class)
+  public void testExpectVoidRsultErrorsOnNoReply() throws IOException {
+    this.proxy.expectVoidReply(100L);
   }
 }
