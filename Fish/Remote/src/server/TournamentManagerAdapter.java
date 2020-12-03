@@ -11,11 +11,18 @@ import player.IPlayerComponent;
 import tmanager.ITournamentManager;
 import tmanager.TournamentManager;
 
+/**
+ * TODO
+ */
 public class TournamentManagerAdapter implements ITournamentManager, StateChangeListener {
   private TournamentManager tm;
   private List<FishClientProxy> players;
   private List<PenguinColor> currentGameColors;
 
+  /**
+   * TODO
+   * @param players
+   */
   public TournamentManagerAdapter(List<FishClientProxy> players) {
     this.players = players;
     for (FishClientProxy proxy: players){

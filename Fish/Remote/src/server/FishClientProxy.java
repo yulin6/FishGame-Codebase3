@@ -20,6 +20,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 import player.IPlayerComponent;
 
 public class FishClientProxy implements IPlayerComponent {
@@ -30,10 +31,29 @@ public class FishClientProxy implements IPlayerComponent {
   private TournamentManagerAdapter tma;
   private PenguinColor color;
 
+  /**
+   * TODO
+   * @param socket
+   * @param age
+   * @throws IOException
+   */
   FishClientProxy(Socket socket, int age) throws IOException {
     this.age = age;
     this.readable = new DataInputStream(socket.getInputStream());
     this.writable = new DataOutputStream(socket.getOutputStream());
+  }
+
+  /**
+   * TODO
+   * @param readable
+   * @param writable
+   * @param age
+   * @throws IOException
+   */
+  FishClientProxy(DataInputStream readable, DataOutputStream writable, int age) throws IOException {
+    this.age = age;
+    this.readable = readable;
+    this.writable = writable;
   }
 
   void setTournamentManagerAdapter(TournamentManagerAdapter tma) {
@@ -46,8 +66,7 @@ public class FishClientProxy implements IPlayerComponent {
       sendStartMessage(this.writable);
       expectVoidReply();
     } catch (IOException ioe) {
-      System.out.println(ioe.getMessage());
-      System.exit(1);
+      throw new RuntimeException("IOException: " + ioe.getMessage());
     }
   }
 
@@ -57,8 +76,7 @@ public class FishClientProxy implements IPlayerComponent {
       sendEndMessage(this.writable, winner);
       this.expectVoidReply();
     } catch (IOException ioe) {
-      System.out.println(ioe.getMessage());
-      System.exit(1);
+      throw new RuntimeException("IOException: " + ioe.getMessage());
     }
   }
 
@@ -73,8 +91,7 @@ public class FishClientProxy implements IPlayerComponent {
       sendPlayingWithMessage(this.writable, opponents);
       expectVoidReply();
     } catch(IOException ioe) {
-      System.out.println(ioe.getMessage());
-      System.exit(1);
+      throw new RuntimeException("IOException: " + ioe.getMessage());
     }
   }
 
@@ -87,9 +104,7 @@ public class FishClientProxy implements IPlayerComponent {
       BoardPosition boardPosn = parsePositionFromReply(reply);
       return new Place(boardPosn, gs.getCurrentPlayer());
     } catch(IOException ioe) {
-      System.out.println(ioe.getMessage());
-      System.exit(1);
-      return null;
+      throw new RuntimeException("IOException: " + ioe.getMessage());
     }
   }
 
@@ -103,16 +118,12 @@ public class FishClientProxy implements IPlayerComponent {
       String reply = this.readable.readUTF();
       return parseActionFromReply(reply, gs.getCurrentPlayer());
     } catch(IOException ioe) {
-      System.out.println(ioe.getMessage());
-      System.exit(1);
-      return null;
+      throw new RuntimeException("IOException: " + ioe.getMessage());
     }
   }
 
   @Override
-  public void finishPlaying() {
-
-  }
+  public void finishPlaying() { }
 
   @Override
   public int getAge() {
@@ -121,11 +132,27 @@ public class FishClientProxy implements IPlayerComponent {
 
   @Override
   public PenguinColor getColor() {
+    if (this.color == null) {
+      throw new IllegalStateException("Cannot get color before color has been assigned");
+    }
     return this.color;
   }
 
-  private void expectVoidReply() throws IOException {
-    String reply = this.readable.readUTF();
+  /**
+   * TODO
+   * @throws IOException
+   */
+  public void expectVoidReply() throws IOException {
+    Long startTime = System.currentTimeMillis();
+    Long timeout = 500L;
+    while (true) {
+      if (readable.available() > 0) {
+        break;
+      } else if (System.currentTimeMillis() - startTime > timeout) {
+        throw new RuntimeException("Client thread timeout");
+      }
+    }
+    String reply = readable.readUTF();
     if (!reply.equals("void")) {
       throw new RuntimeException("Received non-void reply message: " + reply);
     }

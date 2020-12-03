@@ -177,7 +177,6 @@ public class JsonUtils {
     message.add(messageType);
     message.add(args);
     String jsonString = new Gson().toJson(message);
-//    System.out.println(jsonString);
     writable.writeUTF(jsonString);
   }
 

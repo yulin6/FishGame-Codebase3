@@ -26,7 +26,9 @@ public class FishServer {
   private ArrayList<Socket> clients;
 
 
-  // TODO the class is in progress
+  /**
+   * TODO
+   */
   public FishServer(int port) throws IOException {
     this.serverSocket = new ServerSocket(port);
     this.clients = new ArrayList<>();
@@ -79,10 +81,12 @@ public class FishServer {
     return outputClients;
   }
 
+  /**
+   * TODO
+   * @param clients
+   * @throws IOException
+   */
   private void runTournament(ArrayList<Socket> clients) throws IOException {
-    // TODO: Build tournament manager adapter
-    // TODO: Run tournament with adapted tournament manager
-//    throw new NotImplementedException();
     List<FishClientProxy> proxies = new ArrayList<>();
     for(int i = 0; i < clients.size(); ++i){
       FishClientProxy proxy = new FishClientProxy(clients.get(i), i);
@@ -111,25 +115,3 @@ public class FishServer {
   // - Return length of winners returned from tournament
 
 }
-
-
-
-/*
-FishServer accepts all FishClient connections and makes a socket for each
-FishServer creates FishClientProxy for each socket
-FishServer creates TournamentManagerAdapter with list of FishClientProxies
-
-
-TournamentManagerAdapter extends TournamentManager and is a listener to all games
-TournamentManagerAdapter stores up-to-date GameTree for current game
-
-When TournamentManagerAdapter observes GameStarted:
-- send playing-with message to all players
-- clear list of actions
-
-When TournamentManagerAdapter observes Action:
-- store action, list of actions sent to each player
-
-TournamentManagerAdapter will send all Actions not already sent to a player when takeTurn is called
-on that player
- */

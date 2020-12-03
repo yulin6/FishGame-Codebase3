@@ -52,6 +52,11 @@ public class FishClient extends Thread {
     this.port = port;
   }
 
+  /**
+   * TODO
+   * @param clientSocket
+   * @throws IOException
+   */
   public void playTournament(Socket clientSocket) throws IOException {
     clientSocket = new Socket(this.ip, this.port);
     this.joinTournament(clientSocket);
@@ -68,7 +73,7 @@ public class FishClient extends Thread {
   }
 
   /**
-   *
+   * TODO
    * @param readable
    * @param writable
    * @throws IOException
