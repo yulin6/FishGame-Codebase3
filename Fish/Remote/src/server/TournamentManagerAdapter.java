@@ -12,35 +12,38 @@ import tmanager.ITournamentManager;
 import tmanager.TournamentManager;
 
 /**
- * TODO
+ * The TournamentManagerAdapter is a a wrapper of TournamentManager, is used for running the tournament for
+ * FishClientProxies. It also implements StateChangeListener for receiving all the player colors in each game.
  */
 public class TournamentManagerAdapter implements ITournamentManager, StateChangeListener {
-  private TournamentManager tm;
+  private TournamentManager tournamentManager;
   private List<FishClientProxy> players;
   private List<PenguinColor> currentGameColors;
 
   /**
-   * TODO
-   * @param players
+   * the constructor of TournamentManagerAdapter takes in a list of FishClientProxies, which is an IPlayerComponent
+   * for remote players, and then it create a TournamentManager with the list of FishClientProxies.
+   *
+   * @param players a list of FishClientProxies
    */
   public TournamentManagerAdapter(List<FishClientProxy> players) {
     this.players = players;
     for (FishClientProxy proxy: players){
       proxy.setTournamentManagerAdapter(this);
     }
+    List<IPlayerComponent> playerComponents = new ArrayList<>(this.players);
+    this.tournamentManager = new TournamentManager(playerComponents);
   }
 
   @Override
   public void runTournament() {
-    List<IPlayerComponent> playerComponents = new ArrayList<>(this.players);
-    this.tm = new TournamentManager(playerComponents);
-    this.tm.addGameListener(this);
-    this.tm.runTournament();
+    this.tournamentManager.addGameListener(this);
+    this.tournamentManager.runTournament();
   }
 
   @Override
   public List<IPlayerComponent> getWinners() throws IllegalStateException {
-    return this.tm.getWinners();
+    return this.tournamentManager.getWinners();
   }
 
   @Override
@@ -57,11 +60,21 @@ public class TournamentManagerAdapter implements ITournamentManager, StateChange
   @Override
   public void newGameState(GameState gs) { }
 
+  /**
+   * get all the player colors in the current game.
+   *
+   * @return a list of player colors
+   */
   List<PenguinColor> getColorsInCurrentGame() {
     return new ArrayList<>(this.currentGameColors);
   }
 
+  /**
+   * the getter method of tournamentManager.
+   *
+   * @return the TournamentManager
+   */
   public TournamentManager getTournamentManager() {
-    return tm;
+    return tournamentManager;
   }
 }

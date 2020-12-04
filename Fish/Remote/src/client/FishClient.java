@@ -53,7 +53,7 @@ public class FishClient extends Thread {
   }
 
   /**
-   * TODO
+   * creates a Socket for connecting with the game server, and starts playing the tournament.
    * @throws IOException
    */
   public void joinTournament() throws IOException {
@@ -65,10 +65,16 @@ public class FishClient extends Thread {
   }
 
   /**
-   * TODO
-   * @param readable
-   * @param writable
-   * @throws IOException
+   * creates a name for signing up the tournament, and does different actions when received different message from server:
+   * - when the message is "start" or "playing-with", sends "void" back to server.
+   * - when the message is "playing-as", create a FixedDepthPlayerComponent with given color.
+   * - when the message is "setup", parses the GameState, determines the next placement, and send back a position.
+   * - when the message is "take-turn", TODO
+   * - when the message is "end", parses the boolean represents win or lose, reply server with "void", and return the boolean. TODO fix?
+   *
+   * @param readable a DataInputStream
+   * @param writable a DataOutputStream
+   * @throws IOException thrown by Streams
    */
   public boolean playTournament(DataInputStream readable, DataOutputStream writable)
       throws IOException {
@@ -106,7 +112,7 @@ public class FishClient extends Thread {
           case "end":
             boolean won = parseWonFromEndMessage(message);
             sendVoidReply(writable);
-            return won;
+            return won; //todo need to break here?
           default:
             throw new RuntimeException("Invalid message type");
         }

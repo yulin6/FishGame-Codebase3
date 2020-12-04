@@ -30,16 +30,31 @@ public class FishServer {
   private TournamentManagerAdapter adapter;
 
   /**
-   * TODO
+   * The constructor of FishServer takes in a port number for building a ServerSocket.
+   * @param port a port number
+   * @throws IOException I/O exception thrown by ServerSocket
    */
   public FishServer(int port) throws IOException {
+    if(port < 1 || port > 65535){
+      throw new IllegalArgumentException("Valid port number should be between 1 to 65535 inclusively.");
+    }
     this.serverSocket = new ServerSocket(port);
     this.clients = new ArrayList<>();
     this.proxies = new ArrayList<>();
     this.waitMillis = 30000;
   }
 
+  /**
+   * The constructor of FishServer takes in a port number for building a ServerSocket, and an int for defining
+   * the wait period for each sign-up phase.
+   * @param port a port number
+   * @param wait_millis int for defining the wait period for each sign-up phase.
+   * @throws IOException I/O exception thrown by ServerSocket
+   */
   public FishServer(int port, int wait_millis) throws IOException {
+    if(port < 1 || port > 65535){
+      throw new IllegalArgumentException("Valid port number should be between 1 to 65535 inclusively.");
+    }
     this.serverSocket = new ServerSocket(port);
     this.clients = new ArrayList<>();
     this.proxies = new ArrayList<>();
@@ -47,8 +62,8 @@ public class FishServer {
   }
 
   /**
-   * TODO
-   * @throws IOException
+   * The method for running the server, signing up remote players and running tournament.
+   * @throws IOException I/O exception thrown by ServerSocket
    */
   public void runServer() throws IOException {
     this.clients = this.startSignupPhase(this.serverSocket, this.clients, this.waitMillis);
@@ -110,9 +125,9 @@ public class FishServer {
   }
 
   /**
-   * TODO
-   * @param clients
-   * @throws IOException
+   * The method for creating a TournamentManagerAdapter and running the tournament in it.
+   * @param clients the list of connected clients.
+   * @throws IOException I/O exception thrown by ServerSocket
    */
   public void runTournament(ArrayList<Socket> clients) throws IOException {
     this.proxies = new ArrayList<>();
@@ -125,16 +140,16 @@ public class FishServer {
   }
 
   /**
-   * TODO
-   * @return
+   * getter method of serverSocket.
+   * @return the local serverSocket.
    */
   public ServerSocket getServerSocket() {
     return serverSocket;
   }
 
   /**
-   * TODO
-   * @return
+   * getter method of connected clients list.
+   * @return the list of connected clients.
    */
   public ArrayList<Socket> getClients() {
     return clients;
@@ -142,16 +157,16 @@ public class FishServer {
 
 
   /**
-   * TODO
-   * @return
+   * getter method of FishClientProxy list.
+   * @return the list of player components for remote players.
    */
   public List<FishClientProxy> getProxies() {
     return proxies;
   }
 
   /**
-   * TODO
-   * @return
+   * getter method of the TournamentManagerAdapter.
+   * @return the TournamentManagerAdapter.
    */
   public TournamentManagerAdapter getAdapter() {
     return adapter;

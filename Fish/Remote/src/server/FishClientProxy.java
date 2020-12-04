@@ -23,6 +23,10 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import player.IPlayerComponent;
 
+/**
+ * Represents an IPlayerComponent for remote players. The component serves as a proxy for communicating with remote
+ * client and playing the tournament.
+ */
 public class FishClientProxy implements IPlayerComponent {
   private final Long TIMEOUT_MILLIS = 1000L;
 
@@ -33,10 +37,11 @@ public class FishClientProxy implements IPlayerComponent {
   private PenguinColor color;
 
   /**
-   * TODO
-   * @param socket
-   * @param age
-   * @throws IOException
+   * the constructor of FishClientProxy takes in a socket that connects with the remote client and an age for
+   * ordering purpose.
+   * @param socket a socket that connects with the remote client
+   * @param age an age used for the order of playing.
+   * @throws IOException I/O exception thrown by Streams
    */
   public FishClientProxy(Socket socket, int age) throws IOException {
     this.age = age;
@@ -45,11 +50,11 @@ public class FishClientProxy implements IPlayerComponent {
   }
 
   /**
-   * TODO
-   * @param readable
-   * @param writable
-   * @param age
-   * @throws IOException
+   * the constructor of FishClientProxy for tests, which takes a DataInputStream and a DataOutputStream for mocking
+   * the socket, and an age for ordering porpose.
+   * @param readable a DataInputStream
+   * @param writable a DataOutputStream
+   * @param age an age used for the order of playing.
    */
   public FishClientProxy(DataInputStream readable, DataOutputStream writable, int age) {
     this.age = age;
@@ -57,6 +62,10 @@ public class FishClientProxy implements IPlayerComponent {
     this.writable = writable;
   }
 
+  /**
+   * takes in a TournamentManagerAdapter and set it as a local variable.
+   * @param tma a TournamentManager
+   */
   public void setTournamentManagerAdapter(TournamentManagerAdapter tma) {
     this.tma = tma;
   }
@@ -138,8 +147,9 @@ public class FishClientProxy implements IPlayerComponent {
   }
 
   /**
-   * TODO
-   * @throws IOException
+   * the method checks whether did the client replied "void" in the time limit.
+   * @param timeout a Long for setting up the time limit
+   * @throws IOException I/O exception thrown by readable
    */
   public void expectVoidReply(Long timeout) throws IOException {
     Long startTime = System.currentTimeMillis();
