@@ -27,7 +27,7 @@ import game.model.Penguin.PenguinColor;
 /**
  * Represents a client who can connect to a remote server running a game of Fish.
  */
-public class FishClient extends Thread {
+public class FishClient {
 
   private final int NAME_LEN = 12;
   private final int SEARCH_DEPTH = 2;
@@ -96,7 +96,8 @@ public class FishClient extends Thread {
             break;
           case "playing-as":
             PenguinColor color = parseColorFromPlayingAsMessage(message);
-            playerComponent = new FixedDepthPlayerComponent(this.age, SEARCH_DEPTH, color);
+            playerComponent = this.createPlayer(color);
+            playerComponent.joinTournament();
             sendVoidReply(writable);
             break;
           case "setup":
@@ -105,19 +106,31 @@ public class FishClient extends Thread {
             break;
           case "take-turn":
             GameState newState = parseStateFromMessage(message);
-            // TODO reuse gameTree for caching
             gameTree = new GameTreeNode(newState);
             this.determineAndSendMove(writable, playerComponent, gameTree);
             break;
           case "end":
             boolean won = parseWonFromEndMessage(message);
+            playerComponent.leaveTournament(won);
             sendVoidReply(writable);
-            return won; //todo need to break here?
+            return won;
           default:
             throw new RuntimeException("Invalid message type");
         }
       }
     }
+  }
+
+  /**
+   * Creates the IPlayerComponent used to make decisions for this Client.
+   *
+   * Should be overridden by testing classes with malicious IPlayerComponents.
+   *
+   * @param color the player's color
+   * @return a standard well-behaved IPlayerComponent with a fixed search depth
+   */
+  public IPlayerComponent createPlayer(PenguinColor color) {
+    return new FixedDepthPlayerComponent(this.age, SEARCH_DEPTH, color);
   }
 
   /**
@@ -137,9 +150,7 @@ public class FishClient extends Thread {
    * @param gameState the current state of the game
    */
   public void determineAndSendPlacement(
-      DataOutputStream output,
-      IPlayerComponent player,
-      GameState gameState
+      DataOutputStream output, IPlayerComponent player, GameState gameState
   ) throws IOException {
     if (player == null) {
       throw new IllegalStateException("Cannot place a penguin before color is assigned");
@@ -156,9 +167,7 @@ public class FishClient extends Thread {
    * @param gameTree the current game being played
    */
   public void determineAndSendMove(
-      DataOutputStream output,
-      IPlayerComponent player,
-      GameTreeNode gameTree
+      DataOutputStream output, IPlayerComponent player, GameTreeNode gameTree
   ) throws IOException {
     if (player == null) {
       throw new IllegalStateException("Cannot take a turn before color is assigned");
