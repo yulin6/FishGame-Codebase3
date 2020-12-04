@@ -95,9 +95,9 @@ public class FishClientProxyTest {
     this.proxy.placePenguin(new GameTreeNode(gameState));
     String setupMessage = this.clientReadable.readUTF();
     assertEquals("[\"setup\",[{\"players\":["
-        + "{\"color\":\"brown\",\"score\":0,\"places\":[]},"
+        + "{\"color\":\"red\",\"score\":0,\"places\":[]},"
         + "{\"color\":\"black\",\"score\":0,\"places\":[]},"
-        + "{\"color\":\"red\",\"score\":0,\"places\":[]}],"
+        + "{\"color\":\"brown\",\"score\":0,\"places\":[]}],"
         + "\"board\":[[4,4,4,4],[4,4,4,4],[4,4,4,4],[4,4,4,4]]}]]", setupMessage);
   }
 
@@ -107,15 +107,16 @@ public class FishClientProxyTest {
     String clear = this.clientReadable.readUTF();
     clear = this.clientReadable.readUTF();
     gameState.placeAvatar(new BoardPosition(0,0), gameState.getCurrentPlayer());
+    gameState.setNextPlayer();
 
     this.clientWritable.writeUTF("[[0,0],[1,1]]");
     this.proxy.takeTurn(new GameTreeNode(gameState));
     String takeTurnMessage = this.clientReadable.readUTF();
     assertEquals("[\"take-turn\",[{\"players\":["
-        + "{\"color\":\"brown\",\"score\":0,\"places\":[]},"
         + "{\"color\":\"black\",\"score\":0,\"places\":[]},"
+        + "{\"color\":\"brown\",\"score\":0,\"places\":[]},"
         + "{\"color\":\"red\",\"score\":0,\"places\":[[0,0]]}],"
-        + "\"board\":[[4,4,4,4],[4,4,4,4],[4,4,4,4],[4,4,4,4]]}]]", takeTurnMessage);
+        + "\"board\":[[4,4,4,4],[4,4,4,4],[4,4,4,4],[4,4,4,4]]},[]]]", takeTurnMessage);
   }
 
   @Test

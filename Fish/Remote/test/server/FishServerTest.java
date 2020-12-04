@@ -66,7 +66,7 @@ public class FishServerTest {
 
   @Test
   public void startSignupPhaseTest() throws IOException, InterruptedException {
-    FishServer server = new FishServer(PORT);
+    FishServer server = new FishServer(PORT, 500);
     ServerSocket serverSocket = server.getServerSocket();
 
     Thread serverThread = new Thread(() -> {
@@ -74,6 +74,7 @@ public class FishServerTest {
         ArrayList<Socket> clientSockets =
             server.startSignupPhase(serverSocket, new ArrayList<>(), 2000);
         assertEquals(6, clientSockets.size());
+        serverSocket.close();
         for (Socket s : clientSockets) {
           JsonUtils.sendEndMessage(new DataOutputStream(s.getOutputStream()), false);
         }
@@ -86,7 +87,9 @@ public class FishServerTest {
 
     ArrayList<Socket> sockets = new ArrayList<>();
     for (int i = 0; i < 6; i++) {
-      sockets.add(new Socket(LOCALHOST, PORT));
+      Socket socket = new Socket(LOCALHOST, PORT);
+      new DataOutputStream(socket.getOutputStream()).writeUTF("" + i);
+      sockets.add(socket);
     }
 
     serverThread.join();
@@ -128,7 +131,7 @@ public class FishServerTest {
     try {
       serverThread.join();
       for (Thread clientThread : clientThreads) {
-        clientThread.join();
+        clientThread.interrupt();
       }
     } catch(InterruptedException ie) {
       throw new RuntimeException(ie.getMessage());

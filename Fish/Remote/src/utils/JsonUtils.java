@@ -127,6 +127,7 @@ public class JsonUtils {
     JsonArray args = new JsonArray();
     State state = new State(gameState, gameState.getPlayers(), gameState.getBoard());
     args.add(gson.fromJson(gson.toJson(state, State.class), JsonObject.class));
+    args.add(new JsonArray());
 
     sendServerMessage(writable, "take-turn", args);
   }

@@ -23,7 +23,8 @@ public class FishServer {
   private static final int MIN_PLAYERS = 5;
   private static final int MAX_PLAYERS = 10;
 
-  private final int waitMillis;
+  private final int signupWaitMillis;
+  private final int playerWaitMillis;
   private ServerSocket serverSocket;
   private ArrayList<Socket> clients;
   private List<FishClientProxy> proxies;
@@ -33,17 +34,15 @@ public class FishServer {
    * TODO
    */
   public FishServer(int port) throws IOException {
-    this.serverSocket = new ServerSocket(port);
-    this.clients = new ArrayList<>();
-    this.proxies = new ArrayList<>();
-    this.waitMillis = 30000;
+    this(port, 30000);
   }
 
   public FishServer(int port, int wait_millis) throws IOException {
     this.serverSocket = new ServerSocket(port);
     this.clients = new ArrayList<>();
     this.proxies = new ArrayList<>();
-    this.waitMillis = wait_millis;
+    this.signupWaitMillis = wait_millis;
+    this.playerWaitMillis = this.signupWaitMillis / 10;
   }
 
   /**
@@ -51,9 +50,9 @@ public class FishServer {
    * @throws IOException
    */
   public void runServer() throws IOException {
-    this.clients = this.startSignupPhase(this.serverSocket, this.clients, this.waitMillis);
+    this.clients = this.startSignupPhase(this.serverSocket, this.clients, this.signupWaitMillis);
     if (!this.isSignupComplete(this.clients)) {
-      this.startSignupPhase(this.serverSocket, this.clients, this.waitMillis);
+      this.startSignupPhase(this.serverSocket, this.clients, this.signupWaitMillis);
     }
     this.serverSocket.close();
     if (this.isSignupComplete(this.clients)) {
@@ -84,23 +83,28 @@ public class FishServer {
    * @throws IOException
    */
   public ArrayList<Socket> startSignupPhase(
-      ServerSocket ssocket,
-      ArrayList<Socket> clients,
-      int waitMillis
+      ServerSocket ssocket, ArrayList<Socket> clients, int waitMillis
   ) throws IOException {
+
     ArrayList<Socket> outputClients = new ArrayList<>(clients);
     long startSignupTime = System.currentTimeMillis();
     int remainingTime = waitMillis;
+
     while (remainingTime >= 0 && clients.size() < MAX_PLAYERS) {
       ssocket.setSoTimeout(remainingTime);
       try {
         Socket clientSocket = ssocket.accept();
-        DataInputStream readable = new DataInputStream(clientSocket.getInputStream());
-        String name = readable.readUTF();
-        if(name.length() >= 1 && name.length() <= 12) { //Only sign up those who provided a name
+        boolean acceptClient = this.expectClientSentName(
+            new DataInputStream(clientSocket.getInputStream()),
+            this.playerWaitMillis);
+
+        if (acceptClient) {
           outputClients.add(clientSocket);
-          remainingTime = remainingTime - (int) (System.currentTimeMillis() - startSignupTime);
+        } else {
+          clientSocket.close();
         }
+
+        remainingTime = remainingTime - (int) (System.currentTimeMillis() - startSignupTime);
       }
       catch(SocketTimeoutException ste) {
         break; // If a timeout has been reached, the full WAIT_MILLIS has passed
@@ -122,6 +126,17 @@ public class FishServer {
     }
     this.adapter = new TournamentManagerAdapter(proxies);
     this.adapter.runTournament();
+  }
+
+  public boolean expectClientSentName(DataInputStream inputStream, int timeout) throws IOException {
+    Long startTime = System.currentTimeMillis();
+    while (inputStream.available() <= 0) {
+      if ((System.currentTimeMillis() - startTime) >= timeout) {
+        return false;
+      }
+    }
+    String name = inputStream.readUTF();
+    return name.length() >= 1 && name.length() <= 12; //Only sign up those who provided a name
   }
 
   /**

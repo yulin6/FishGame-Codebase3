@@ -198,7 +198,7 @@ public class JsonUtilsTest {
     assertEquals("[\"take-turn\",[{\"players\":" +
         "[{\"color\":\"brown\",\"score\":0,\"places\":[[1,0]]}," +
         "{\"color\":\"black\",\"score\":4,\"places\":[[1,1]]}]," +
-        "\"board\":[[0,4,4,4],[4,4,4,4],[4,4,4,4],[4,4,4,4]]},[[[0,0],[1,1]]]]]", readable.readUTF());
+        "\"board\":[[0,4,4,4],[4,4,4,4],[4,4,4,4],[4,4,4,4]]}]]", readable.readUTF());
 
     JsonUtils.sendTakeTurnMessage(writable, gameState);
     GameState parsedGameState = JsonUtils.parseStateFromMessage(readable.readUTF());
