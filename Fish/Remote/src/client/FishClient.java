@@ -77,8 +77,6 @@ public class FishClient extends Thread {
     IPlayerComponent playerComponent = null;
     GameTreeNode gameTree = null;
 
-    System.out.println("+-----------------------------------------------------------------------+");
-
     while (true) {
       if (readable.available() != 0) {
         String message = readable.readUTF();

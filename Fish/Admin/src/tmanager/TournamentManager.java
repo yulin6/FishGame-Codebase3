@@ -56,7 +56,7 @@ public class TournamentManager implements ITournamentManager {
     }
     this.activePlayers = new ArrayList<>(players);
     this.listeners = new ArrayList<>();
-    informPlayers(InformType.START);
+    informPlayers(this.activePlayers, InformType.START, false);
     generateGames();
     this.phase = TournamentPhase.RUNNING;
   }
@@ -67,7 +67,7 @@ public class TournamentManager implements ITournamentManager {
    */
   public void addGameListener(StateChangeListener listener) {
     this.listeners.add(listener);
-    for (Referee referee : this.referees) {
+    for (Referee referee: referees) {
       referee.setListener(listener);
     }
   }
@@ -144,7 +144,7 @@ public class TournamentManager implements ITournamentManager {
     while (phase == TournamentPhase.RUNNING) {
         runTournamentRound();
     }
-    informPlayers(InformType.END);
+    informPlayers(this.activePlayers, InformType.END, true);
   }
 
   /**
@@ -155,6 +155,7 @@ public class TournamentManager implements ITournamentManager {
   public void runTournamentRound() {
     if (phase == TournamentPhase.RUNNING) {
       List<IPlayerComponent> winners = runGames();
+
       if (isTournamentOver(winners)) {
         activePlayers = winners;
         phase = TournamentPhase.END;
@@ -180,12 +181,16 @@ public class TournamentManager implements ITournamentManager {
    */
   private List<IPlayerComponent> runGames() {
     List<IPlayerComponent> winners = new ArrayList<>();
+    List<IPlayerComponent> failuresAndCheaters = new ArrayList<>();
     for (Referee referee : referees) {
       referee.notifyGameStart();
       referee.runGame();
       referee.notifyGameEnd();
       winners.addAll(referee.getWinners());
+      failuresAndCheaters.addAll(referee.getFailures());
+      failuresAndCheaters.addAll(referee.getCheaters());
     }
+    informPlayers(failuresAndCheaters, InformType.END, false);
     return winners;
   }
 
@@ -223,18 +228,18 @@ public class TournamentManager implements ITournamentManager {
    *
    * @param type The type of information to broadcast to players (start or end).
    */
-  private void informPlayers(InformType type) {
+  private void informPlayers(List<IPlayerComponent> players, InformType type, boolean isWinner) {
     Future informFuture;
     ExecutorService es = null;
     Runnable informCall;
 
-    List<IPlayerComponent> informedPlayers = new ArrayList<>(activePlayers);
+    List<IPlayerComponent> informedPlayers = new ArrayList<>(players);
 
     for (IPlayerComponent player : informedPlayers) {
       if (type == InformType.START) {
         informCall = () -> player.joinTournament();
       } else if (type == InformType.END) {
-        informCall = () -> player.leaveTournament(true);
+        informCall = () -> player.leaveTournament(isWinner);
       } else {
         throw new IllegalArgumentException("Invalid InformType received in informPlayers.");
       }

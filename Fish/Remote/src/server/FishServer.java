@@ -1,5 +1,6 @@
 package server;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.ServerSocket;
@@ -7,6 +8,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
+import utils.JsonUtils;
 
 
 /**
@@ -19,12 +21,12 @@ import java.util.List;
 public class FishServer {
   private static final int MIN_PLAYERS = 5;
   private static final int MAX_PLAYERS = 10;
-  private final int WAIT_MILLIS = 30000;
 
-  private int port;
+  private final int waitMillis;
   private ServerSocket serverSocket;
   private ArrayList<Socket> clients;
-
+  private List<FishClientProxy> proxies;
+  private TournamentManagerAdapter adapter;
 
   /**
    * TODO
@@ -32,10 +34,27 @@ public class FishServer {
   public FishServer(int port) throws IOException {
     this.serverSocket = new ServerSocket(port);
     this.clients = new ArrayList<>();
-    this.clients = this.startSignupPhase(this.serverSocket, this.clients);
+    this.proxies = new ArrayList<>();
+    this.waitMillis = 30000;
+  }
+
+  public FishServer(int port, int wait_millis) throws IOException {
+    this.serverSocket = new ServerSocket(port);
+    this.clients = new ArrayList<>();
+    this.proxies = new ArrayList<>();
+    this.waitMillis = wait_millis;
+  }
+
+  /**
+   * TODO
+   * @throws IOException
+   */
+  public void runServer() throws IOException {
+    this.clients = this.startSignupPhase(this.serverSocket, this.clients, this.waitMillis);
     if (!this.isSignupComplete(this.clients)) {
-      this.startSignupPhase(this.serverSocket, this.clients);
+      this.startSignupPhase(this.serverSocket, this.clients, this.waitMillis);
     }
+    this.serverSocket.close();
     if (this.isSignupComplete(this.clients)) {
       this.runTournament(this.clients);
     }
@@ -63,11 +82,14 @@ public class FishServer {
    * @return
    * @throws IOException
    */
-  public ArrayList<Socket> startSignupPhase(ServerSocket ssocket, ArrayList<Socket> clients)
-      throws IOException {
+  public ArrayList<Socket> startSignupPhase(
+      ServerSocket ssocket,
+      ArrayList<Socket> clients,
+      int waitMillis
+  ) throws IOException {
     ArrayList<Socket> outputClients = new ArrayList<>(clients);
     long startSignupTime = System.currentTimeMillis();
-    int remainingTime = WAIT_MILLIS;
+    int remainingTime = waitMillis;
     while (remainingTime >= 0 && clients.size() < MAX_PLAYERS) {
       ssocket.setSoTimeout(remainingTime);
       try {
@@ -87,12 +109,45 @@ public class FishServer {
    * @throws IOException
    */
   public void runTournament(ArrayList<Socket> clients) throws IOException {
-    List<FishClientProxy> proxies = new ArrayList<>();
+    this.proxies = new ArrayList<>();
     for(int i = 0; i < clients.size(); ++i){
       FishClientProxy proxy = new FishClientProxy(clients.get(i), i);
-      proxies.add(proxy);
+      this.proxies.add(proxy);
     }
-    TournamentManagerAdapter adapter = new TournamentManagerAdapter(proxies);
-    adapter.runTournament();
+    this.adapter = new TournamentManagerAdapter(proxies);
+    this.adapter.runTournament();
+  }
+
+  /**
+   * TODO
+   * @return
+   */
+  public ServerSocket getServerSocket() {
+    return serverSocket;
+  }
+
+  /**
+   * TODO
+   * @return
+   */
+  public ArrayList<Socket> getClients() {
+    return clients;
+  }
+
+
+  /**
+   * TODO
+   * @return
+   */
+  public List<FishClientProxy> getProxies() {
+    return proxies;
+  }
+
+  /**
+   * TODO
+   * @return
+   */
+  public TournamentManagerAdapter getAdapter() {
+    return adapter;
   }
 }

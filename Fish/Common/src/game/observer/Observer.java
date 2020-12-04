@@ -9,14 +9,16 @@ import java.util.List;
  * An observer used for maintaining StateChangeListeners and notify them when a GameState has changed.
  */
 public class Observer {
-    private final List<StateChangeListener> listeners = new ArrayList<StateChangeListener>();
+    private final List<StateChangeListener> listeners = new ArrayList<>();
 
     /**
      * add the given StateChangeListener to the list of listeners.
      * @param toAdd the given StateChangeListener
      */
     public void addListener(StateChangeListener toAdd) {
-        listeners.add(toAdd);
+        if(!listeners.contains(toAdd)) {
+            listeners.add(toAdd);
+        }
     }
 
     /**

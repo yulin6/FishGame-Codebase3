@@ -38,7 +38,7 @@ public class FishClientProxy implements IPlayerComponent {
    * @param age
    * @throws IOException
    */
-  FishClientProxy(Socket socket, int age) throws IOException {
+  public FishClientProxy(Socket socket, int age) throws IOException {
     this.age = age;
     this.readable = new DataInputStream(socket.getInputStream());
     this.writable = new DataOutputStream(socket.getOutputStream());
@@ -51,13 +51,13 @@ public class FishClientProxy implements IPlayerComponent {
    * @param age
    * @throws IOException
    */
-  FishClientProxy(DataInputStream readable, DataOutputStream writable, int age) {
+  public FishClientProxy(DataInputStream readable, DataOutputStream writable, int age) {
     this.age = age;
     this.readable = readable;
     this.writable = writable;
   }
 
-  void setTournamentManagerAdapter(TournamentManagerAdapter tma) {
+  public void setTournamentManagerAdapter(TournamentManagerAdapter tma) {
     this.tma = tma;
   }
 
