@@ -181,32 +181,51 @@ public class FishClientTest {
     JsonUtils.sendSetupMessage(this.serverWritable, this.gameState);
     assertEquals("[0,0]", waitForClientMsg(this.serverReadable));
     this.gameState.placeAvatar(new BoardPosition(0,0), this.p2);
+    this.gameState.setNextPlayer();
+
+    JsonUtils.sendSetupMessage(this.serverWritable, this.gameState);
+    assertEquals("[0,1]", waitForClientMsg(this.serverReadable));
     this.gameState.placeAvatar(new BoardPosition(0,1), this.p1);
+    this.gameState.setNextPlayer();
 
     JsonUtils.sendSetupMessage(this.serverWritable, this.gameState);
     assertEquals("[0,2]", waitForClientMsg(this.serverReadable));
     this.gameState.placeAvatar(new BoardPosition(0,2), this.p2);
+    this.gameState.setNextPlayer();
+
+    JsonUtils.sendSetupMessage(this.serverWritable, this.gameState);
+    assertEquals("[1,0]", waitForClientMsg(this.serverReadable));
     this.gameState.placeAvatar(new BoardPosition(1,0), this.p1);
+    this.gameState.setNextPlayer();
 
     JsonUtils.sendSetupMessage(this.serverWritable, this.gameState);
     assertEquals("[1,1]", waitForClientMsg(this.serverReadable));
     this.gameState.placeAvatar(new BoardPosition(1,1), this.p2);
+    this.gameState.setNextPlayer();
+
+    JsonUtils.sendSetupMessage(this.serverWritable, this.gameState);
+    assertEquals("[1,2]", waitForClientMsg(this.serverReadable));
     this.gameState.placeAvatar(new BoardPosition(1,2), this.p1);
+    this.gameState.setNextPlayer();
 
     JsonUtils.sendSetupMessage(this.serverWritable, this.gameState);
     assertEquals("[2,0]", waitForClientMsg(this.serverReadable));
     this.gameState.placeAvatar(new BoardPosition(2,0), this.p2);
-    this.gameState.placeAvatar(new BoardPosition(2,1), this.p1);
+    this.gameState.setNextPlayer();
 
+    JsonUtils.sendSetupMessage(this.serverWritable, this.gameState);
+    assertEquals("[2,1]", waitForClientMsg(this.serverReadable));
+    this.gameState.placeAvatar(new BoardPosition(2,1), this.p1);
+    this.gameState.setNextPlayer();
 
     JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState);
     assertEquals("[[0,2],[2,2]]", waitForClientMsg(this.serverReadable));
     this.gameState.moveAvatar(new BoardPosition(2,2), new BoardPosition(0,2), this.p2);
     this.gameState.setNextPlayer();
 
-    BoardPosition from = new BoardPosition(1,2);
-    BoardPosition to = new BoardPosition(3,2);
-    this.gameState.moveAvatar(to, from, this.p1);
+    JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState);
+    assertEquals("[[1,0],[3,0]]", waitForClientMsg(this.serverReadable));
+    this.gameState.moveAvatar(new BoardPosition(3,0), new BoardPosition(1,0), this.p1);
     this.gameState.setNextPlayer();
 
     JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState);
@@ -214,11 +233,15 @@ public class FishClientTest {
     this.gameState.moveAvatar(new BoardPosition(3,1), new BoardPosition(1,1), this.p2);
     this.gameState.setNextPlayer();
 
-    from = new BoardPosition(1,0);
-    to = new BoardPosition(3,0);
-    this.gameState.moveAvatar(to, from, this.p1);
+    JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState);
+    assertEquals("[[1,2],[3,2]]", waitForClientMsg(this.serverReadable));
+    this.gameState.moveAvatar(new BoardPosition(3,2), new BoardPosition(1,2), this.p1);
     this.gameState.setNextPlayer();
 
+    JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState);
+    assertEquals("false", waitForClientMsg(this.serverReadable));
+
+    this.gameState.setNextPlayer();
     JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState);
     assertEquals("false", waitForClientMsg(this.serverReadable));
   }
@@ -253,23 +276,19 @@ public class FishClientTest {
     this.gameState.placeAvatar(new BoardPosition(2,1), this.p1);
 
     JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState);
-    assertEquals("[[1,0],[3,0]]", waitForClientMsg(this.serverReadable));
-    this.gameState.moveAvatar(new BoardPosition(3,0), new BoardPosition(1,0), this.p1);
+    assertEquals("[[0,2],[2,2]]", waitForClientMsg(this.serverReadable));
+    this.gameState.moveAvatar(new BoardPosition(2,2), new BoardPosition(0,2), this.p2);
     this.gameState.setNextPlayer();
 
-    BoardPosition from = new BoardPosition(2,0);
-    BoardPosition to = new BoardPosition(3,1);
-    this.gameState.moveAvatar(to, from, this.p2);
-    this.gameState.setNextPlayer();
-
-    JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState);
-    assertEquals("[[1,2],[2,2]]", waitForClientMsg(this.serverReadable));
-    this.gameState.moveAvatar(new BoardPosition(2,2), new BoardPosition(1,2), this.p1);
+    this.gameState.moveAvatar(new BoardPosition(3,1), new BoardPosition(2,1), this.p1);
     this.gameState.setNextPlayer();
 
     JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState);
-    assertEquals("[[2,2],[3,2]]", waitForClientMsg(this.serverReadable));
-    this.gameState.moveAvatar(new BoardPosition(3,2), new BoardPosition(2,2), this.p1);
+    assertEquals("[[2,0],[3,0]]", waitForClientMsg(this.serverReadable));
+    this.gameState.moveAvatar(new BoardPosition(3,0), new BoardPosition(2,0), this.p2);
+    this.gameState.setNextPlayer();
+
+    this.gameState.moveAvatar(new BoardPosition(3,2), new BoardPosition(1,2), this.p1);
 
     JsonUtils.sendTakeTurnMessage(this.serverWritable, this.gameState);
     assertEquals("false", waitForClientMsg(this.serverReadable));

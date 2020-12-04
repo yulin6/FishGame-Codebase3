@@ -29,6 +29,37 @@ public class State {
     HashMap<BoardPosition, Penguin> map = gs.getPenguins();
     Set<BoardPosition> positions = map.keySet();
     this.players = new ArrayList<>();
+
+    Player fp = gs.getCurrentPlayer();
+    List<BoardPosition> penguins_ = new ArrayList<>();
+    for (BoardPosition bp : positions) {
+      if (map.get(bp).getColor() == fp.getColor()) {
+        penguins_.add(bp);
+      }
+    }
+
+    TestPlayer tp_ = new TestPlayer(fp.getColor(), fp.getFish(), penguins_);
+    this.players.add(tp_);
+
+    gs.setNextPlayer();
+    Player currentPlayer = gs.getCurrentPlayer();
+
+    while (currentPlayer.getColor() != fp.getColor()) {
+      penguins_ = new ArrayList<>();
+      for (BoardPosition bp : positions) {
+        if (map.get(bp).getColor() == currentPlayer.getColor()) {
+          penguins_.add(bp);
+        }
+      }
+
+      tp_ = new TestPlayer(currentPlayer.getColor(), currentPlayer.getFish(), penguins_);
+      this.players.add(tp_);
+
+      gs.setNextPlayer();
+      currentPlayer = gs.getCurrentPlayer();
+    }
+
+    /*
     boolean firstPlayer = true;
     Player fp = null;
     for (Player p : pset) {
@@ -47,6 +78,7 @@ public class State {
       TestPlayer tp = new TestPlayer(p.getColor(), p.getFish(), penguins);
       this.players.add(tp);
     }
+
     assert(fp != null);
     List<BoardPosition> penguins = new ArrayList<>();
     for (BoardPosition bp : positions) {
@@ -57,6 +89,7 @@ public class State {
 
     TestPlayer tp = new TestPlayer(fp.getColor(), fp.getFish(), penguins);
     this.players.add(tp);
+    */
 
     this.board = new ArrayList<>();
     for (int i = 0; i < b.getRows(); i++) {
