@@ -31,15 +31,6 @@ public class Observer {
     }
 
     /**
-     * notify the Listeners and call their actionPerformed method.
-     */
-    public void notifyListenersActionPerformed(Action action) {
-        for(StateChangeListener sl: listeners){
-            sl.actionPerformed(action);
-        }
-    }
-
-    /**
      * notify the Listeners and call their newGameState method.
      */
     public void notifyListenersNewGameState(GameState gs) {

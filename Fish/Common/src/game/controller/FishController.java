@@ -142,9 +142,6 @@ public class FishController implements StateChangeListener{
     }
   }
 
-  @Override
-  public void actionPerformed(Action action) { return; }
-
   /**
    * Display the game board first, then shows players initial score before running the game.
    */

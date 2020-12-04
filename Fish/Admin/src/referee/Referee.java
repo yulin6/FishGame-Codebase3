@@ -377,7 +377,6 @@ public class Referee implements IReferee {
           this.observer.notifyListenersNewGameState(gs);
         } else if (phase == GamePhase.PLAYING) {
           this.gt = gt.lookAhead(action);
-          this.observer.notifyListenersActionPerformed(action);
           this.observer.notifyListenersNewGameState(gs);
         }
       } catch (IllegalArgumentException iae) {

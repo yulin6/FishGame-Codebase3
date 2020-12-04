@@ -1,6 +1,5 @@
 package server;
 
-import game.model.Action;
 import game.model.GameState;
 import game.model.Penguin.PenguinColor;
 import game.model.Player;
@@ -16,7 +15,7 @@ import tmanager.TournamentManager;
  */
 public class TournamentManagerAdapter implements ITournamentManager, StateChangeListener {
   private TournamentManager tm;
-  private List<FishClientProxy> players;
+  private List<FishClientProxy> proxies;
   private List<PenguinColor> currentGameColors;
 
   /**
@@ -24,7 +23,7 @@ public class TournamentManagerAdapter implements ITournamentManager, StateChange
    * @param players
    */
   public TournamentManagerAdapter(List<FishClientProxy> players) {
-    this.players = players;
+    this.proxies = players;
     for (FishClientProxy proxy: players){
       proxy.setTournamentManagerAdapter(this);
     }
@@ -32,7 +31,7 @@ public class TournamentManagerAdapter implements ITournamentManager, StateChange
 
   @Override
   public void runTournament() {
-    List<IPlayerComponent> playerComponents = new ArrayList<>(this.players);
+    List<IPlayerComponent> playerComponents = new ArrayList<>(this.proxies);
     this.tm = new TournamentManager(playerComponents);
     this.tm.addGameListener(this);
     this.tm.runTournament();
@@ -52,16 +51,9 @@ public class TournamentManagerAdapter implements ITournamentManager, StateChange
   }
 
   @Override
-  public void actionPerformed(Action action) { }
-
-  @Override
   public void newGameState(GameState gs) { }
 
   List<PenguinColor> getColorsInCurrentGame() {
     return new ArrayList<>(this.currentGameColors);
-  }
-
-  public TournamentManager getTournamentManager() {
-    return tm;
   }
 }

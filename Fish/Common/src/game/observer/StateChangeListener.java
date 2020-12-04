@@ -16,12 +16,6 @@ public interface StateChangeListener {
 
     /**
      * TODO
-     * @param action
-     */
-    void actionPerformed(Action action);
-
-    /**
-     * TODO
      * @param gs
      */
     void newGameState(GameState gs);
