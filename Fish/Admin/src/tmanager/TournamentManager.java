@@ -49,7 +49,8 @@ public class TournamentManager implements ITournamentManager {
      * Constructor for a TournamentManager object. Accepts a list of external player components and
      * a number to modify the parameters of Referees' boards with, and constructs a
      * TournamentManager. The TournamentManager informs the players that a tournament is beginning
-     * (handling failures appropriately) and sets up games to be run.
+     * (handling failures appropriately) and sets up games to be run. The size of game boards in the
+     * tournament will be random.
      *
      * @param players The list of external player components to notify and then assign to games
      *                under new Referees. Assumed to be sorted in age-ascending order when passed
@@ -68,10 +69,17 @@ public class TournamentManager implements ITournamentManager {
     }
 
   /**
-   * todo
-   * @param players
-   * @param rows
-   * @param cols
+   *  Constructor for a TournamentManager object. Accepts a list of external player components and
+   *  a number to modify the parameters of Referees' boards with, and constructs a
+   *  TournamentManager. The TournamentManager informs the players that a tournament is beginning
+   *  (handling failures appropriately) and sets up games to be run. Also, it takes in two ints for
+   *  determining the size of the the games boards in the tournament.
+   *
+   *  @param players The list of external player components to notify and then assign to games
+   *                  under new Referees. Assumed to be sorted in age-ascending order when passed
+   *                  in, as they have already signed up.
+   * @param rows the height of game boards
+   * @param cols the width of game boards
    */
     public TournamentManager(List<IPlayerComponent> players, int rows, int cols) {
         if (players.size() < MIN_PLAYERS) {
