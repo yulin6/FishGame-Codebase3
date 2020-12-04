@@ -10,7 +10,7 @@ public class FishClientTimeout extends FishClient {
   private final boolean loopGetAge;
   private final boolean loopJoinTournament;
 
-  FishClientTimeout(int port, boolean loopGetAge, boolean loopJoinTournament) throws IOException {
+  public FishClientTimeout(int port, boolean loopGetAge, boolean loopJoinTournament) throws IOException {
     super("127.0.0.1", port);
     this.loopGetAge = loopGetAge;
     this.loopJoinTournament = loopJoinTournament;

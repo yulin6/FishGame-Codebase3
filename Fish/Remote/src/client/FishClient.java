@@ -56,12 +56,13 @@ public class FishClient {
    * creates a Socket for connecting with the game server, and starts playing the tournament.
    * @throws IOException
    */
-  public void joinTournament() throws IOException {
+  public boolean joinTournament() throws IOException {
     Socket clientSocket = new Socket(this.ip, this.port);
     DataInputStream readable = new DataInputStream(clientSocket.getInputStream());
     DataOutputStream writable = new DataOutputStream(clientSocket.getOutputStream());
-    this.playTournament(readable, writable);
+    boolean won = this.playTournament(readable, writable);
     clientSocket.close();
+    return won;
   }
 
   /**
