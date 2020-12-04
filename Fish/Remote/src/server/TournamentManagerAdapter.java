@@ -60,4 +60,8 @@ public class TournamentManagerAdapter implements ITournamentManager, StateChange
   List<PenguinColor> getColorsInCurrentGame() {
     return new ArrayList<>(this.currentGameColors);
   }
+
+  public TournamentManager getTournamentManager() {
+    return tm;
+  }
 }

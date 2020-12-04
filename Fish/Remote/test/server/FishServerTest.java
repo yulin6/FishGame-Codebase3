@@ -15,6 +15,7 @@ import utils.JsonUtils;
 public class FishServerTest {
   private final String LOCALHOST = "127.0.0.1";
   private final int PORT = 44444;
+
   /*
   @Test
   public void startSignupPhaseTest() throws IOException {
@@ -92,6 +93,56 @@ public class FishServerTest {
     for (Socket s : sockets) {
       s.close();
     }
+  }
+
+  @Test
+  public void runServerTest() throws IOException, InterruptedException {
+    FishServer server = new FishServer(PORT, 2000);
+    ServerSocket serverSocket = server.getServerSocket();
+
+    Thread serverThread = new Thread(() -> {
+      try {
+        server.runServer();
+        assertEquals(6, server.getProxies().size());
+      } catch (IOException ioe) {
+        throw new RuntimeException("Server IOException caught: " + ioe.getMessage());
+      }
+    });
+
+    serverThread.start();
+
+
+    ArrayList<Thread> clientThreads = new ArrayList<>();
+    for (int i = 0; i < 6; i++) {
+      Thread clientThread = new Thread(() -> {
+        try {
+          new FishClient("127.0.0.1", 44444).joinTournament();
+        } catch (IOException ioe) {
+          throw new RuntimeException(ioe.getMessage());
+        }
+      });
+      clientThread.start();
+      clientThreads.add(clientThread);
+    }
+
+    try {
+      serverThread.join();
+      for (Thread clientThread : clientThreads) {
+        clientThread.join();
+      }
+    } catch(InterruptedException ie) {
+      throw new RuntimeException(ie.getMessage());
+    }
+
+    //TODO how to make test stop?
+    ArrayList<Socket> connectedClients = server.getClients();
+    for(Socket socket: connectedClients){
+      socket.close();
+    }
+    server.getServerSocket().close();
+
+//    assertEquals(6, server.getProxies().size());
+
   }
 }
 

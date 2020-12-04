@@ -1,5 +1,6 @@
 package server;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -93,8 +94,13 @@ public class FishServer {
     while (remainingTime >= 0 && clients.size() < MAX_PLAYERS) {
       ssocket.setSoTimeout(remainingTime);
       try {
-        outputClients.add(ssocket.accept());
-        remainingTime = remainingTime - (int)(System.currentTimeMillis() - startSignupTime);
+        Socket clientSocket = ssocket.accept();
+        DataInputStream readable = new DataInputStream(clientSocket.getInputStream());
+        String name = readable.readUTF();
+        if(name.length() >= 1 && name.length() <= 12) { //Only sign up those who provided a name
+          outputClients.add(clientSocket);
+          remainingTime = remainingTime - (int) (System.currentTimeMillis() - startSignupTime);
+        }
       }
       catch(SocketTimeoutException ste) {
         break; // If a timeout has been reached, the full WAIT_MILLIS has passed
