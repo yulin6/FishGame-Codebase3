@@ -9,7 +9,8 @@ import referee.AdminTestSuite;
 @Suite.SuiteClasses({
         ModelTestSuite.class,
         PlayerComponentTestSuite.class,
-        AdminTestSuite.class
+        AdminTestSuite.class,
+        RemoteTestSuite.class
 })
 
 public class FullTestSuite {
