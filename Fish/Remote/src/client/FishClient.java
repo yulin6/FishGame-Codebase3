@@ -30,7 +30,7 @@ import game.model.Penguin.PenguinColor;
  * Represents a client who can connect to a remote server running a game of Fish.
  */
 public class FishClient {
-  private final int TIMEOUT = 10000;
+  private final int TIMEOUT = 40000; // Should be longer than server's sign-up period
   private final int NAME_LEN = 12;
   private final int SEARCH_DEPTH = 2;
 
