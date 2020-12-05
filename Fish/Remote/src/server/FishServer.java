@@ -7,6 +7,8 @@ import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import utils.JsonUtils;
@@ -70,6 +72,7 @@ public class FishServer {
       this.tournamentRan = true;
     }
     for (Socket s : this.clients) {
+      System.out.println("Closing client socket");
       s.close();
     }
   }
@@ -98,11 +101,11 @@ public class FishServer {
   ) throws IOException {
 
     ArrayList<Socket> outputClients = new ArrayList<>(clients);
-    long startSignupTime = System.currentTimeMillis();
-    int remainingTime = waitMillis;
+    Instant start = Instant.now();
+    long remainingMillis = waitMillis - Duration.between(start, Instant.now()).toMillis();
 
-    while (remainingTime >= 0 && clients.size() < MAX_PLAYERS) {
-      ssocket.setSoTimeout(remainingTime);
+    while (remainingMillis >= 0 && clients.size() < MAX_PLAYERS) {
+      ssocket.setSoTimeout((int) remainingMillis);
       try {
         Socket clientSocket = ssocket.accept();
         boolean acceptClient = this.expectClientSentName(
@@ -110,12 +113,14 @@ public class FishServer {
             this.playerWaitMillis);
 
         if (acceptClient) {
+          System.out.println("Accepted player");
           outputClients.add(clientSocket);
         } else {
           clientSocket.close();
         }
 
-        remainingTime = remainingTime - (int) (System.currentTimeMillis() - startSignupTime);
+        remainingMillis = waitMillis - Duration.between(start, Instant.now()).toMillis();
+        System.out.println("Remaining time: " + remainingMillis);
       }
       catch(SocketTimeoutException ste) {
         break; // If a timeout has been reached, the full WAIT_MILLIS has passed

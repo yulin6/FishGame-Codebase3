@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -XX:+UseSerialGC -jar ../Filepath $@
+java -XX:+UseSerialGC -jar ./Other/xserver.jar $@
