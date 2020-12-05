@@ -29,6 +29,7 @@ public class FishServer {
   private ArrayList<Socket> clients;
   private List<FishClientProxy> proxies;
   private TournamentManagerAdapter adapter;
+  private boolean tournamentRan = false;
 
   /**
    * The constructor of FishServer takes in a port number for building a ServerSocket.
@@ -63,11 +64,10 @@ public class FishServer {
     if (!this.isSignupComplete(this.clients)) {
       this.startSignupPhase(this.serverSocket, this.clients, this.signupWaitMillis);
     }
-    this.serverSocket.close(); //todo question, why does the serverSocket close here?
+    this.serverSocket.close();
     if (this.isSignupComplete(this.clients)) {
       this.runTournament(this.clients);
-    } else {
-      this.clients = new ArrayList<>();
+      this.tournamentRan = true;
     }
     for (Socket s : this.clients) {
       s.close();
@@ -188,5 +188,10 @@ public class FishServer {
    */
   public TournamentManagerAdapter getAdapter() {
     return adapter;
+  }
+
+
+  public boolean isTournamentRan() {
+    return tournamentRan;
   }
 }

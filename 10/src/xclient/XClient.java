@@ -6,10 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class XClient {
-    public static void main(String[] args)  {
-        if(args.length < 2 || args.length > 3){
-            throw new IllegalArgumentException("Invalid number of arguments.");
-        }
+    public static void main(String[] args) throws InterruptedException {
         int[] playersAndPortNum = parsePlayersAndPortNum(args);
         int playerNum = playersAndPortNum[0];
         int port = playersAndPortNum[1];
@@ -20,7 +17,7 @@ public class XClient {
 
         ArrayList<Thread> clientThreads = new ArrayList<>();
         for(int i = 0; i < playerNum; ++i){
-            String finalIp = ip;
+            final String finalIp = ip;
             Thread clientThread = new Thread(() -> {
                 try {
                     new FishClient(finalIp, port).joinTournament();
@@ -33,7 +30,7 @@ public class XClient {
         }
 
         for (Thread clientThread : clientThreads) {
-            clientThread.interrupt();
+            clientThread.join();
         }
 
         //todo how to terminate this?
@@ -41,6 +38,9 @@ public class XClient {
     }
 
     private static int[] parsePlayersAndPortNum(String[] args){
+        if(args.length < 2 || args.length > 3){
+            throw new IllegalArgumentException("Invalid number of arguments.");
+        }
         int playerNum;
         int port;
         try{

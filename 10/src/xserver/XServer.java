@@ -11,16 +11,14 @@ public class XServer {
         int port = parsePortNum(args);
         FishServer server = new FishServer(port);
         server.runServer();
-        if(server.getClients().size() != 0){
+        if(server.isTournamentRan()){
             int winnerSize = server.getAdapter().getWinners().size();
             int cheaterAndFailureSize = server.getClients().size() - winnerSize;
             int[] resultArr = new int[]{winnerSize, cheaterAndFailureSize};
             String result = new Gson().toJson(resultArr);
             System.out.println(result);
         }
-
-        server.getServerSocket().close();
-        System.exit(0);
+        return;
     }
 
     private static int parsePortNum(String[] args){

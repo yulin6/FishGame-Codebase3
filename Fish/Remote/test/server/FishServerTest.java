@@ -119,7 +119,7 @@ public class FishServerTest {
     for (int i = 0; i < 6; i++) {
       Thread clientThread = new Thread(() -> {
         try {
-          new FishClient("127.0.0.1", 44444).joinTournament();
+          new FishClient(LOCALHOST, PORT).joinTournament();
         } catch (IOException ioe) {
           throw new RuntimeException(ioe.getMessage());
         }
@@ -138,11 +138,7 @@ public class FishServerTest {
     }
 
     //TODO how to make test stop?
-    ArrayList<Socket> connectedClients = server.getClients();
-    for(Socket socket: connectedClients){
-      socket.close();
-    }
-    server.getServerSocket().close();
+
 
 //    assertEquals(6, server.getProxies().size());
 
