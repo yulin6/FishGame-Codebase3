@@ -13,12 +13,12 @@ public class XServer {
         server.runServer();
         if(server.isTournamentRan()){
             int winnerSize = server.getAdapter().getWinners().size();
-            int cheaterAndFailureSize = server.getClients().size() - winnerSize;
+            int cheaterAndFailureSize = server.getAdapter().getCheatersAndFailures().size();
             int[] resultArr = new int[]{winnerSize, cheaterAndFailureSize};
             String result = new Gson().toJson(resultArr);
             System.out.println(result);
         }
-        return;
+        System.exit(0);
     }
 
     private static int parsePortNum(String[] args){

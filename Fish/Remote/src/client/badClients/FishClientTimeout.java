@@ -1,4 +1,4 @@
-package server.badClients;
+package client.badClients;
 
 import client.FishClient;
 import game.model.Penguin.PenguinColor;

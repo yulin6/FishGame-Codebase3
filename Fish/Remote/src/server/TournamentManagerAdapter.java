@@ -49,6 +49,14 @@ public class TournamentManagerAdapter implements ITournamentManager, StateChange
     return this.tournamentManager.getWinners();
   }
 
+  public List<IPlayerComponent> getCheatersAndFailures() {
+    ArrayList<IPlayerComponent> cheatersAndFailures = new ArrayList<>();
+    cheatersAndFailures.addAll(this.tournamentManager.getCheaters());
+    cheatersAndFailures.addAll(this.tournamentManager.getFailures());
+    return cheatersAndFailures;
+  }
+
+
   @Override
   public void gameStarted(GameState gs) {
     this.currentGameColors = new ArrayList<>();

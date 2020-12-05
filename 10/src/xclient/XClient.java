@@ -1,7 +1,8 @@
 package xclient;
 
 import client.FishClient;
-
+import client.badClients.FishClientIllogicalPlayer;
+import client.badClients.FishClientTimeout;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -18,8 +19,20 @@ public class XClient {
         ArrayList<Thread> clientThreads = new ArrayList<>();
         for(int i = 0; i < playerNum; ++i){
             final String finalIp = ip;
+//            final int j = i;
             Thread clientThread = new Thread(() -> {
                 try {
+                    /*   Testing block with cheating and failing players.
+                    switch (j) {
+                        case 0:
+                            new FishClientTimeout(port, false, false).joinTournament();
+                            break;
+                        case 1:
+                            new FishClientIllogicalPlayer(port).joinTournament();
+                            break;
+                        default:
+                            new FishClient(finalIp, port).joinTournament();
+                    }*/
                     new FishClient(finalIp, port).joinTournament();
                 } catch (IOException ioe) {
                     throw new RuntimeException(ioe.getMessage());
@@ -33,8 +46,6 @@ public class XClient {
             clientThread.join();
         }
 
-        //todo how to terminate this?
-//        System.exit(0);
     }
 
     private static int[] parsePlayersAndPortNum(String[] args){
@@ -48,9 +59,6 @@ public class XClient {
             port = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("First and second argument should be integers.");
-        }
-        if(playerNum < 5 || playerNum > 10){
-            throw new IllegalArgumentException("Players number should be 5 to 10.");
         }
         return new int[] {playerNum, port};
     }

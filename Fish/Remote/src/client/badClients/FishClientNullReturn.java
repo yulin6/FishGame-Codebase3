@@ -1,18 +1,18 @@
-package server.badClients;
+package client.badClients;
 
 import client.FishClient;
 import game.model.Penguin.PenguinColor;
 import java.io.IOException;
 import player.IPlayerComponent;
-import player.IllogicalPlayerComponent;
+import player.NullReturnPlayerComponent;
 
-public class FishClientIllogicalPlayer extends FishClient {
-  public FishClientIllogicalPlayer(int port) throws IOException {
+public class FishClientNullReturn extends FishClient {
+  public FishClientNullReturn(int port) throws IOException {
     super("127.0.0.1", port);
   }
 
   @Override
   public IPlayerComponent createPlayer(PenguinColor penguinColor) {
-    return new IllogicalPlayerComponent();
+    return new NullReturnPlayerComponent();
   }
 }

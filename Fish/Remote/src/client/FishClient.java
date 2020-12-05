@@ -35,6 +35,7 @@ public class FishClient {
 
   private final String ip;
   private final int port;
+  private Socket clientSocket;
   // This will never be used, and only serves to adapt to the FixedDepthPlayerComponent spec.
   private int age = 0;
 
@@ -57,7 +58,7 @@ public class FishClient {
    * @throws IOException
    */
   public boolean joinTournament() throws IOException {
-    Socket clientSocket = new Socket(this.ip, this.port);
+    this.clientSocket = new Socket(this.ip, this.port);
     DataInputStream readable = new DataInputStream(clientSocket.getInputStream());
     DataOutputStream writable = new DataOutputStream(clientSocket.getOutputStream());
     boolean won = this.playTournament(readable, writable);
@@ -84,7 +85,7 @@ public class FishClient {
     IPlayerComponent playerComponent = null;
     GameTreeNode gameTree = null;
 
-    while (true) {
+    while (this.clientSocket != null && !this.clientSocket.isClosed()) {
       if (readable.available() != 0) {
         String message = readable.readUTF();
         System.out.println(message);
@@ -120,6 +121,7 @@ public class FishClient {
         }
       }
     }
+    return false;
   }
 
   /**

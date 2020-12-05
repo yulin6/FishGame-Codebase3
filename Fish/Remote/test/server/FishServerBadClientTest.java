@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
-import server.badClients.FishClientBadWinner;
-import server.badClients.FishClientTimeout;
+import client.badClients.FishClientBadWinner;
+import client.badClients.FishClientTimeout;
 
 public class FishServerBadClientTest {
   private final int PORT = 12345;

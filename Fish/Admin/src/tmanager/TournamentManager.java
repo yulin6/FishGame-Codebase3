@@ -38,6 +38,8 @@ import referee.Referee;
 public class TournamentManager implements ITournamentManager {
 
     private List<IPlayerComponent> activePlayers;
+    private List<IPlayerComponent> cheaters;
+    private List<IPlayerComponent> failures;
     private List<Referee> referees;
     private List<StateChangeListener> listeners;
     private TournamentPhase phase;
@@ -68,6 +70,8 @@ public class TournamentManager implements ITournamentManager {
             throw new IllegalArgumentException("Not enough players to form a tournament.");
         }
         this.activePlayers = new ArrayList<>(players);
+        this.cheaters = new ArrayList<>();
+        this.failures = new ArrayList<>();
         this.listeners = new ArrayList<>();
         informPlayers(this.activePlayers, InformType.START, false);
         this.isUniformBoard = false;
@@ -94,6 +98,8 @@ public class TournamentManager implements ITournamentManager {
             throw new IllegalArgumentException("Not enough players to form a tournament.");
         }
         this.activePlayers = new ArrayList<>(players);
+        this.cheaters = new ArrayList<>();
+        this.failures = new ArrayList<>();
         this.listeners = new ArrayList<>();
         informPlayers(this.activePlayers, InformType.START, false);
         this.isUniformBoard = true;
@@ -238,17 +244,17 @@ public class TournamentManager implements ITournamentManager {
      */
     private List<IPlayerComponent> runGames() {
         List<IPlayerComponent> winners = new ArrayList<>();
-        List<IPlayerComponent> failuresAndCheaters = new ArrayList<>();
+
 
         for (Referee referee : referees) {
             referee.notifyGameStart();
             referee.runGame();
             referee.notifyGameEnd();
             winners.addAll(referee.getWinners());
-            failuresAndCheaters.addAll(referee.getFailures());
-            failuresAndCheaters.addAll(referee.getCheaters());
+
+            this.cheaters.addAll(referee.getFailures());
+            this.failures.addAll(referee.getCheaters());
         }
-        informPlayers(failuresAndCheaters, InformType.END, false);
         return winners;
     }
 
@@ -331,6 +337,22 @@ public class TournamentManager implements ITournamentManager {
      */
     public List<Referee> getReferees() {
         return referees;
+    }
+
+    /**
+     * todo
+     * @return
+     */
+    public List<IPlayerComponent> getCheaters() {
+        return cheaters;
+    }
+
+    /**
+     * todo
+     * @return
+     */
+    public List<IPlayerComponent> getFailures() {
+        return failures;
     }
 
     /**
