@@ -85,10 +85,9 @@ public class FishClient {
     IPlayerComponent playerComponent = null;
     GameTreeNode gameTree = null;
 
-    while (this.clientSocket != null && !this.clientSocket.isClosed()) {
+    while (true) {
       if (readable.available() != 0) {
         String message = readable.readUTF();
-        System.out.println(message);
         String messageType = getFishMessageType(message);
 
         switch (messageType) {
@@ -121,7 +120,6 @@ public class FishClient {
         }
       }
     }
-    return false;
   }
 
   /**
