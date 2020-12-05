@@ -164,7 +164,6 @@ public class FishServer {
     return clients;
   }
 
-
   /**
    * getter method of FishClientProxy list.
    * @return the list of player components for remote players.
