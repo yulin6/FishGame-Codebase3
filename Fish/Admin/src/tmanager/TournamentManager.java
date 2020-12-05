@@ -184,7 +184,7 @@ public class TournamentManager implements ITournamentManager {
         while (phase == TournamentPhase.RUNNING) {
             ArrayList<IPlayerComponent> losers = new ArrayList<>();
             losers.addAll(this.activePlayers);
-            runTournamentRound();
+            runTournamentRound(); // Mutates this.activePlayers to only store winners
             losers.removeAll(this.activePlayers);
             informPlayers(losers, InformType.END, false);
         }
