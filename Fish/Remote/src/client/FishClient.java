@@ -20,6 +20,8 @@ import java.io.*;
 
 import java.net.*;
 
+import java.time.Duration;
+import java.time.Instant;
 import player.FixedDepthPlayerComponent;
 import player.IPlayerComponent;
 import game.model.Penguin.PenguinColor;
@@ -28,7 +30,7 @@ import game.model.Penguin.PenguinColor;
  * Represents a client who can connect to a remote server running a game of Fish.
  */
 public class FishClient {
-
+  private final int TIMEOUT = 10000;
   private final int NAME_LEN = 12;
   private final int SEARCH_DEPTH = 2;
 
@@ -85,8 +87,12 @@ public class FishClient {
     IPlayerComponent playerComponent = null;
     GameTreeNode gameTree = null;
 
-    while (true) {
+    Instant lastServerMessage = Instant.now();
+
+
+    while (Duration.between(lastServerMessage, Instant.now()).toMillis() < this.TIMEOUT) {
       if (readable.available() != 0) {
+        lastServerMessage = Instant.now();
         String message = readable.readUTF();
         String messageType = getFishMessageType(message);
 
@@ -120,6 +126,7 @@ public class FishClient {
         }
       }
     }
+    return false;
   }
 
   /**
