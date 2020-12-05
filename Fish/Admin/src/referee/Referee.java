@@ -77,6 +77,34 @@ public class Referee implements IReferee {
 
   /**
    * Constructor for a Referee that takes a list of players, a number of rows and a number of
+   * columns for a game board, and a fishNum for number of fishes on each tile, and sets up a game for
+   * which the players will play in, with the Referee handling all interactions between players and the game.
+   * @param players The list of players. Assumes that the list of players given is in ascending
+   *                order of player age.
+   * @param rows the number of rows the referee is instructed to create the board with
+   * @param cols the number of columns the referee is instructed to create the board with
+   * @param fishNum the number of fishes on each tile
+   */
+  public Referee(List<IPlayerComponent> players, int rows, int cols, int fishNum) {
+    this.playerMap = new HashMap<>();
+    this.winners = new ArrayList<>();
+    this.failures = new ArrayList<>();
+    this.cheaters = new ArrayList<>();
+    this.numPlayers = players.size();
+    this.penguinsPerPlayer = PENGUIN_MAX - this.numPlayers;
+    if (rows * cols < this.numPlayers * this.penguinsPerPlayer) {
+      throw new IllegalArgumentException("Board with specified parameters cannot handle the given" +
+              " number of players");
+    }
+    Board board = new Board(rows, cols, fishNum);
+    GameState gs = makeNewState(players, board);
+    this.gt = new GameTreeNode(gs);
+    this.phase = GamePhase.SETUP;
+    this.observer = new Observer();
+  }
+
+  /**
+   * Constructor for a Referee that takes a list of players, a number of rows and a number of
    * columns for a game board, and sets up a game for which the players will play in, with the
    * Referee handling all interactions between players and the game.
    * @param players The list of players. Assumes that the list of players given is in ascending
@@ -95,7 +123,8 @@ public class Referee implements IReferee {
       throw new IllegalArgumentException("Board with specified parameters cannot handle the given" +
               " number of players");
     }
-    GameState gs = makeNewState(players, rows, cols);
+    Board board = generateRandomBoard(rows, cols);
+    GameState gs = makeNewState(players, board);
     this.gt = new GameTreeNode(gs);
     this.phase = GamePhase.SETUP;
     this.observer = new Observer();
@@ -159,12 +188,10 @@ public class Referee implements IReferee {
    * penguins have been placed, with the passed-in list of players assigned to the game.
    *
    * @param players The list of players to assign to the game, sorted by ascending age.
-   * @param rows the number of rows to create the board with
-   * @param cols the number of columns to create the board with
+   * @param board a Board for creating a GameState.
    * @return The GameState that was created.
    */
-  private GameState makeNewState(List<IPlayerComponent> players, int rows, int cols) {
-    Board b = generateRandomBoard(rows, cols);
+  private GameState makeNewState(List<IPlayerComponent> players, Board board) {
     HashSet<Player> playerSet = new HashSet<>();
     for (IPlayerComponent pcomponent : players) {
       Player p;
@@ -178,7 +205,7 @@ public class Referee implements IReferee {
     if (playerSet.size() == 0) {
       throw new IllegalArgumentException("Insufficient players to make a valid state.");
     }
-    return new GameState(playerSet, b);
+    return new GameState(playerSet, board);
 
   }
 

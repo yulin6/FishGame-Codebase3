@@ -51,7 +51,7 @@ public class FishClientProxy implements IPlayerComponent {
 
   /**
    * the constructor of FishClientProxy for tests, which takes a DataInputStream and a DataOutputStream for mocking
-   * the socket, and an age for ordering porpose.
+   * the socket, and an age for ordering purpose.
    * @param readable a DataInputStream
    * @param writable a DataOutputStream
    * @param age an age used for the order of playing.
