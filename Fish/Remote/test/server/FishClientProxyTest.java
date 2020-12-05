@@ -80,7 +80,7 @@ public class FishClientProxyTest {
     String playingAsMsg = this.clientReadable.readUTF();
     assertEquals("[\"playing-as\",[\"red\"]]", playingAsMsg);
     String playingWithMsg = this.clientReadable.readUTF();
-    assertEquals("[\"playing-with\",[\"brown\",\"black\"]]", playingWithMsg);
+    assertEquals("[\"playing-with\",[\"black\",\"brown\"]]", playingWithMsg);
 
     assertEquals(PenguinColor.RED, this.proxy.getColor());
   }

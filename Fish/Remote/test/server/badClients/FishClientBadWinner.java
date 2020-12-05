@@ -7,7 +7,7 @@ import player.BadWinnerPlayerComponent;
 import player.IPlayerComponent;
 
 public class FishClientBadWinner extends FishClient {
-  FishClientBadWinner(int port) throws IOException {
+  public FishClientBadWinner(int port) throws IOException {
     super("127.0.0.1", port);
   }
 

@@ -10,7 +10,7 @@ public class FishClientException extends FishClient {
   private final boolean errGetAge;
   private final boolean errJoinTournament;
 
-  FishClientException(int port, boolean errGetAge, boolean errJoinTournament) throws IOException {
+  public FishClientException(int port, boolean errGetAge, boolean errJoinTournament) throws IOException {
     super("127.0.0.1", port);
     this.errGetAge = errGetAge;
     this.errJoinTournament = errJoinTournament;
