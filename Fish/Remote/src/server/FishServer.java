@@ -63,9 +63,11 @@ public class FishServer {
     if (!this.isSignupComplete(this.clients)) {
       this.startSignupPhase(this.serverSocket, this.clients, this.signupWaitMillis);
     }
-    this.serverSocket.close();
+    this.serverSocket.close(); //todo question, why does the serverSocket close here?
     if (this.isSignupComplete(this.clients)) {
       this.runTournament(this.clients);
+    } else {
+      this.clients = new ArrayList<>();
     }
     for (Socket s : this.clients) {
       s.close();
@@ -137,6 +139,13 @@ public class FishServer {
     this.adapter.runTournament();
   }
 
+  /**
+   * todo
+   * @param inputStream
+   * @param timeout
+   * @return
+   * @throws IOException
+   */
   public boolean expectClientSentName(DataInputStream inputStream, int timeout) throws IOException {
     Long startTime = System.currentTimeMillis();
     while (inputStream.available() <= 0) {

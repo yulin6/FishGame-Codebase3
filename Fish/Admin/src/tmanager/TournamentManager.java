@@ -25,6 +25,12 @@ import referee.Referee;
  * - phase: an enum to represent the phase a tournament is in (running or over)
  * - firstRoundRun: a boolean which if false is the first round hasn't been run, true otherwise
  * (used to determine tournament-end conditions).
+ * - isUniformBoard: a boolean for determine whether the game boards are uniform, an uniform board
+ * have predefined row, column and fish number of the board, otherwise the specs on a random board are random.
+ * - boardRows: the height of game boards.
+ * - boardCols: the width of game boards.
+ * - fishNum: the number of fishes on each tile.
+ *
  * <p>
  * It also contains constants relating to max and min players in a game and a max bound on board
  * dimensions.
@@ -39,6 +45,7 @@ public class TournamentManager implements ITournamentManager {
     private boolean isUniformBoard;
     private int boardRows;
     private int boardCols;
+    private int fishNum;
 
     private static final int MAX_PLAYERS = 4;
     private static final int MIN_PLAYERS = 2;
@@ -80,8 +87,9 @@ public class TournamentManager implements ITournamentManager {
    *                  in, as they have already signed up.
    * @param rows the height of game boards
    * @param cols the width of game boards
+   * @param fishNum the number of fish on each tile
    */
-    public TournamentManager(List<IPlayerComponent> players, int rows, int cols) {
+    public TournamentManager(List<IPlayerComponent> players, int rows, int cols, int fishNum) {
         if (players.size() < MIN_PLAYERS) {
             throw new IllegalArgumentException("Not enough players to form a tournament.");
         }
@@ -91,6 +99,7 @@ public class TournamentManager implements ITournamentManager {
         this.isUniformBoard = true;
         this.boardRows = rows;
         this.boardCols = cols;
+        this.fishNum = fishNum;
         generateGames();
         this.phase = TournamentPhase.RUNNING;
     }
@@ -168,7 +177,12 @@ public class TournamentManager implements ITournamentManager {
         }
 
         try {
-            Referee newRef = new Referee(players, rows, cols);
+            Referee newRef;
+            if(!isUniformBoard) {
+                newRef = new Referee(players, rows, cols);
+            } else {
+                newRef = new Referee(players, rows, cols, this.fishNum);
+            }
             for (StateChangeListener listener : this.listeners) {
                 newRef.setListener(listener);
             }

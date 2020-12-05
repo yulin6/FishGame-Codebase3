@@ -19,6 +19,10 @@ public class TournamentManagerAdapter implements ITournamentManager, StateChange
   private TournamentManager tournamentManager;
   private List<PenguinColor> currentGameColors;
 
+  private final int boardRows = 5;
+  private final int boardCols = 5;
+  private final int fishNum = 2;
+
   /**
    * the constructor of TournamentManagerAdapter takes in a list of FishClientProxies, which is an IPlayerComponent
    * for remote players, and then it create a TournamentManager with the list of FishClientProxies.
@@ -35,7 +39,7 @@ public class TournamentManagerAdapter implements ITournamentManager, StateChange
   @Override
   public void runTournament() {
     List<IPlayerComponent> playerComponents = new ArrayList<>(this.proxies);
-    this.tournamentManager = new TournamentManager(playerComponents);
+    this.tournamentManager = new TournamentManager(playerComponents, this.boardRows, this.boardCols, this.fishNum);
     this.tournamentManager.addGameListener(this);
     this.tournamentManager.runTournament();
   }
