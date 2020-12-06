@@ -1,5 +1,6 @@
 package referee;
 
+import game.observer.StateChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -76,6 +77,34 @@ public class Referee implements IReferee {
 
   /**
    * Constructor for a Referee that takes a list of players, a number of rows and a number of
+   * columns for a game board, and a fishNum for number of fishes on each tile, and sets up a game for
+   * which the players will play in, with the Referee handling all interactions between players and the game.
+   * @param players The list of players. Assumes that the list of players given is in ascending
+   *                order of player age.
+   * @param rows the number of rows the referee is instructed to create the board with
+   * @param cols the number of columns the referee is instructed to create the board with
+   * @param fishNum the number of fishes on each tile
+   */
+  public Referee(List<IPlayerComponent> players, int rows, int cols, int fishNum) {
+    this.playerMap = new HashMap<>();
+    this.winners = new ArrayList<>();
+    this.failures = new ArrayList<>();
+    this.cheaters = new ArrayList<>();
+    this.numPlayers = players.size();
+    this.penguinsPerPlayer = PENGUIN_MAX - this.numPlayers;
+    if (rows * cols < this.numPlayers * this.penguinsPerPlayer) {
+      throw new IllegalArgumentException("Board with specified parameters cannot handle the given" +
+              " number of players");
+    }
+    Board board = new Board(rows, cols, fishNum);
+    GameState gs = makeNewState(players, board);
+    this.gt = new GameTreeNode(gs);
+    this.phase = GamePhase.SETUP;
+    this.observer = new Observer();
+  }
+
+  /**
+   * Constructor for a Referee that takes a list of players, a number of rows and a number of
    * columns for a game board, and sets up a game for which the players will play in, with the
    * Referee handling all interactions between players and the game.
    * @param players The list of players. Assumes that the list of players given is in ascending
@@ -94,7 +123,8 @@ public class Referee implements IReferee {
       throw new IllegalArgumentException("Board with specified parameters cannot handle the given" +
               " number of players");
     }
-    GameState gs = makeNewState(players, rows, cols);
+    Board board = generateRandomBoard(rows, cols);
+    GameState gs = makeNewState(players, board);
     this.gt = new GameTreeNode(gs);
     this.phase = GamePhase.SETUP;
     this.observer = new Observer();
@@ -158,12 +188,10 @@ public class Referee implements IReferee {
    * penguins have been placed, with the passed-in list of players assigned to the game.
    *
    * @param players The list of players to assign to the game, sorted by ascending age.
-   * @param rows the number of rows to create the board with
-   * @param cols the number of columns to create the board with
+   * @param board a Board for creating a GameState.
    * @return The GameState that was created.
    */
-  private GameState makeNewState(List<IPlayerComponent> players, int rows, int cols) {
-    Board b = generateRandomBoard(rows, cols);
+  private GameState makeNewState(List<IPlayerComponent> players, Board board) {
     HashSet<Player> playerSet = new HashSet<>();
     for (IPlayerComponent pcomponent : players) {
       Player p;
@@ -177,7 +205,7 @@ public class Referee implements IReferee {
     if (playerSet.size() == 0) {
       throw new IllegalArgumentException("Insufficient players to make a valid state.");
     }
-    return new GameState(playerSet, b);
+    return new GameState(playerSet, board);
 
   }
 
@@ -198,7 +226,6 @@ public class Referee implements IReferee {
     final ExecutorService es = Executors.newSingleThreadExecutor();
     final Callable<Integer> getAction = () -> pcomponent.getAge();
     Future<Integer> future = es.submit(getAction);
-
     try {
       age = future.get(COMMS_TIMEOUT, TimeUnit.SECONDS);
     } catch (TimeoutException | InterruptedException | ExecutionException e) {
@@ -206,9 +233,11 @@ public class Referee implements IReferee {
       // Don't put the player into the game in the first place; directly add to failures list.
       failures.add(pcomponent);
       numPlayers--;
+      es.shutdownNow();
       throw new IllegalArgumentException("Player component did not appropriately respond.");
     }
 
+    es.shutdownNow();
     Player newPlayer = new Player(age, color);
     playerMap.put(color, pcomponent);
     return newPlayer;
@@ -249,6 +278,7 @@ public class Referee implements IReferee {
       throw new IllegalArgumentException("Cannot notify players that a game is starting outside " +
               "of the setup phase.");
     }
+    observer.notifyListenersGameStarted(this.gt.getGameState());
     sendNotifToPlayers(NotifType.START);
   }
 
@@ -263,7 +293,6 @@ public class Referee implements IReferee {
       doPlacingPhase();
       doPlayingPhase();
     }
-    observer.notifyListener();
   }
 
   /**
@@ -321,7 +350,7 @@ public class Referee implements IReferee {
         // All exceptions here indicate a player has failed.
         invalidPlayer(currState, currPlayer, currPComponent, failures);
         this.gt = new GameTreeNode(currState);
-        this.observer.notifyListener();
+        this.observer.notifyListenersNewGameState(this.gt.getGameState());
         return;
       }
       doPlayerAction(action, currState, currPlayer, currPComponent);
@@ -348,8 +377,10 @@ public class Referee implements IReferee {
       final Callable<Action> getAction = () -> currComp.takeTurn(node);
       future = es.submit(getAction);
     } else {
+      es.shutdownNow();
       throw new IllegalStateException("Wrong game phase.");
     }
+    es.shutdownNow();
     return future;
   }
 
@@ -367,22 +398,22 @@ public class Referee implements IReferee {
     if (action == null) {
       invalidPlayer(gs, currPlayer, currComponent, failures);
       this.gt = new GameTreeNode(gs);
-      this.observer.notifyListener();
+      this.observer.notifyListenersNewGameState(gs);
     } else {
       try {
         if (phase == GamePhase.PLACING) {
           action.perform(gs);
           this.gt = new GameTreeNode(gs);
-          this.observer.notifyListener();
+          this.observer.notifyListenersNewGameState(gs);
         } else if (phase == GamePhase.PLAYING) {
           this.gt = gt.lookAhead(action);
-          this.observer.notifyListener();
+          this.observer.notifyListenersNewGameState(gs);
         }
       } catch (IllegalArgumentException iae) {
         // player made an illegal placement/movement
         invalidPlayer(gs, currPlayer, currComponent, cheaters);
         this.gt = new GameTreeNode(gs);
-        this.observer.notifyListener();
+        this.observer.notifyListenersNewGameState(gs);
       }
     }
   }
@@ -435,6 +466,7 @@ public class Referee implements IReferee {
               "ended.");
     }
     sendNotifToPlayers(NotifType.END);
+
   }
 
   /**
@@ -491,6 +523,7 @@ public class Referee implements IReferee {
         methodCall = new NotifFunc(color);
         sendNotif = es.submit(methodCall);
         sendNotif.get(COMMS_TIMEOUT, TimeUnit.SECONDS);
+        es.shutdown();
       }
       catch (TimeoutException | InterruptedException | ExecutionException e) {
         // All exceptions here indicate a player has failed.
@@ -502,11 +535,11 @@ public class Referee implements IReferee {
             break;
           }
         }
-        es.shutdown(); // doesn't actually shut down the thread if it's infinite looping
+        es.shutdownNow();
         IPlayerComponent failedPlayer = playerMap.get(color);
         invalidPlayer(state, player, failedPlayer, failures);
         this.gt = new GameTreeNode(state);
-        this.observer.notifyListener();
+        this.observer.notifyListenersNewGameState(state);
       }
     }
   }
@@ -544,8 +577,8 @@ public class Referee implements IReferee {
     }
   }
 
-  public void setListener(FishController controller){
-    this.observer.addListener(controller);
+  public void setListener(StateChangeListener listener){
+    this.observer.addListener(listener);
   }
 
   /**

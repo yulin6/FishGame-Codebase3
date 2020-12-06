@@ -36,7 +36,7 @@ public class FixedDepthPlayerComponent implements IPlayerComponent {
   }
 
   @Override
-  public void leaveTournament() {
+  public void leaveTournament(Boolean winner) {
     // No behavior; integration-testing-use player
   }
 

@@ -49,7 +49,7 @@ After these Referees are generated, the games of the Referees are run. This invo
     referee then runs its game, which requires sending requests for penguin placements and
      penguin movements during the game. External players are responsible for understanding when
       the placing phase has switched to the playing phase. Requests for placements/movements will
-       be sent as a JSON State, as defined in the testing task of milestone 4, with the expected
+       be sent as a JSON state.State, as defined in the testing task of milestone 4, with the expected
         response being a JSON Position (as defined in testing task, m3) for placements or
          a JSON Action (testing task, m5) for movements. This continues until the game ends, at
           which point a message "Game has ended." is sent to player components, with an expected

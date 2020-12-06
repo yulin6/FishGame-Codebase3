@@ -24,7 +24,7 @@ public class IllogicalPlayerComponent implements IPlayerComponent {
   }
 
   @Override
-  public void leaveTournament() {
+  public void leaveTournament(Boolean winner) {
     // No behavior - illogical fails on the content it returns
   }
 

@@ -121,5 +121,20 @@ public class Penguin {
       int randnum = rng.nextInt(PenguinColor.values().length);
       return PenguinColor.values()[randnum];
     }
+
+    public String toString() {
+      switch(this.tieCode) {
+        case 0:
+          return "black";
+        case 1:
+          return "brown";
+        case 2:
+          return "red";
+        case 3:
+          return "white";
+        default:
+          throw new AssertionError("Impossible to reach: PenguinColor toString failure");
+      }
+    }
   }
 }

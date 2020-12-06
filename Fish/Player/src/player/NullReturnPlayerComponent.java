@@ -25,7 +25,7 @@ public class NullReturnPlayerComponent implements IPlayerComponent {
   }
 
   @Override
-  public void leaveTournament() {
+  public void leaveTournament(Boolean winner) {
     // No behavior; fails by returning nulls
   }
 

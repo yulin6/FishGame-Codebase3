@@ -1,3 +1,6 @@
+package state;
+
+import game.model.IBoard;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,20 +15,51 @@ import game.model.Penguin;
 import game.model.Player;
 
 /**
- * Class to represent the State type objects in Java after being deserialized
+ * Class to represent the state.State type objects in Java after being deserialized
  * from JSON.
- * State objects in JSON form are { "players" : Player*, "board" : Board}
- * where Players is a JSON array of "Player" as described in the documentation of TestPlayer,
+ * state.State objects in JSON form are { "players" : Player*, "board" : Board}
+ * where Players is a JSON array of "Player" as described in the documentation of state.TestPlayer,
  * and Board is a JSON array of numbers from 0 to 5.
  */
 public class State {
   private List<TestPlayer> players;
   private List<List<Integer>> board;
 
-  public State(GameState gs, HashSet<Player> pset, Board b) {
+  public State(GameState gs, HashSet<Player> pset, IBoard b) {
     HashMap<BoardPosition, Penguin> map = gs.getPenguins();
     Set<BoardPosition> positions = map.keySet();
     this.players = new ArrayList<>();
+
+    Player fp = gs.getCurrentPlayer();
+    List<BoardPosition> penguins_ = new ArrayList<>();
+    for (BoardPosition bp : positions) {
+      if (map.get(bp).getColor() == fp.getColor()) {
+        penguins_.add(bp);
+      }
+    }
+
+    TestPlayer tp_ = new TestPlayer(fp.getColor(), fp.getFish(), penguins_);
+    this.players.add(tp_);
+
+    gs.setNextPlayer();
+    Player currentPlayer = gs.getCurrentPlayer();
+
+    while (currentPlayer.getColor() != fp.getColor()) {
+      penguins_ = new ArrayList<>();
+      for (BoardPosition bp : positions) {
+        if (map.get(bp).getColor() == currentPlayer.getColor()) {
+          penguins_.add(bp);
+        }
+      }
+
+      tp_ = new TestPlayer(currentPlayer.getColor(), currentPlayer.getFish(), penguins_);
+      this.players.add(tp_);
+
+      gs.setNextPlayer();
+      currentPlayer = gs.getCurrentPlayer();
+    }
+
+    /*
     boolean firstPlayer = true;
     Player fp = null;
     for (Player p : pset) {
@@ -44,6 +78,7 @@ public class State {
       TestPlayer tp = new TestPlayer(p.getColor(), p.getFish(), penguins);
       this.players.add(tp);
     }
+
     assert(fp != null);
     List<BoardPosition> penguins = new ArrayList<>();
     for (BoardPosition bp : positions) {
@@ -54,6 +89,7 @@ public class State {
 
     TestPlayer tp = new TestPlayer(fp.getColor(), fp.getFish(), penguins);
     this.players.add(tp);
+    */
 
     this.board = new ArrayList<>();
     for (int i = 0; i < b.getRows(); i++) {

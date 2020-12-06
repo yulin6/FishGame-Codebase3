@@ -33,7 +33,7 @@ public class InfiniteLoopPlayerComponent implements IPlayerComponent {
   }
 
   @Override
-  public void leaveTournament() {
+  public void leaveTournament(Boolean winner) {
     while (true) {
 
     }

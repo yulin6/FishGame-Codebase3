@@ -24,7 +24,7 @@ Making a pass
 
 Getting information about the game
 - Various information about the game can be queried for, including the current status of all
-  players, the location of the penguins on the board, and the state of the board. This can be requested through the API, and will be provided as a State JSON object.
+  players, the location of the penguins on the board, and the state of the board. This can be requested through the API, and will be provided as a state.State JSON object.
 
 Getting phase
 - The phase of the game can be queried for, and is returned to the player as a Phase.
@@ -36,12 +36,12 @@ Getting the current player
 Getting move legality
 - Much like making a move, a player will specify a start position and an end position, which will
  be used to verify whether their move is legal. If the move is legal, the player will receive the
-  resulting game state in the form of a State JSON object. Otherwise, they will receive a false
+  resulting game state in the form of a state.State JSON object. Otherwise, they will receive a false
    boolean value. The player component must also specify the color of the player making the move.
    
 Getting pass legality
 - A player can query the results of a given player (specified by color) passing their turn, and if
- the pass is legal, the resulting State will be returned; otherwise they will receive a false value.
+ the pass is legal, the resulting state.State will be returned; otherwise they will receive a false value.
 
 Performing function on all possible next game states
 - To perform a function on all possible next game states, the player must provide a function
@@ -79,5 +79,5 @@ Player:
 - A Player is composed of a Color, a natural number counting their fish, and an array of Posn
  objects representing their penguins.
  
-State: 
-- A State is a JSON object composing a JSON array of Player(s) and a Board, representing the given state of a game. The player order is captured in the array of Player objects, with the first going first, second going second, etc.
+state.State: 
+- A state.State is a JSON object composing a JSON array of Player(s) and a Board, representing the given state of a game. The player order is captured in the array of Player objects, with the first going first, second going second, etc.

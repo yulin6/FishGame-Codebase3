@@ -12,7 +12,7 @@ The code we wrote for the integration testing for Milestone 4 failed due to our 
   test harness.
 - Commit containing integration testing code with bug: https://github.ccs.neu.edu/CS4500-F20/fritch/commit/3c1e628103d45cbb110e3a9932c92a42771fd10e 
 - Fix:  https://github.ccs.neu.edu/CS4500-F20/fritch/commit/f28ba6eb1ccca5db44ce520253d450933b3f4121
-(Specifically, the changes made were to State.java and Xstate.java. The JSON tests we wrote were
+(Specifically, the changes made were to state.State.java and Xstate.java. The JSON tests we wrote were
  also changed to reflect the correct understanding of the requirements.)
 
 ## Strategy

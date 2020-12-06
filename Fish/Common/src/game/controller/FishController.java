@@ -1,5 +1,6 @@
 package game.controller;
 
+import game.model.Action;
 import java.util.*;
 
 import game.model.Board;
@@ -120,21 +121,26 @@ public class FishController implements StateChangeListener{
   }
 
   @Override
-  public void actionPerformed() {
+  public void gameStarted(GameState gs) {
+    this.state = gs;
+    this.frame.repaint();
+  }
+
+  @Override
+  public void gameStateUpdated(GameState gs) {
     try {
       int sleepTime = 500;
       Thread.sleep(sleepTime);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    this.state = referee.getGameState();
+    this.state = gs;
     this.frame.repaint();
-    updateScorePanel(referee.getGameState().getPlayers());
+    updateScorePanel(gs.getPlayers());
     if (this.referee.getPhase().equals(Referee.GamePhase.END)) {
       System.exit(0);
     }
   }
-
 
   /**
    * Display the game board first, then shows players initial score before running the game.

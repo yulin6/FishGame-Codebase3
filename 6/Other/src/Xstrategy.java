@@ -20,6 +20,8 @@ import game.model.Pass;
 import game.model.Penguin;
 import game.model.Player;
 import player.Strategy;
+import state.State;
+import state.TestPlayer;
 
 /**
  * Xstrategy testing harness for milestone 6. Accepts a Depth-State JSON input where a Depth is a

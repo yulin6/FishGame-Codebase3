@@ -15,6 +15,8 @@ import game.model.Move;
 import game.model.Pass;
 import game.model.Penguin;
 import game.model.Player;
+import state.State;
+import state.TestPlayer;
 
 public class Xstate {
 

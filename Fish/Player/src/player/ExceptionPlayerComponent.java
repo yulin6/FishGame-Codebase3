@@ -33,7 +33,7 @@ public class ExceptionPlayerComponent implements IPlayerComponent {
   }
 
   @Override
-  public void leaveTournament() {
+  public void leaveTournament(Boolean winner) {
     throw new IllegalArgumentException("Dummy exception for testing - leaveTournament");
   }
 
