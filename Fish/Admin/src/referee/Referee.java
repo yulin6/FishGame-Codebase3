@@ -226,7 +226,7 @@ public class Referee implements IReferee {
     final ExecutorService es = Executors.newSingleThreadExecutor();
     final Callable<Integer> getAction = () -> pcomponent.getAge();
     Future<Integer> future = es.submit(getAction);
-
+    es.shutdown();
     try {
       age = future.get(COMMS_TIMEOUT, TimeUnit.SECONDS);
     } catch (TimeoutException | InterruptedException | ExecutionException e) {
@@ -520,6 +520,7 @@ public class Referee implements IReferee {
         methodCall = new NotifFunc(color);
         sendNotif = es.submit(methodCall);
         sendNotif.get(COMMS_TIMEOUT, TimeUnit.SECONDS);
+        es.shutdown();
       }
       catch (TimeoutException | InterruptedException | ExecutionException e) {
         // All exceptions here indicate a player has failed.
@@ -531,7 +532,7 @@ public class Referee implements IReferee {
             break;
           }
         }
-        es.shutdown(); // doesn't actually shut down the thread if it's infinite looping
+        es.shutdownNow(); // doesn't actually shut down the thread if it's infinite looping
         IPlayerComponent failedPlayer = playerMap.get(color);
         invalidPlayer(state, player, failedPlayer, failures);
         this.gt = new GameTreeNode(state);
