@@ -137,10 +137,6 @@ public class FishServerTest {
       throw new RuntimeException(ie.getMessage());
     }
 
-    //TODO how to make test stop?
-
-
-//    assertEquals(6, server.getProxies().size());
 
   }
 }

@@ -1,6 +1,5 @@
 package game.observer;
 
-import game.model.Action;
 import game.model.GameState;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,7 @@ public class Observer {
      */
     public void notifyListenersNewGameState(GameState gs) {
         for(StateChangeListener sl: listeners){
-            sl.newGameState(gs);
+            sl.gameStateUpdated(gs);
         }
     }
 }

@@ -30,7 +30,7 @@ import game.model.Penguin.PenguinColor;
  * Represents a client who can connect to a remote server running a game of Fish.
  */
 public class FishClient {
-  private final int TIMEOUT = 40000; // Should be longer than server's sign-up period
+  private final int TIMEOUT = 30000;
   private final int NAME_LEN = 12;
   private final int SEARCH_DEPTH = 2;
 
@@ -73,8 +73,8 @@ public class FishClient {
    * - when the message is "start" or "playing-with", sends "void" back to server.
    * - when the message is "playing-as", create a FixedDepthPlayerComponent with given color.
    * - when the message is "setup", parses the GameState, determines the next placement, and send back a position.
-   * - when the message is "take-turn", TODO
-   * - when the message is "end", parses the boolean represents win or lose, reply server with "void", and return the boolean. TODO fix?
+   * - when the message is "take-turn", parses the GameState, determines the next movement, and send back a action.
+   * - when the message is "end", parses the boolean represents win or lose, reply server with "void", and return the boolean.
    *
    * @param readable a DataInputStream
    * @param writable a DataOutputStream
@@ -88,7 +88,6 @@ public class FishClient {
     GameTreeNode gameTree = null;
 
     Instant lastServerMessage = Instant.now();
-
 
     while (Duration.between(lastServerMessage, Instant.now()).toMillis() < this.TIMEOUT) {
       if (readable.available() != 0) {

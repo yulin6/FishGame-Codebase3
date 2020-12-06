@@ -54,7 +54,7 @@ public class FishServer {
     this.clients = new ArrayList<>();
     this.proxies = new ArrayList<>();
     this.signupWaitMillis = wait_millis;
-    this.playerWaitMillis = this.signupWaitMillis / 10;
+    this.playerWaitMillis = this.signupWaitMillis / 10; //todo why is this 3 seconds?
   }
 
   /**
@@ -78,8 +78,8 @@ public class FishServer {
 
   /**
    * Is the provided list of clients within the length bounds for a Fish tournament?
-   * @param clients
-   * @return
+   * @param clients a list of client Sockets
+   * @return a boolean represents whether the sign-up phase is over
    */
   private boolean isSignupComplete(ArrayList<Socket> clients) {
     return clients.size() >= MIN_PLAYERS && clients.size() <= MAX_PLAYERS;
@@ -90,9 +90,9 @@ public class FishServer {
    * Starts with the provided list, and returns the new list with all new connections added at the
    * end without mutation.
    *
-   * @param ssocket
-   * @param clients
-   * @return
+   * @param ssocket the ServerSocket
+   * @param clients the list of client Sockets
+   * @return a list of client Sockets
    * @throws IOException
    */
   public ArrayList<Socket> startSignupPhase(
@@ -108,8 +108,7 @@ public class FishServer {
       try {
         Socket clientSocket = ssocket.accept();
         boolean acceptClient = this.expectClientSentName(
-            new DataInputStream(clientSocket.getInputStream()),
-            this.playerWaitMillis);
+            new DataInputStream(clientSocket.getInputStream()));
 
         if (acceptClient) {
           outputClients.add(clientSocket);
@@ -142,16 +141,15 @@ public class FishServer {
   }
 
   /**
-   * todo
-   * @param inputStream
-   * @param timeout
-   * @return
-   * @throws IOException
+   * check if a client provided a name within playerWaitMillis.
+   * @param inputStream the DataInputStream
+   * @return a boolean represents whether a client provided a name within playerWaitMillis
+   * @throws IOException I/O exception thrown by reading DataInputStream
    */
-  public boolean expectClientSentName(DataInputStream inputStream, int timeout) throws IOException {
+  public boolean expectClientSentName(DataInputStream inputStream) throws IOException {
     Long startTime = System.currentTimeMillis();
     while (inputStream.available() <= 0) {
-      if ((System.currentTimeMillis() - startTime) >= timeout) {
+      if ((System.currentTimeMillis() - startTime) >= this.playerWaitMillis) {
         return false;
       }
     }

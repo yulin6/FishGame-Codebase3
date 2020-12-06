@@ -17,7 +17,7 @@ import state.TestPlayer;
 
 
 /**
- * the class handles all the serialization and deserialization of the messages between client and server.
+ * the class handles all the serialization and deserialization of the JSON messages between clients and server.
  */
 public class JsonUtils {
 
