@@ -11,7 +11,7 @@ import tmanager.ITournamentManager;
 import tmanager.TournamentManager;
 
 /**
- * The TournamentManagerAdapter is a a wrapper of TournamentManager, is used for running the tournament for
+ * The TournamentManagerAdapter is a wrapper of TournamentManager, is used for running the tournament for
  * FishClientProxies. It also implements StateChangeListener for receiving all the player colors in each game.
  */
 public class TournamentManagerAdapter implements ITournamentManager, StateChangeListener {
@@ -66,7 +66,7 @@ public class TournamentManagerAdapter implements ITournamentManager, StateChange
   }
 
   @Override
-  public void newGameState(GameState gs) { }
+  public void gameStateUpdated(GameState gs) { }
 
   /**
    * get all the player colors in the current game.

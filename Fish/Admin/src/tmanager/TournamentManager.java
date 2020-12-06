@@ -340,16 +340,16 @@ public class TournamentManager implements ITournamentManager {
     }
 
     /**
-     * todo
-     * @return
+     * get the list of cheaters.
+     * @return a the list of cheaters.
      */
     public List<IPlayerComponent> getCheaters() {
         return cheaters;
     }
 
     /**
-     * todo
-     * @return
+     * get the list of failures.
+     * @return a list of failures.
      */
     public List<IPlayerComponent> getFailures() {
         return failures;

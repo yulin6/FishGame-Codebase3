@@ -9,14 +9,14 @@ import game.model.GameState;
 public interface StateChangeListener {
 
     /**
-     * TODO
-     * @param gs
+     * will be called when a game start for performing certain action with the given updated GameState.
+     * @param gs a GameState
      */
     void gameStarted(GameState gs);
 
     /**
-     * TODO
-     * @param gs
+     * will be called when a game state changed for performing certain action with the given updated GameState.
+     * @param gs a GameState
      */
-    void newGameState(GameState gs);
+    void gameStateUpdated(GameState gs);
 }

@@ -127,7 +127,7 @@ public class FishController implements StateChangeListener{
   }
 
   @Override
-  public void newGameState(GameState gs) {
+  public void gameStateUpdated(GameState gs) {
     try {
       int sleepTime = 500;
       Thread.sleep(sleepTime);
