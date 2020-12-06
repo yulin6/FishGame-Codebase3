@@ -226,7 +226,6 @@ public class Referee implements IReferee {
     final ExecutorService es = Executors.newSingleThreadExecutor();
     final Callable<Integer> getAction = () -> pcomponent.getAge();
     Future<Integer> future = es.submit(getAction);
-    es.shutdown();
     try {
       age = future.get(COMMS_TIMEOUT, TimeUnit.SECONDS);
     } catch (TimeoutException | InterruptedException | ExecutionException e) {
@@ -234,9 +233,11 @@ public class Referee implements IReferee {
       // Don't put the player into the game in the first place; directly add to failures list.
       failures.add(pcomponent);
       numPlayers--;
+      es.shutdownNow();
       throw new IllegalArgumentException("Player component did not appropriately respond.");
     }
 
+    es.shutdownNow();
     Player newPlayer = new Player(age, color);
     playerMap.put(color, pcomponent);
     return newPlayer;
@@ -376,8 +377,10 @@ public class Referee implements IReferee {
       final Callable<Action> getAction = () -> currComp.takeTurn(node);
       future = es.submit(getAction);
     } else {
+      es.shutdownNow();
       throw new IllegalStateException("Wrong game phase.");
     }
+    es.shutdownNow();
     return future;
   }
 
@@ -532,7 +535,7 @@ public class Referee implements IReferee {
             break;
           }
         }
-        es.shutdownNow(); // doesn't actually shut down the thread if it's infinite looping
+        es.shutdownNow();
         IPlayerComponent failedPlayer = playerMap.get(color);
         invalidPlayer(state, player, failedPlayer, failures);
         this.gt = new GameTreeNode(state);

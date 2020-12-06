@@ -312,13 +312,13 @@ public class TournamentManager implements ITournamentManager {
             try {
                 es = Executors.newSingleThreadExecutor();
                 informFuture = es.submit(informCall);
-                es.shutdown();
                 informFuture.get(Referee.COMMS_TIMEOUT, TimeUnit.SECONDS);
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                es.shutdown();
+                es.shutdownNow();
                 activePlayers.remove(player);
             }
         }
+        es.shutdownNow();
     }
 
     /**
