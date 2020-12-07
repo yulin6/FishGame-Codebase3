@@ -32,7 +32,7 @@ import game.model.Penguin.PenguinColor;
 public class FishClient {
   private final int TIMEOUT = 30000;
   private final int NAME_LEN = 12;
-  private final int SEARCH_DEPTH = 2;
+  private final int SEARCH_DEPTH = 1;
 
 
   private final String ip;
