@@ -32,22 +32,25 @@ public class Penguin {
 
     if (PENGUIN_RED == null || PENGUIN_WHITE == null || PENGUIN_BLACK == null
             || PENGUIN_BROWN == null) {
+      URL pathRed = Penguin.class.getClassLoader().getResource("redpenguin.png");
+      URL pathWhite = Penguin.class.getClassLoader().getResource("whitepenguin.png");
+      URL pathBrown = Penguin.class.getClassLoader().getResource("brownpenguin.png");
+      URL pathBlack = Penguin.class.getClassLoader().getResource("blackpenguin.png");
 
       try {
-        image = ImageIO.read(new File("Other/dep/resources/redpenguin.png"));
+        image = ImageIO.read(pathRed);
         PENGUIN_RED = image;
-        image = ImageIO.read(new File("Other/dep/resources/whitepenguin.png"));
+        image = ImageIO.read(pathWhite);
         PENGUIN_WHITE = image;
-        image = ImageIO.read(new File("Other/dep/resources/brownpenguin.png"));
+        image = ImageIO.read(pathBrown);
         PENGUIN_BROWN = image;
-        image = ImageIO.read(new File("Other/dep/resources/blackpenguin.png"));
+        image = ImageIO.read(pathBlack);
         PENGUIN_BLACK = image;
       } catch (IOException e) {
         e.printStackTrace();
       }
     }
   }
-
   /**
    * Copy constructor for Penguin objects. Copies the penguin color from the passed-in Penguin.
    * @param p Penguin to copy from.

@@ -41,7 +41,7 @@ public class Tile implements BoardSpace {
     BufferedImage image;
     if (FISH_ICON == null) {
       try {
-        File fishImage = new File("Other/dep/resources/fish33x20.png");
+        URL fishImage = Tile.class.getClassLoader().getResource("fish33x20.png");
         image = ImageIO.read(fishImage);
         FISH_ICON = image;
       } catch (IOException e) {
