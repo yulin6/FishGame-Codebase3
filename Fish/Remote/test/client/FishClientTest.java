@@ -84,7 +84,7 @@ public class FishClientTest {
 
   @Test(expected = IllegalStateException.class)
   public void testDetermineAndSendMoveErrorsBeforeColorAssigned() throws IOException {
-    this.client.determineAndSendMove(this.clientWritable, null, new GameTreeNode(this.gameState));
+    this.client.determineAndSendMove(this.clientWritable, null, this.gameState);
   }
 
   private void performMove(BoardPosition start, BoardPosition end, Player player) {
@@ -105,28 +105,28 @@ public class FishClientTest {
       }
     }
 
-    this.client.determineAndSendMove(this.clientWritable, player, new GameTreeNode(this.gameState));
+    this.client.determineAndSendMove(this.clientWritable, player, this.gameState);
     assertEquals("[[0,2],[2,2]]", this.serverReadable.readUTF());
     this.performMove(new BoardPosition(0, 2), new BoardPosition(2, 2), this.p2);
 
-    this.client.determineAndSendMove(this.clientWritable, player, new GameTreeNode(this.gameState));
+    this.client.determineAndSendMove(this.clientWritable, player, this.gameState);
     assertEquals("[[1,0],[3,0]]", this.serverReadable.readUTF());
     this.performMove(new BoardPosition(1, 0), new BoardPosition(3, 0), this.p1);
 
-    this.client.determineAndSendMove(this.clientWritable, player, new GameTreeNode(this.gameState));
+    this.client.determineAndSendMove(this.clientWritable, player, this.gameState);
     assertEquals("[[1,1],[3,1]]", this.serverReadable.readUTF());
     this.performMove(new BoardPosition(1, 1), new BoardPosition(3, 1), this.p2);
 
-    this.client.determineAndSendMove(this.clientWritable, player, new GameTreeNode(this.gameState));
+    this.client.determineAndSendMove(this.clientWritable, player, this.gameState);
     assertEquals("[[1,2],[3,2]]", this.serverReadable.readUTF());
     this.performMove(new BoardPosition(1, 2), new BoardPosition(3, 2), this.p1);
 
-    this.client.determineAndSendMove(this.clientWritable, player, new GameTreeNode(this.gameState));
+    this.client.determineAndSendMove(this.clientWritable, player, this.gameState);
     assertEquals("false", this.serverReadable.readUTF());
 
     this.gameState.setNextPlayer();
 
-    this.client.determineAndSendMove(clientWritable, player, new GameTreeNode(this.gameState));
+    this.client.determineAndSendMove(clientWritable, player, this.gameState);
     assertEquals("false", this.serverReadable.readUTF());
   }
 

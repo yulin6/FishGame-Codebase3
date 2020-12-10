@@ -72,7 +72,7 @@ public class FishServerTest {
     Thread serverThread = new Thread(() -> {
       try {
         ArrayList<Socket> clientSockets =
-            server.startSignupPhase(serverSocket, new ArrayList<>(), 2000);
+            server.startSignupPhase();
         assertEquals(6, clientSockets.size());
         serverSocket.close();
         for (Socket s : clientSockets) {

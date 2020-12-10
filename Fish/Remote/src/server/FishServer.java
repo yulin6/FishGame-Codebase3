@@ -54,7 +54,7 @@ public class FishServer {
     this.clients = new ArrayList<>();
     this.proxies = new ArrayList<>();
     this.signupWaitMillis = wait_millis;
-    this.playerWaitMillis = this.signupWaitMillis / 10; //todo why is this 3 seconds?
+    this.playerWaitMillis = this.signupWaitMillis / 10;
   }
 
   /**
@@ -62,13 +62,13 @@ public class FishServer {
    * @throws IOException I/O exception thrown by ServerSocket
    */
   public void runServer() throws IOException {
-    this.clients = this.startSignupPhase(this.serverSocket, this.clients, this.signupWaitMillis);
-    if (!this.isSignupComplete(this.clients)) {
-      this.startSignupPhase(this.serverSocket, this.clients, this.signupWaitMillis);
+    this.clients = this.startSignupPhase();
+    if (!this.isSignupComplete()) {
+      this.clients.addAll(this.startSignupPhase());
     }
     this.serverSocket.close();
-    if (this.isSignupComplete(this.clients)) {
-      this.runTournament(this.clients);
+    if (this.isSignupComplete()) {
+      this.runTournament();
       this.tournamentRan = true;
     }
     for (Socket s : this.clients) {
@@ -78,11 +78,10 @@ public class FishServer {
 
   /**
    * Is the provided list of clients within the length bounds for a Fish tournament?
-   * @param clients a list of client Sockets
    * @return a boolean represents whether the sign-up phase is over
    */
-  private boolean isSignupComplete(ArrayList<Socket> clients) {
-    return clients.size() >= MIN_PLAYERS && clients.size() <= MAX_PLAYERS;
+  private boolean isSignupComplete() {
+    return this.clients.size() >= MIN_PLAYERS && this.clients.size() <= MAX_PLAYERS;
   }
 
   /**
@@ -90,23 +89,19 @@ public class FishServer {
    * Starts with the provided list, and returns the new list with all new connections added at the
    * end without mutation.
    *
-   * @param ssocket the ServerSocket
-   * @param clients the list of client Sockets
    * @return a list of client Sockets
    * @throws IOException
    */
-  public ArrayList<Socket> startSignupPhase(
-      ServerSocket ssocket, ArrayList<Socket> clients, int waitMillis
-  ) throws IOException {
+  public ArrayList<Socket> startSignupPhase() throws IOException {
 
-    ArrayList<Socket> outputClients = new ArrayList<>(clients);
+    ArrayList<Socket> outputClients = new ArrayList<>(this.clients);
     Instant start = Instant.now();
-    long remainingMillis = waitMillis - Duration.between(start, Instant.now()).toMillis();
+    long remainingMillis = this.signupWaitMillis - Duration.between(start, Instant.now()).toMillis();
 
     while (remainingMillis >= 0 && outputClients.size() < MAX_PLAYERS) {
-      ssocket.setSoTimeout((int) remainingMillis);
+      this.serverSocket.setSoTimeout((int) remainingMillis);
       try {
-        Socket clientSocket = ssocket.accept();
+        Socket clientSocket = this.serverSocket.accept();
         boolean acceptClient = this.expectClientSentName(
             new DataInputStream(clientSocket.getInputStream()));
 
@@ -116,7 +111,7 @@ public class FishServer {
           clientSocket.close();
         }
 
-        remainingMillis = waitMillis - Duration.between(start, Instant.now()).toMillis();
+        remainingMillis = this.signupWaitMillis - Duration.between(start, Instant.now()).toMillis();
       }
       catch(SocketTimeoutException ste) {
         break; // If a timeout has been reached, the full WAIT_MILLIS has passed
@@ -127,13 +122,12 @@ public class FishServer {
 
   /**
    * The method for creating a TournamentManagerAdapter and running the tournament in it.
-   * @param clients the list of connected clients.
    * @throws IOException I/O exception thrown by ServerSocket
    */
-  public void runTournament(ArrayList<Socket> clients) throws IOException {
+  public void runTournament() throws IOException {
     this.proxies = new ArrayList<>();
-    for(int i = 0; i < clients.size(); ++i){
-      FishClientProxy proxy = new FishClientProxy(clients.get(i), i);
+    for(int i = 0; i < this.clients.size(); ++i){
+      FishClientProxy proxy = new FishClientProxy(this.clients.get(i), i);
       this.proxies.add(proxy);
     }
     this.adapter = new TournamentManagerAdapter(proxies);

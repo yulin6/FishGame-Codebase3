@@ -87,11 +87,11 @@ public class FishClient {
     IPlayerComponent playerComponent = null;
     GameTreeNode gameTree = null;
 
-    Instant lastServerMessage = Instant.now();
+    Instant lastServerMessageTime = Instant.now();
 
-    while (Duration.between(lastServerMessage, Instant.now()).toMillis() < this.TIMEOUT) {
-      if (readable.available() != 0) {
-        lastServerMessage = Instant.now();
+    while (Duration.between(lastServerMessageTime, Instant.now()).toMillis() < this.TIMEOUT) {
+      if (readable.available() != 0) { // available() returns an estimate of the number of bytes that can be read.
+        lastServerMessageTime = Instant.now();
         String message = readable.readUTF();
         String messageType = getFishMessageType(message);
 
@@ -112,8 +112,7 @@ public class FishClient {
             break;
           case "take-turn":
             GameState newState = parseStateFromMessage(message);
-            gameTree = new GameTreeNode(newState);
-            this.determineAndSendMove(writable, playerComponent, gameTree);
+            this.determineAndSendMove(writable, playerComponent, newState);
             break;
           case "end":
             boolean won = parseWonFromEndMessage(message);
@@ -171,16 +170,16 @@ public class FishClient {
    * player has no moves and must skip.
    *
    * @param player the player currently making the move
-   * @param gameTree the current game being played
+   * @param gameState the current state of the game
    */
   public void determineAndSendMove(
-      DataOutputStream output, IPlayerComponent player, GameTreeNode gameTree
+      DataOutputStream output, IPlayerComponent player, GameState gameState
   ) throws IOException {
     if (player == null) {
       throw new IllegalStateException("Cannot take a turn before color is assigned");
     }
 
-    Action action = player.takeTurn(gameTree);
+    Action action = player.takeTurn(new GameTreeNode(gameState));
     if (action instanceof Pass) {
       sendSkipReply(output);
     } else if (action instanceof Move) {
