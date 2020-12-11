@@ -94,11 +94,11 @@ public class FishServer {
    */
   public ArrayList<Socket> startSignupPhase() throws IOException {
 
-    ArrayList<Socket> outputClients = new ArrayList<>(this.clients);
+    ArrayList<Socket> outputClients = new ArrayList<>();
     Instant start = Instant.now();
     long remainingMillis = this.signupWaitMillis - Duration.between(start, Instant.now()).toMillis();
 
-    while (remainingMillis >= 0 && outputClients.size() < MAX_PLAYERS) {
+    while (remainingMillis >= 0 && outputClients.size() + this.clients.size() < MAX_PLAYERS) {
       this.serverSocket.setSoTimeout((int) remainingMillis);
       try {
         Socket clientSocket = this.serverSocket.accept();
