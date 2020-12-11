@@ -76,7 +76,7 @@ public class FishClientProxy implements IPlayerComponent {
       sendStartMessage(this.writable);
       expectVoidReply(TIMEOUT_MILLIS);
     } catch (IOException ioe) {
-      throw new RuntimeException("IOException");
+      throw new RuntimeException(ioe.getMessage());
     }
   }
 
@@ -86,7 +86,7 @@ public class FishClientProxy implements IPlayerComponent {
       sendEndMessage(this.writable, winner);
       this.expectVoidReply(TIMEOUT_MILLIS);
     } catch (IOException ioe) {
-      throw new RuntimeException("IOException");
+      throw new RuntimeException(ioe.getMessage());
     }
   }
 
@@ -101,7 +101,7 @@ public class FishClientProxy implements IPlayerComponent {
       sendPlayingWithMessage(this.writable, opponents);
       expectVoidReply(TIMEOUT_MILLIS);
     } catch(IOException ioe) {
-      throw new RuntimeException("IOException");
+      throw new RuntimeException(ioe.getMessage());
     }
   }
 
@@ -114,7 +114,7 @@ public class FishClientProxy implements IPlayerComponent {
       BoardPosition boardPosn = parsePositionFromReply(reply);
       return new Place(boardPosn, gs.getCurrentPlayer());
     } catch(IOException ioe) {
-      throw new RuntimeException("IOException");
+      throw new RuntimeException(ioe.getMessage());
     }
   }
 
@@ -126,7 +126,7 @@ public class FishClientProxy implements IPlayerComponent {
       String reply = this.readable.readUTF();
       return parseActionFromReply(reply, gs.getCurrentPlayer());
     } catch(IOException ioe) {
-      throw new RuntimeException("IOException");
+      throw new RuntimeException(ioe.getMessage());
     }
   }
 

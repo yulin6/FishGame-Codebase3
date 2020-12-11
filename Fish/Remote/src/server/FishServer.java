@@ -1,9 +1,7 @@
 package server;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -11,7 +9,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import utils.JsonUtils;
 
 
 /**
@@ -96,7 +93,7 @@ public class FishServer {
 
     ArrayList<Socket> outputClients = new ArrayList<>(this.clients);
     Instant start = Instant.now();
-    long remainingMillis = this.signupWaitMillis - Duration.between(start, Instant.now()).toMillis();
+    long remainingMillis = this.signupWaitMillis;
 
     while (remainingMillis >= 0 && outputClients.size() < MAX_PLAYERS) {
       this.serverSocket.setSoTimeout((int) remainingMillis);
